@@ -1,4 +1,6 @@
 package com.chesstrainer.data
 
-class ValidationResponse {
-}
+data class ValidationResponse(
+    val isValid: Boolean,
+    val message: String
+)

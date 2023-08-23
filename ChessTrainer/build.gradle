@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id 'war'
@@ -27,21 +28,21 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    implementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    implementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat:3.1.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.0'
+    testImplementation 'org.springframework.security:spring-security-test:6.0.2'
 }
 
-compileKotlin {
+tasks.withType(KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict']
         jvmTarget = '17'
@@ -53,4 +54,8 @@ compileTestKotlin {
         freeCompilerArgs = ['-Xjsr305=strict']
         jvmTarget = '17'
     }
+}
+
+ext {
+    set('snakeyaml.version','2.0')
 }

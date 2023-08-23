@@ -1,4 +1,5 @@
 package com.chesstrainer.data
 
-class Move {
-}
+data class Move(
+    val move: String,
+)

@@ -52,9 +52,9 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 				onDrop={(move: any) => handleMove(move)}
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}
         lightSquareStyle={{ backgroundColor: lightSquareColor }}
-        boardStyle={{ }}
+				draggable={true}
 			/>
-			<button onClick={showHint}>Hint</button>
+			<button className="test-button" onClick={showHint}>Hint</button>
 			{hint && <div className="hint">Try moving: {hint}</div>}
 		</div>
 	);

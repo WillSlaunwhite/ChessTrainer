@@ -1,8 +1,13 @@
 .chessboard-container {
-  perspective: 600px;
+  // TODO not achieving what we want here
+  // perspective: 600px;
 
   .chessboard {
-    transform: rotateX(50deg) rotateY(-50deg);
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, .4);
+    // TODO not behaving correctly
+  }
+
+  .test-button {
+    color: orange;
+    padding: 1rem;
   }
 }

@@ -1,4 +1,4 @@
-package com.chesstrainer.security
+package com.chesstrainer.services
 
 import com.chesstrainer.entities.UserDetailsImpl
 import com.chesstrainer.repositories.UserRepository

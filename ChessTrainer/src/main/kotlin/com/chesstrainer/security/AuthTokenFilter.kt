@@ -1,5 +1,6 @@
 package com.chesstrainer.security
 
+import com.chesstrainer.services.UserDetailsServiceImpl
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

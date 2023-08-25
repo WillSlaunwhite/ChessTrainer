@@ -14,11 +14,11 @@ import java.util.*
 
 
 @Component
-class JwtUtils {
+class JwtUtil {
     @Value("\${JWT_SECRET}")
     private lateinit var jwtSecret: String
     private val jwtExpirationMs: Int = 86400000
-    private val logger = LoggerFactory.getLogger(JwtUtils::class.java)
+    private val logger = LoggerFactory.getLogger(JwtUtil::class.java)
 
     fun generateJwtToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserDetailsImpl

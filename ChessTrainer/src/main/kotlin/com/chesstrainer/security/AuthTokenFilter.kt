@@ -1,16 +1,16 @@
 package com.chesstrainer.security
 
 import com.chesstrainer.services.UserDetailsServiceImpl
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.web.filter.OncePerRequestFilter
 
 class AuthTokenFilter(
-    private val jwtUtils: JwtUtils, private val userDetailsService: UserDetailsServiceImpl,
+    private val jwtUtil: JwtUtil?, private val userDetailsService: UserDetailsServiceImpl?,
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -19,15 +19,15 @@ class AuthTokenFilter(
         filterChain: FilterChain,
     ) {
         val jwt = parseJwt(request)
-        if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-            val username = jwtUtils.getUserNameFromJwtToken(jwt)
-            val userDetails = userDetailsService.loadUserByUsername(username)
-            val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-            authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
-            SecurityContextHolder.getContext().authentication = authentication
+//        if (jwt != null && jwtUtil != null && jwtUtil.validateToken(jwt)) {
+//            val username = jwtUtil.extractUsername(jwt)
+//            val userDetails = userDetailsService?.loadUserByUsername(username)
+//            val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails?.authorities)
+//            authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+//            SecurityContextHolder.getContext().authentication = authentication
         }
-        filterChain.doFilter(request, response)
-    }
+//        filterChain.doFilter(request, response)
+//    }
 
     private fun parseJwt(request: HttpServletRequest): String? {
         val headerAuth = request.getHeader("Authorization")

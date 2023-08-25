@@ -12,7 +12,6 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	initialPosition = "start",
 	darkSquareColor = "#17203b",
 	lightSquareColor = "#4d4d4d",
-  pieceTheme = "chess24_theme",
 	onMove,
 }) => {
 	const [position, setPosition] = useState(initialPosition);

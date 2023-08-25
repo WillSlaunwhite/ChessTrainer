@@ -1,6 +1,5 @@
 package com.chesstrainer.security
 
-import com.chesstrainer.services.UserDetailsServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,33 +18,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
-    private lateinit var userDetailsService: UserDetailsServiceImpl
+    private val userService: UserDetailsService? = null
 
     @Autowired
     private val jwtRequestFilter: JwtRequestFilter? = null
 
     @Autowired
     private val encoder: PasswordEncoder? = null
+
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService as UserDetailsService?).passwordEncoder(encoder)
+        auth.userDetailsService(userService as UserDetailsService?).passwordEncoder(encoder)
     }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.cors().and()
-            .csrf().disable()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/bids/*").permitAll()
+
+        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers(HttpMethod.GET, "/api/bids/*").permitAll()
             .antMatchers(HttpMethod.GET, "/api/search/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll()
-            .antMatchers("/authenticate").permitAll()
-            .antMatchers("/api/**").authenticated()
-            .anyRequest().permitAll()
-            .and()
-            .sessionManagement()
+            .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll().antMatchers("/authenticate").permitAll()
+            .antMatchers(HttpMethod.POST, "/authenticate").permitAll().antMatchers("/authenticate").permitAll()
+            .antMatchers("/api/**").authenticated().anyRequest().permitAll().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
@@ -55,5 +49,4 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
-
 }

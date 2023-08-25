@@ -1,3 +1,3 @@
-package com.skilldistillery.marketplace.security
+package com.chesstrainer.data
 
 class AuthenticationResponse(val jwt: String)

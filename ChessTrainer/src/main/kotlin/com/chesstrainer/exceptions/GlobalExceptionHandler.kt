@@ -7,10 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
 class GlobalExceptionHandler {
-    @ExceptionHandler(TokenNotFoundException::class)
-    fun handleTokenNotFoundException(e: TokenNotFoundException?): ResponseEntity<Void> {
-        return ResponseEntity.notFound().build()
-    }
 
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFoundException(e: UserNotFoundException?): ResponseEntity<Void> {

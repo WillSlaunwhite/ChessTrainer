@@ -1,7 +1,7 @@
 package com.chesstrainer.entities
 
 import com.chesstrainer.enums.Role
-import jakarta.persistence.*
+import javax.persistence.*
 import java.time.LocalDateTime
 
 @Entity

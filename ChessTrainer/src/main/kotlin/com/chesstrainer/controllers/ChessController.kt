@@ -1,16 +1,17 @@
 package com.chesstrainer.controllers
 
-import com.chesstrainer.data.ValidationResponse
 import com.chesstrainer.data.Move
+import com.chesstrainer.data.ValidationResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@CrossOrigin("*", "http://localhost")
 @RequestMapping("/api")
 class ChessController {
+
+    @RequestMapping("/**/{path:[^\\.]*}", "/", "/home")
+    fun index(): String? { return "forward:/index.html" }
 
     @PostMapping("/validate-move")
     fun validateMove(@RequestBody move: Move): ResponseEntity<ValidationResponse> {

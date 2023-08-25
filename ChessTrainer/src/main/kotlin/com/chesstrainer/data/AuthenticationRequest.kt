@@ -1,4 +1,4 @@
-package com.skilldistillery.marketplace.security
+package com.chesstrainer.data
 
 data class AuthenticationRequest (
     val username: String,

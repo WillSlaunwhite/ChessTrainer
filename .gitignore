@@ -26,3 +26,5 @@ DB/.chesstrainerdb.sql.swp
 .DS_Store
 CHESS_REQUIREMENTS.pdf
 
+chess-trainer/index.html
+ChessTrainer/gradlew.bat

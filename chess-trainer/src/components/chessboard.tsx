@@ -21,7 +21,6 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	onMove,
 }) => {
 	const [position, setPosition] = useState(initialPosition);
-	const [hint, setHint] = useState<string | null>(null);
 
 	const handleMove = async (move: Move) => {
 		try {
@@ -52,13 +51,8 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		return screenWidth < 1000 ? screenWidth * 0.9 : screenWidth * 0.4;
 	};
 
-	const showHint = () => {
-		// need to add logic to show hints to users, when enabled
-		setHint("e4");
-	};
-
 	return (
-		<div className="chessboard-container mb-24 ">
+		<div className="chessboard-container mb-20">
 			<Chessboard
 				calcWidth={calcWidth}
 				position={position}
@@ -67,10 +61,6 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 				lightSquareStyle={{ backgroundColor: lightSquareColor }}
 				draggable={true}
 			/>
-			<button className="test-button" onClick={showHint}>
-				Hint
-			</button>
-			{hint && <div className="hint">Try moving: {hint}</div>}
 		</div>
 	);
 };

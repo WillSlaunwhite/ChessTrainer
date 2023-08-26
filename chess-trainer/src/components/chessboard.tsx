@@ -16,8 +16,6 @@ interface ChessboardProps {
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
 	initialPosition = "start",
-	darkSquareColor = "#17203b",
-	lightSquareColor = "#4d4d4d",
 	onMove,
 }) => {
 	const [position, setPosition] = useState(initialPosition);
@@ -34,7 +32,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 
 			const data = await response.json();
 			if (data.valid) {
-				setPosition(move);
+				setPosition(data.position);
 			} else {
 				alert(data.message);
 			}
@@ -48,17 +46,15 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	};
 
 	const calcWidth = ({ screenWidth }: { screenWidth: number }) => {
-		return screenWidth < 1000 ? screenWidth * 0.9 : screenWidth * 0.4;
+		return screenWidth < 1000 ? screenWidth * 0.9 : screenWidth * 0.6;
 	};
 
 	return (
-		<div className="chessboard-container mb-20">
+		<div className="chessboard-container w-screen h-4/5 flex items-start justify-center">
 			<Chessboard
 				calcWidth={calcWidth}
 				position={position}
 				onDrop={(move: Move) => handleMove(move)}
-				darkSquareStyle={{ backgroundColor: darkSquareColor }}
-				lightSquareStyle={{ backgroundColor: lightSquareColor }}
 				draggable={true}
 			/>
 		</div>

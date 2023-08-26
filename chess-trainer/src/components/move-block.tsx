@@ -5,14 +5,14 @@ interface MoveProps {
 
 const MoveBlock: React.FC<MoveProps> = ({ moveNumber = 3, movePiece = "..." }) => {
 	return (
-		<div className="block-border w-20 h-20 mx-4 border-2 border-slate-400">
-			<p className="text-indigo-400 tracking-widest mx-2">
+		<div className="block-border w-20 h-20 mx-6 border-2 border-slate-400">
+			<p className="text-indigo-400 tracking-widest mx-2 ml-4">
 				{moveNumber}. {movePiece}
 			</p>
-			<p className="text-indigo-400 tracking-widest mx-2">
+			<p className="text-indigo-400 tracking-widest mx-2 ml-4">
 				{moveNumber + 1}. {movePiece}
 			</p>
-			<p className="text-indigo-400 tracking-widest mx-2">
+			<p className="text-indigo-400 tracking-widest mx-2 ml-4">
 				{moveNumber + 2}. {movePiece}
 			</p>
 		</div>

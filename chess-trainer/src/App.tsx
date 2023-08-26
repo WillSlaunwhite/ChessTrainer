@@ -3,7 +3,6 @@ import ButtonsContainer from "./components/buttons-container";
 import ChessboardComponent from "./components/chessboard";
 import Header from "./components/header";
 import MoveContainer from "./components/move-container";
-import NavButton from "./components/nav-button";
 import Rules from "./components/rules";
 
 function App() {

@@ -52,13 +52,15 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 			return screenWidth * 0.9;
 		} else if (screenWidth < 750) {
 			return screenWidth * 0.7;
+		} else if (screenWidth < 900) {
+			return screenWidth * 0.6;
 		} else {
-			return screenWidth * 0.5;
+			return screenWidth * .5;
 		}
 	};
 
 	return (
-		<div className="chessboard-container w-screen h-4/5 flex items-start justify-center">
+		<div className="chessboard-container w-screen h-4/5 flex items-center justify-center">
 			<Chessboard
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}
 				lightSquareStyle={{ backgroundColor: lightSquareColor }}

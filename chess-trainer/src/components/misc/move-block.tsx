@@ -5,7 +5,7 @@ interface MoveProps {
 
 const MoveBlock: React.FC<MoveProps> = ({ moveNumber = 3, movePiece = "..." }) => {
 	return (
-		<div className="block-border font-sans text-xl text-gray-600 w-32 h-24 mx-8 border-2 border-green-900">
+		<div className="block-border font-sans text-xl text-gray-600 w-[7rem] h-24 mx-1 border-2 border-green-900">
 			<p className="tracking-widest mx-2 ml-4">
 				{moveNumber}. {movePiece}
 			</p>

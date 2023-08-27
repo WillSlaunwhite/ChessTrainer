@@ -1,4 +1,4 @@
-import NavButton from "./nav-button"
+import NavButton from "../buttons/nav-button"
 
 const ButtonsContainer: React.FC = () => {
   return(

@@ -1,10 +1,10 @@
 import "./App.scss";
-import ButtonsContainer from "./components/buttons-container";
-import ChessboardComponent from "./components/chessboard";
-import Header from "./components/header";
-import MatButton from "./components/mat-button";
-import MoveContainer from "./components/move-container";
-import Rules from "./components/rules";
+import ButtonsContainer from "./components/containers/buttons-container";
+import ChessboardComponent from "./components/chessboard/chessboard";
+import Header from "./components/text/header";
+import MatButton from "./components/buttons/mat-button";
+import MoveContainer from "./components/containers/move-container";
+import Rules from "./components/text/rules";
 
 function App() {
 	return (

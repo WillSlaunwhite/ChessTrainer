@@ -1,4 +1,4 @@
-import MoveBlock from "./move-block";
+import MoveBlock from "../misc/move-block";
 
 const MoveContainer: React.FC = () => {
   return (

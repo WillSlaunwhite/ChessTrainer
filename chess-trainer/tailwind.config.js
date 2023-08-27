@@ -1,20 +1,19 @@
+import withMT from "@material-tailwind/react/utils/withMT";
 /** @type {import('tailwindcss').Config} */
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-// const tailwindRipple = require("tailwindcss-ripple");
+import tailwindRipple from "tailwindcss-ripple";
 
-export default {
-	purge: ["./src/**/*.{js,jsx,ts,tsx}"],
-	darkMode: "false",
+export default withMT({
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
+	darkMode: '"false"',
 	theme: {
-		ripple: (theme) => ({
-			colors: theme("colors"),
-		}),
 		extend: {},
 		fontFamily: {
 			mono: "Monaco",
-			serif: "Georgia",
+			sans: "Kanit",
 		},
 	},
-	plugins: [],
-};
+	ripple: (theme) => ({
+		colors: theme("colors"),
+	}),
+	plugins: [tailwindRipple],
+});

@@ -46,7 +46,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	};
 
 	const calcWidth = ({ screenWidth }: { screenWidth: number }) => {
-		return screenWidth < 1000 ? screenWidth * 0.9 : screenWidth * 0.6;
+		return screenWidth < 500 ? screenWidth * 0.9 : screenWidth * 0.6;
 	};
 
 	return (

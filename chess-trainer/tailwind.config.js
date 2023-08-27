@@ -5,7 +5,19 @@ export default withMT({
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
 	darkMode: '"false"',
 	theme: {
-		extend: {},
+		extend: {
+			colors: {
+				light: {
+					50: "#fff",
+					100: "#fcfcfc",
+					200: "#f7f7f7",
+					300: "#ececec",
+					400: "#e8e8e8",
+					500: "#e1e1e1",
+					600: "#dbdbdb",
+				}
+			}
+		},
 		fontFamily: {
 			mono: "Monaco",
 			sans: "Kanit",

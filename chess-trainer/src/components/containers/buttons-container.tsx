@@ -2,7 +2,7 @@ import NavButton from "../buttons/nav-button"
 
 const ButtonsContainer: React.FC = () => {
   return(
-    <div className="button-container h-8 w-screen relative bottom-28 flex justify-around">
+    <div className="button-container h-6 w-screen fixed bottom-16 flex justify-around">
       <NavButton text="back"></NavButton>
       <NavButton text="next"></NavButton>
     </div>

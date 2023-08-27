@@ -16,6 +16,8 @@ interface ChessboardProps {
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
 	initialPosition = "start",
+	darkSquareColor = "#7d5426",
+	lightSquareColor = "#e6d9bc",
 	onMove,
 }) => {
 	const [position, setPosition] = useState(initialPosition);
@@ -46,12 +48,20 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	};
 
 	const calcWidth = ({ screenWidth }: { screenWidth: number }) => {
-		return screenWidth < 500 ? screenWidth * 0.9 : screenWidth * 0.6;
+		if (screenWidth < 500) {
+			return screenWidth * 0.9;
+		} else if (screenWidth < 750) {
+			return screenWidth * 0.7;
+		} else {
+			return screenWidth * 0.5;
+		}
 	};
 
 	return (
 		<div className="chessboard-container w-screen h-4/5 flex items-start justify-center">
 			<Chessboard
+				darkSquareStyle={{ backgroundColor: darkSquareColor }}
+				lightSquareStyle={{ backgroundColor: lightSquareColor }}
 				calcWidth={calcWidth}
 				position={position}
 				onDrop={(move: Move) => handleMove(move)}

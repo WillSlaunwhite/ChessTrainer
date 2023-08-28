@@ -1,5 +1,6 @@
 import withMT from "@material-tailwind/react/utils/withMT";
 /** @type {import('tailwindcss').Config} */
+import tailwindcssRipple from "tailwindcss-ripple";
 
 export default withMT({
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -37,5 +38,7 @@ export default withMT({
 	ripple: (theme) => ({
 		colors: theme("colors"),
 	}),
-	plugins: [],
+	plugins: [
+		tailwindcssRipple
+	],
 });

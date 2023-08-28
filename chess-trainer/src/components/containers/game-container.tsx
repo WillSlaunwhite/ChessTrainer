@@ -3,7 +3,7 @@ import MoveContainer from "./move-container";
 
 const GameContainerComponent = () => {
 	return (
-		<div className="main-content flex flex-col justify-center items-center h-full w-1/2">
+  <div className="game-container flex flex-col justify-center items-center relative top-[20%]">
 			<MoveContainer></MoveContainer>
 			<ChessboardComponent initialPosition="start" />
 		</div>

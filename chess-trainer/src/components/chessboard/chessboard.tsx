@@ -60,7 +60,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	};
 
 	return (
-		<div className="chessboard-container w-screen h-4/5 flex items-center justify-center">
+		<div className="chessboard-container w-screen h-4/5 flex absolute items-center justify-center">
 			<Chessboard
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}
 				lightSquareStyle={{ backgroundColor: lightSquareColor }}

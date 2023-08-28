@@ -1,10 +1,12 @@
 import "./App.scss";
-import MainViewComponent from "./views/main-view";
+import SidebarComponent from "./components/sidebar/sidebar";
+import GameViewComponent from "./views/game-view";
 
 function App() {
 	return (
-		<div className="app-container">
-				<MainViewComponent></MainViewComponent>
+		<div className="app-container h-screen w-screen flex flex-column justify-around items-center overflow-hidden">
+			<SidebarComponent></SidebarComponent>
+			<GameViewComponent></GameViewComponent>
 		</div>
 	);
 }

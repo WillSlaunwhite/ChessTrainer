@@ -1,55 +1,75 @@
+import { Chess, Square } from "chess.js";
 import Chessboard from "chessboardjsx";
-import { Chess } from "chess.js";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Move = {
-	sourceSquare: string;
-	targetSquare: string;
+	color: "w" | "b";
+	from: string;
+	to: string;
+	flags: string;
 	piece: string;
+	san: string;
+	captured?: string;
+	promotion?: string;
 };
 
 interface ChessboardProps {
-	initialPosition?: string;
+	fen: string;
+	setFen: (fen: string) => void;
 	darkSquareColor?: string;
 	lightSquareColor?: string;
 	onMove?: (move: Move) => void; // Callback when user makes a move
 }
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
-	initialPosition = "start",
+	fen,
+	setFen,
 	darkSquareColor = "#7d5426",
 	lightSquareColor = "#e6d9bc",
-	onMove,
-}) => {
-	const [position, setPosition] = useState(initialPosition);
+	}) => {
+	const chess = useRef(new Chess());
+	const [squareStyles, setSquareStyles] = useState({});
+	const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
 
-	const chess = new Chess();
+
+	useEffect(() => {
+		chess.current.load(fen);
+	}, [fen]);
 
 
-	const handleMove = async (move: Move) => {
-		try {
-			const response = await fetch("/api/validate-move", {
-				method: "POST",
-				body: JSON.stringify({ move }),
-				headers: {
-					"Content-type": "application/json",
-				},
+	const handleClick = (square: string) => {
+		if (selectedSquare === null) {
+			setSelectedSquare(square);
+			setSquareStyles({
+				[square]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
 			});
-
-			const data = await response.json();
-			if (data.valid) {
-				setPosition(data.position);
-			} else {
-				alert(data.message);
-			}
-
-			if (onMove) {
-				onMove(move);
-			}
-		} catch (error) {
-			console.error(`Unable to validate move: ${error}`);
+		} else {
+			handleMove({ from: selectedSquare, to: square });
+			setSelectedSquare(null);
+			setSquareStyles({});
 		}
 	};
+
+	const handleMove = (move: {from: string, to: string}) => {
+		const { from, to } = move;
+		const moves = chess.current.moves({ square: from as Square, verbose: true });
+
+		for (let i = 0; i < moves.length; i++) {
+			if (moves[i].to === to) {
+				chess.current.move({ from, to, promotion: "q" });
+				setFen(chess.current.fen());
+				setSquareStyles({
+					[from]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+					[to]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+				});
+				console.log(chess.current.history({ verbose: true }));
+				console.log(chess.current.fen());
+			}
+		}
+	};
+
+
+
 
 	const calcWidth = ({ screenWidth }: { screenWidth: number }) => {
 		if (screenWidth < 500) {
@@ -59,18 +79,20 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		} else if (screenWidth < 900) {
 			return screenWidth * 0.6;
 		} else {
-			return screenWidth * .5;
+			return screenWidth * 0.5;
 		}
 	};
 
 	return (
 		<div className="chessboard-container w-auto h-auto flex items-center justify-center z-30">
 			<Chessboard
+				squareStyles={squareStyles}
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}
 				lightSquareStyle={{ backgroundColor: lightSquareColor }}
 				calcWidth={calcWidth}
-				position={position}
-				onDrop={(move: Move) => handleMove(move)}
+				position={fen}
+				onDrop={(move: { sourceSquare: string; targetSquare: string }) => handleMove({from: move.sourceSquare, to: move.targetSquare})}
+				onSquareClick={handleClick}
 				draggable={true}
 			/>
 		</div>

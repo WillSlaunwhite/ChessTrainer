@@ -1,4 +1,5 @@
 import Chessboard from "chessboardjsx";
+import { Chess } from "chess.js";
 import { useState } from "react";
 
 type Move = {
@@ -21,6 +22,9 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	onMove,
 }) => {
 	const [position, setPosition] = useState(initialPosition);
+
+	const chess = new Chess();
+
 
 	const handleMove = async (move: Move) => {
 		try {

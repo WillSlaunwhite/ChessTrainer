@@ -6,7 +6,9 @@ function App() {
 	return (
 		<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
 			<WelcomeScreenComponent></WelcomeScreenComponent>
-			<GameContainerComponent></GameContainerComponent>
+			<div className="game-container-comp hidden md:block absolute right-[15%]">
+				<GameContainerComponent></GameContainerComponent>
+			</div>
 		</div>
 	);
 }

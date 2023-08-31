@@ -3,8 +3,7 @@ import ChessboardComponent from "../chessboard/chessboard";
 
 const GameContainerComponent: React.FC<{fen: string; setFen: (fen: string) => void}> = ({fen, setFen}) => {
 	return (
-		<div className="game-container scale-90 flex flex-col justify-center items-center relative bottom-1/3 md:top-0 md:left-[20%]">
-			{/* <MoveContainer></MoveContainer> */}
+		<div className="game-container scale-90 flex flex-col justify-center items-center">
 			<ChessboardComponent fen={fen} setFen={setFen} />
 		</div>
 	);

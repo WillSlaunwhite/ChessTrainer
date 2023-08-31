@@ -84,7 +84,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	};
 
 	return (
-		<div className="chessboard-container w-auto h-auto flex items-center justify-center z-30">
+		<div className="chessboard w-auto h-auto flex items-center justify-center z-30">
 			<Chessboard
 				squareStyles={squareStyles}
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}

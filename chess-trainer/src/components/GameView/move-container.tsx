@@ -1,4 +1,4 @@
-import MoveBlock from "./move-block";
+import MoveBlock from "./MoveBlock/move-block";
 
 interface Question {
 	fen: string;
@@ -25,18 +25,21 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ currentQuestionIndex, set
 				correctMove={questions[currentQuestionIndex].correctMove}
 				index={currentQuestionIndex}
         onMove={handleMove}
+				moveHistory={["test", "test2"]}
 			/>
 			<MoveBlock
 				fen={questions[currentQuestionIndex+1].fen}
 				correctMove={questions[currentQuestionIndex+1].correctMove}
 				index={currentQuestionIndex+1}
         onMove={handleMove}
+				moveHistory={["test3", "test4"]}
 			/>
 			<MoveBlock
 				fen={questions[currentQuestionIndex+2].fen}
 				correctMove={questions[currentQuestionIndex+2].correctMove}
 				index={currentQuestionIndex+2}
         onMove={handleMove}
+				moveHistory={["test5", "test6"]}
 			/>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import OpeningsMenu from "../components/containers/openings-menu";
-import QuizComponent from "../components/quiz/quiz";
+import QuizComponent from "../components/GameView/quiz";
 import SidebarComponent from "../components/sidebar/sidebar";
 import WelcomeMessageComponent from "../components/text/welcome-message";
 

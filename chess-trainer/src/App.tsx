@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.scss";
-import GameView from "./views/game-view";
+import GameView from "./components/GameView/game-view";
 import HomeView from "./views/home-view";
 
 function App() {

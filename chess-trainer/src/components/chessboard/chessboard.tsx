@@ -26,6 +26,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	setFen,
 	darkSquareColor = "#7d5426",
 	lightSquareColor = "#e6d9bc",
+	onMove
 	}) => {
 	const chess = useRef(new Chess());
 	const [squareStyles, setSquareStyles] = useState({});

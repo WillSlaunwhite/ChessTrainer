@@ -1,4 +1,5 @@
-import MoveBlock from "./MoveBlock/move-block";
+import { useState } from "react";
+import MoveBlock from "./MoveBlock";
 
 interface Question {
 	fen: string;
@@ -6,41 +7,35 @@ interface Question {
 }
 
 interface MoveContainerProps {
-	currentQuestionIndex: number;
-  setCurrentQuestionIndex: (index: number) => void;
 	questions: Question[];
 }
 
-const MoveContainer: React.FC<MoveContainerProps> = ({ currentQuestionIndex, setCurrentQuestionIndex, questions }) => {
-  const handleMove = (isCorrect: boolean) => {
-    if (isCorrect) { }
-      // if move is correct
-  }
+const MoveContainer: React.FC<MoveContainerProps> = ({ questions }) => {
+	const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
 
+	const handleMove = (move: string) => {
+		const correct = move === questions[currentBlockIndex].correctMove;
+		if (currentBlockIndex === 2) {
+			// TODO update score
+			setCurrentBlockIndex(0);
+		} else {
+			setCurrentBlockIndex(currentBlockIndex + 1);
+		}
+	};
 
 	return (
 		<div className="block-container flex flex-row justify-center mb-2">
-			<MoveBlock
-				fen={questions[currentQuestionIndex].fen}
-				correctMove={questions[currentQuestionIndex].correctMove}
-				index={currentQuestionIndex}
-        onMove={handleMove}
-				moveHistory={["test", "test2"]}
-			/>
-			<MoveBlock
-				fen={questions[currentQuestionIndex+1].fen}
-				correctMove={questions[currentQuestionIndex+1].correctMove}
-				index={currentQuestionIndex+1}
-        onMove={handleMove}
-				moveHistory={["test3", "test4"]}
-			/>
-			<MoveBlock
-				fen={questions[currentQuestionIndex+2].fen}
-				correctMove={questions[currentQuestionIndex+2].correctMove}
-				index={currentQuestionIndex+2}
-        onMove={handleMove}
-				moveHistory={["test5", "test6"]}
-			/>
+			{[0, 1, 2].map((i) => (
+				<MoveBlock
+					key={i}
+					fen={questions[i].fen}
+					correctMove={questions[i].correctMove}
+					index={i}
+					onMove={handleMove}
+					moveHistory={["test", "test2"]}
+					isCurrent={i===currentBlockIndex}
+				/>
+			))}
 		</div>
 	);
 };

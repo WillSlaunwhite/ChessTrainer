@@ -19,7 +19,7 @@ const QuizComponent: React.FC<QuizProps> = ({ questions }) => {
 
 	return (
 		<div>
-			<MoveContainer setCurrentQuestionIndex={setCurrentQuestionIndex} currentQuestionIndex={currentQuestionIndex} questions={questions}></MoveContainer>
+			<MoveContainer questions={questions}></MoveContainer>
 		</div>
 	);
 };

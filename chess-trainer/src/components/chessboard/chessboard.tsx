@@ -18,7 +18,7 @@ interface ChessboardProps {
 	setFen: (fen: string) => void;
 	darkSquareColor?: string;
 	lightSquareColor?: string;
-	onMove?: (move: Move) => void; // Callback when user makes a move
+	onMove?: (move: string) => void; // Callback when user makes a move
 }
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
@@ -65,6 +65,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 				});
 				console.log(chess.current.history({ verbose: true }));
 				console.log(chess.current.fen());
+				onMove(moves[i].san);
 			}
 		}
 	};

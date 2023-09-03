@@ -25,15 +25,15 @@ const OpeningsMenu: React.FC<{ setFen: (fen: string) => void; setIsQuizActive: (
 			<Card className="w-10/12">
 				<List className="mt-1">
 					<ListItem className="ripple-bg-blue-700 ripple" onClick={() => openGame("Italian")}>Italian Game</ListItem>
-					<ListItem className="ripple-bg-blue-700 ripple" onClick={() => openGame("Ruy")}>Ruy Lopez</ListItem>
-					<ListItem className="ripple-bg-blue-700 ripple" onClick={() => openGame("Scotch")}>Scotch Game</ListItem>
+					<ListItem className="ripple-bg-blue-700 ripple opacity-50 pointer-events-none" onClick={() => openGame("Ruy")}>Ruy Lopez</ListItem>
+					<ListItem className="ripple-bg-blue-700 ripple opacity-50 pointer-events-none" onClick={() => openGame("Scotch")}>Scotch Game</ListItem>
 				</List>
 			</Card>
 			<Card className="w-10/12 bg-black mt-1">
 				<List>
-					<ListItem className="text-light-400 ripple-bg-blue-700 ripple"onClick={() => openGame("Sicilian")}>Sicilian Defense</ListItem>
-					<ListItem className="text-light-400 ripple-bg-blue-700 ripple"onClick={() => openGame("French")}>French Defense</ListItem>
-					<ListItem className="text-light-400 ripple-bg-blue-700 ripple"onClick={() => openGame("Caro-Kann")}>Caro-Kann</ListItem>
+					<ListItem className="text-light-400 ripple-bg-blue-700 ripple opacity-50 pointer-events-none"onClick={() => openGame("Sicilian")}>Sicilian Defense</ListItem>
+					<ListItem className="text-light-400 ripple-bg-blue-700 ripple opacity-50 pointer-events-none"onClick={() => openGame("French")}>French Defense</ListItem>
+					<ListItem className="text-light-400 ripple-bg-blue-700 ripple opacity-50 pointer-events-none"onClick={() => openGame("Caro-Kann")}>Caro-Kann</ListItem>
 				</List>
 			</Card>
 		</div>

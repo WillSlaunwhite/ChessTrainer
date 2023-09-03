@@ -2,16 +2,6 @@ import { Chess, Square } from "chess.js";
 import Chessboard from "chessboardjsx";
 import { useEffect, useRef, useState } from "react";
 
-type Move = {
-	color: "w" | "b";
-	from: string;
-	to: string;
-	flags: string;
-	piece: string;
-	san: string;
-	captured?: string;
-	promotion?: string;
-};
 
 interface ChessboardProps {
 	fen: string;
@@ -56,7 +46,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		const moves = chess.current.moves({ square: from as Square, verbose: true });
 
 		for (let i = 0; i < moves.length; i++) {
-			if (moves[i].to === to && moves[i].san) {
+			if (moves[i].to === to) {
 				chess.current.move({ from, to, promotion: "q" });
 				setFen(chess.current.fen());
 				setSquareStyles({
@@ -66,6 +56,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 				console.log(chess.current.history({ verbose: true }));
 				console.log(chess.current.fen());
 				onMove(moves[i].san);
+				break;
 			}
 		}
 	};

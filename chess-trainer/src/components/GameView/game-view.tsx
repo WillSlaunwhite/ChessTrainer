@@ -1,15 +1,10 @@
 import { useState } from "react";
+import ChessboardComponent from "../chessboard/chessboard";
 import ExplanationComponent from "../text/explanation";
-import GameContainerComponent from "./game-container";
-import QuizComponent from "./quiz";
 import MoveContainer from "./move-container";
+import SummaryComponent from "./summary";
+import { Question } from "../../models/interfaces";
 
-interface Question {
-	fen: string;
-	correctMove: string;
-	correctExplanation: string;
-	incorrectExplanation: string;
-}
 
 const questions: Question[] = [
 	{
@@ -70,6 +65,7 @@ const GameView: React.FC<GameViewProps> = ({ fen, setFen, setIsQuizActive }) => 
 	const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
 	const [score, setScore] = useState(0);
 	const [isCorrect, setIsCorrect] = useState<boolean[]>([]);
+	const [summary, setSummary] = useState("");
 	const showSummary = false;
 
 	const updateMoveHistory = (move: string) => {
@@ -95,6 +91,7 @@ const GameView: React.FC<GameViewProps> = ({ fen, setFen, setIsQuizActive }) => 
 				// summary
 			}
 			setCurrentBlockIndex(0);
+			setIsCorrect(new Array(3).fill(null));
 		} else {
 			setCurrentBlockIndex(currentBlockIndex + 1);
 		}
@@ -108,9 +105,10 @@ const GameView: React.FC<GameViewProps> = ({ fen, setFen, setIsQuizActive }) => 
 
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-full w-full overflow-hidden">
+			{ showSummary && <SummaryComponent summary={summary} />}
 			<ExplanationComponent explanation={isCorrect ? questions[currentBlockIndex].correctExplanation : questions[currentBlockIndex].incorrectExplanation} />
 			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories}/>
-			<GameContainerComponent fen={fen} setFen={setFen} onMove={handleMove} />
+			<ChessboardComponent fen={fen} setFen={setFen} onMove={handleMove} />
 		</div>
 	);
 };

@@ -18,7 +18,7 @@ interface ChessboardProps {
 	setFen: (fen: string) => void;
 	darkSquareColor?: string;
 	lightSquareColor?: string;
-	onMove?: (move: string) => void; // Callback when user makes a move
+	onMove: (move: string) => void; // Callback when user makes a move
 }
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
@@ -56,7 +56,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		const moves = chess.current.moves({ square: from as Square, verbose: true });
 
 		for (let i = 0; i < moves.length; i++) {
-			if (moves[i].to === to) {
+			if (moves[i].to === to && moves[i].san) {
 				chess.current.move({ from, to, promotion: "q" });
 				setFen(chess.current.fen());
 				setSquareStyles({

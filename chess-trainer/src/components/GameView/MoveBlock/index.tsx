@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react";
+import MoveHistory from "./move-history";
 
 interface MoveProps {
-	fen: string;
-	correctMove: string;
-	index: number;
-	onMove: (move: string) => void;
+	isCorrect: boolean | null;
 	moveHistory: string[];
 	isCurrent: boolean;
 }
 
-const MoveBlock: React.FC<MoveProps> = ({ fen, correctMove, index, onMove, moveHistory, isCurrent }) => {
-	const [move, setMove] = useState<string | null>(null);
+const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
+	// const borderColor = isCorrect === null && !isCurrent ? "border-gray-900" : isCurrent ? "border-blue-500" : isCorrect ? "border-green-500" : "border-red-500";
 
-	const borderColor = move === null ? "border-gray-900" : move === correctMove ? "border-green-500" : "border-red-500";
-
-	const handleMove = (move: string) => {
-		setMove(move);
-		onMove(move);
-	};
-
-	useEffect(() => {
-		setMove(null);
-	}, [isCurrent]);
+	const getBorderColor = () => {
+		if(isCorrect === null) {
+			return "border-gray-900";
+		} else if (!isCorrect) {
+			return "border-red-500";
+		} else if (isCurrent) {
+			return "border-blue-500";
+		} else if (isCorrect === true) {
+			return "border-green-500";
+		}
+	}
 
 	return (
-		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] h-24 mx-1 border-4 ${borderColor}`}>
+		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] h-24 mx-1 border-4 ${getBorderColor()}`}>
 			<div className="move-history tracking-wide text-center">
-				{moveHistory.map((move, index) => (
-					<p key={index}>{move}</p>
-				))}
-				<p>{move || "---"}</p>
+				<MoveHistory moveHistory={moveHistory}/>
 			</div>
 		</div>
 		// move numbers and the move next to it

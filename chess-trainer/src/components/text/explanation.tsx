@@ -1,5 +1,13 @@
 type ExplanationProps = {
-  isCorrect: boolean;
-  correctExplanation: string;
-  incorrectExplanation: string;
+  explanation: string;
 }
+
+const ExplanationComponent: React.FC<ExplanationProps> = ({
+  explanation
+}) => {
+  return (
+    <p className="explanation-text">{explanation}</p>
+  );
+};
+
+export default ExplanationComponent;

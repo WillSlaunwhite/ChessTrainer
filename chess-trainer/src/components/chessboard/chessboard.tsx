@@ -1,51 +1,109 @@
+import { Chess, Square } from "chess.js";
 import Chessboard from "chessboardjsx";
-import { useState } from "react";
-
-type Move = {
-	sourceSquare: string;
-	targetSquare: string;
-	piece: string;
-};
+import React, { useCallback, useEffect, useState } from "react";
+import { italianGameMainLine } from "../../models/constants";
+import { useBoard } from "../GameView/board-context";
+import { useChessboard } from "../GameView/chess-context";
 
 interface ChessboardProps {
-	initialPosition?: string;
+	chess: Chess;
 	darkSquareColor?: string;
 	lightSquareColor?: string;
-	onMove?: (move: Move) => void; // Callback when user makes a move
+	onMove: (move: string) => void; // Callback when user makes a move
 }
 
 const ChessboardComponent: React.FC<ChessboardProps> = ({
-	initialPosition = "start",
+	chess,
 	darkSquareColor = "#7d5426",
 	lightSquareColor = "#e6d9bc",
 	onMove,
 }) => {
-	const [position, setPosition] = useState(initialPosition);
+	const [squareStyles, setSquareStyles] = useState({});
+	const {selectedSquare, setSelectedSquare} = useChessboard();
+	const { fen, setFen} = useBoard();
 
-	const handleMove = async (move: Move) => {
-		try {
-			const response = await fetch("/api/validate-move", {
-				method: "POST",
-				body: JSON.stringify({ move }),
-				headers: {
-					"Content-type": "application/json",
-				},
-			});
+	console.log("chessboard");
 
-			const data = await response.json();
-			if (data.valid) {
-				setPosition(data.position);
+	useEffect(() => {
+		chess.load(fen);
+		console.log('use effect');
+	}, [chess, fen]);
+
+	const handleMove = useCallback(
+		(move: { from: string; to: string }) => {
+			const { from, to } = move;
+			const moves = chess.moves({ square: from as Square, verbose: true });
+
+			for (let i = 0; i < moves.length; i++) {
+				if (moves[i].to === to) {
+					console.log("Before move:", chess.history({ verbose: true }));
+					chess.move({ from, to, promotion: "q" });
+					console.log("After move:", chess.history({ verbose: true }));
+
+
+					const newFen = chess.fen();
+					if(fen !== newFen) {
+						setFen(newFen);
+					}
+
+
+					setSquareStyles({
+						[from]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+						[to]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+					});
+					console.log(chess.history({ verbose: true }));
+					console.log(chess.fen());
+					onMove(moves[i].san);
+					break;
+				}
+			}
+
+			if (chess.turn() === "b") {
+				setTimeout(() => {
+					console.log(chess.history({ verbose: true }));
+
+					const whiteMoveIndex = chess.history.length;
+					console.log(whiteMoveIndex);
+					const blackMoveSan = italianGameMainLine.black[whiteMoveIndex];
+					console.log(blackMoveSan);
+					const possibleMoves = chess.moves({ verbose: true });
+					console.log(possibleMoves);
+
+					const blackMove = possibleMoves.find((move) => move.san === blackMoveSan);
+
+					if (blackMove) {
+						const blackMoveResult = chess.move(blackMove);
+						if (blackMoveResult) {
+							console.log(blackMoveResult);
+							
+							setFen(chess.fen());
+						}
+					}
+				}, 500);
+			}
+		},
+		[chess, fen, onMove, setFen],
+	);
+
+	const handleClick = useCallback(
+		(square: string) => {
+			console.log("hello");
+
+			if (selectedSquare === null) {
+				console.log("hello2");
+				setSelectedSquare(square);
+				setSquareStyles({
+					[square]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+				});
 			} else {
-				alert(data.message);
+				console.log("hello3");
+				handleMove({ from: selectedSquare, to: square });
+				setSelectedSquare(null);
+				setSquareStyles({});
 			}
-
-			if (onMove) {
-				onMove(move);
-			}
-		} catch (error) {
-			console.error(`Unable to validate move: ${error}`);
-		}
-	};
+		},
+		[handleMove, selectedSquare, setSelectedSquare],
+	);
 
 	const calcWidth = ({ screenWidth }: { screenWidth: number }) => {
 		if (screenWidth < 500) {
@@ -55,22 +113,26 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		} else if (screenWidth < 900) {
 			return screenWidth * 0.6;
 		} else {
-			return screenWidth * .5;
+			return screenWidth * 0.5;
 		}
 	};
 
 	return (
-		<div className="chessboard-container w-auto h-auto flex items-center justify-center z-30">
+		<div className="chessboard w-auto h-auto flex items-center justify-center z-30">
 			<Chessboard
+				squareStyles={squareStyles}
 				darkSquareStyle={{ backgroundColor: darkSquareColor }}
 				lightSquareStyle={{ backgroundColor: lightSquareColor }}
 				calcWidth={calcWidth}
-				position={position}
-				onDrop={(move: Move) => handleMove(move)}
+				position={fen}
+				onDrop={(move: { sourceSquare: string; targetSquare: string }) =>
+					handleMove({ from: move.sourceSquare, to: move.targetSquare })
+				}
+				onSquareClick={handleClick}
 				draggable={true}
 			/>
 		</div>
 	);
 };
 
-export default ChessboardComponent;
+export default React.memo(ChessboardComponent);

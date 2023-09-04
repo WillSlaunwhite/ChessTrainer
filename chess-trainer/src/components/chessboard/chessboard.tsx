@@ -92,14 +92,10 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 			if (selectedSquare === null) {
 				console.log("hello2");
 				setSelectedSquare(square);
-				setSquareStyles({
-					[square]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
-				});
 			} else {
 				console.log("hello3");
 				handleMove({ from: selectedSquare, to: square });
 				setSelectedSquare(null);
-				setSquareStyles({});
 			}
 		},
 		[handleMove, selectedSquare, setSelectedSquare],

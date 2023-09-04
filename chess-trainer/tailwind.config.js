@@ -8,6 +8,8 @@ export default withMT({
 	theme: {
 		extend: {
 			colors: {
+				'dark-square': '#7d5426',
+				'light-square': '#e6d9bc',
 				light: {
 					50: "#fff",
 					100: "#fcfcfc",

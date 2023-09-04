@@ -5,3 +5,13 @@
 bg-img {
   position: absolute;
 }
+
+.chessboard {
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.square {
+  width: 100%;
+  height: 100%;
+}

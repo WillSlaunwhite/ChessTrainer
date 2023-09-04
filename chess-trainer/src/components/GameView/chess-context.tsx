@@ -13,6 +13,8 @@ const ChessboardInteractionContext = createContext<ChessboardInteractionContextP
 
 
 export const useChessboard = () => {
+  console.log("in useChessboard");
+  
   const context = useContext(ChessboardInteractionContext);
   if (!context) {
     throw new Error("useBoard must be used within a BoardProvider");

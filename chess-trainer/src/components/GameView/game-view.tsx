@@ -1,18 +1,19 @@
 import { Chess } from "chess.js";
 import React, { useCallback, useState } from "react";
 import { questions } from "../../models/constants";
-import ChessboardComponent from "../chessboard/chessboard";
+import ChessboardContainer from "../chessboard/chessboard-container";
 import ExplanationComponent from "../text/explanation";
 import { ChessboardInteractionProvider } from "./chess-context";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
+import { BoardProvider } from "./board-context";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
 	chess: Chess;
 }
 
-const GameView: React.FC<GameViewProps> = ({ setIsQuizActive, chess }) => {
+const GameView: React.FC<GameViewProps> = () => {
 	const [moveHistories, setMoveHistories] = useState<string[][]>([[], [], []]);
 	const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
 	const [score, setScore] = useState(0);
@@ -59,7 +60,9 @@ const GameView: React.FC<GameViewProps> = ({ setIsQuizActive, chess }) => {
 			/>
 			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories} />
 			<ChessboardInteractionProvider>
-				<ChessboardComponent chess={chess} onMove={handleMove} />
+				<BoardProvider>
+					<ChessboardContainer />
+				</BoardProvider>
 			</ChessboardInteractionProvider>
 		</div>
 	);

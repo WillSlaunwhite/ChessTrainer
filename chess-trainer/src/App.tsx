@@ -1,20 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.scss";
 import GameView from "./components/GameView/game-view";
 import HomeView from "./views/home-view";
+import { Chess } from "chess.js";
+import { BoardProvider } from "./components/GameView/board-context";
 
 function App() {
-	const [fen, setFen] = useState("r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4");
 	const [isQuizActive, setIsQuizActive] = useState(false);
-
+	const chess = useRef(new Chess());
+	console.log("app");
 
 	return (
 		<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
-			{!isQuizActive ? (
-				<HomeView setFen={setFen} setIsQuizActive={setIsQuizActive}></HomeView>
-			) : (
-				<GameView fen={fen} setFen={setFen} setIsQuizActive={setIsQuizActive}></GameView>
-			)}
+			<BoardProvider>
+				{!isQuizActive ? (
+					<HomeView setIsQuizActive={setIsQuizActive}></HomeView>
+				) : (
+					<GameView chess={chess.current} setIsQuizActive={setIsQuizActive}></GameView>
+				)}
+			</BoardProvider>
 		</div>
 	);
 }

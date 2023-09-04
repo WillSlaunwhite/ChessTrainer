@@ -10,7 +10,7 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 	// const borderColor = isCorrect === null && !isCurrent ? "border-gray-900" : isCurrent ? "border-blue-500" : isCorrect ? "border-green-500" : "border-red-500";
 
 	const getBorderColor = () => {
-		if (isCorrect === null) {
+		if (isCorrect === null && isCorrect) {
 			return "border-blue-500";
 		} else if (isCorrect === false) {
 			return "border-red-500";

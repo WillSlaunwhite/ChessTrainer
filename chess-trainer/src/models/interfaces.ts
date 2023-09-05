@@ -15,3 +15,12 @@ export interface Question {
 	correctExplanation: string;
 	incorrectExplanation: string;
 }
+
+export interface OpeningLine {
+	lastComputerMove: string;
+	whiteMoves: string[];
+	blackMoves: string[];
+	correctExplanations: string[];
+	incorrectExplanations: string[];
+	wrongAnswers: string[];
+}

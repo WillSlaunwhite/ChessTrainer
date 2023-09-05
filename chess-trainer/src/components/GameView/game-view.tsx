@@ -1,52 +1,65 @@
-import { Chess } from "chess.js";
 import React, { useCallback, useState } from "react";
-import { questions } from "../../models/constants";
-import ChessboardComponent from "../chessboard/chessboard";
+import { BoardProvider } from "../../contexts/board-context";
+import { ChessboardInteractionProvider } from "../../contexts/chess-context";
+import { HistoryProvider } from "../../contexts/history-context";
+import { italianGameMainLine } from "../../models/constants";
+import ChessboardContainer from "../chessboard/chessboard-container";
 import ExplanationComponent from "../text/explanation";
-import { ChessboardInteractionProvider } from "./chess-context";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
-	chess: Chess;
 }
 
-const GameView: React.FC<GameViewProps> = ({ setIsQuizActive, chess }) => {
+const GameView: React.FC<GameViewProps> = () => {
 	const [moveHistories, setMoveHistories] = useState<string[][]>([[], [], []]);
 	const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
 	const [score, setScore] = useState(0);
 	const [isCorrect, setIsCorrect] = useState<boolean[]>([]);
-	const [summary, setSummary] = useState("");
+	const [summary] = useState("");
 	const showSummary = false;
+	const questions = italianGameMainLine;
 	console.log("game view");
 
 	const handleMove = useCallback(
 		(move: string) => {
-			if (currentBlockIndex === 2) {
-				if (moveHistories[currentBlockIndex].length == questions.length) {
-					// summary
-				}
-				setCurrentBlockIndex(0);
-				setIsCorrect(new Array(3).fill(null));
-			} else {
-				setCurrentBlockIndex(currentBlockIndex + 1);
-			}
+			const tempCurrentBlockIndex = currentBlockIndex;
 
 			const updatedMoveHistories = [...moveHistories];
 			updatedMoveHistories[currentBlockIndex].push(move);
 			setMoveHistories(updatedMoveHistories);
 
 			const updatedIsCorrect = [...isCorrect];
-			if (move === questions[currentBlockIndex].correctMove) {
-				updatedIsCorrect[currentBlockIndex] = true;
+			if (move === questions.whiteMoves[tempCurrentBlockIndex]) {
+				updatedIsCorrect[tempCurrentBlockIndex] = true;
 				setScore(score + 1);
 			} else {
-				updatedIsCorrect[currentBlockIndex] = false;
+				updatedIsCorrect[tempCurrentBlockIndex] = false;
 			}
+			console.log("current block index " + currentBlockIndex);
+			console.log("temp block index " + tempCurrentBlockIndex);
+
+			console.log(updatedIsCorrect);
+
 			setIsCorrect(updatedIsCorrect);
+
+			if (currentBlockIndex >= 2) {
+				// const emptyArr: boolean | null[] = [];
+				// emptyArr.fill(null);
+				setIsCorrect(new Array(3).fill(null));
+				if (moveHistories[currentBlockIndex].length == questions.whiteMoves.length) {
+					// summary
+				}
+				setCurrentBlockIndex(0);
+				console.log("before isCorrect " + isCorrect);
+
+				console.log("after " + isCorrect);
+			} else {
+				setCurrentBlockIndex(currentBlockIndex + 1);
+			}
 		},
-		[currentBlockIndex, isCorrect, moveHistories, score],
+		[currentBlockIndex, isCorrect, moveHistories, questions.whiteMoves, score],
 	);
 
 	return (
@@ -54,15 +67,20 @@ const GameView: React.FC<GameViewProps> = ({ setIsQuizActive, chess }) => {
 			{showSummary && <SummaryComponent summary={summary} />}
 			<ExplanationComponent
 				explanation={
-					isCorrect ? questions[currentBlockIndex].correctExplanation : questions[currentBlockIndex].incorrectExplanation
+					isCorrect ? questions.correctExplanations[] : questions.incorrectExplanations[moveHistories.length]
 				}
 			/>
 			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories} />
 			<ChessboardInteractionProvider>
-				<ChessboardComponent chess={chess} onMove={handleMove} />
+				<BoardProvider>
+					<HistoryProvider>
+						<ChessboardContainer handleMoveParent={handleMove} />
+					</HistoryProvider>
+				</BoardProvider>
 			</ChessboardInteractionProvider>
 		</div>
 	);
 };
 
-export default React.memo(GameView);
+const GameViewMemo = React.memo(GameView);
+export default GameViewMemo;

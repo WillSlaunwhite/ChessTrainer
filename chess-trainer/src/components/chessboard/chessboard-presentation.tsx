@@ -7,7 +7,6 @@ interface ChessboardPresentationProps {
 }
 
 const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, onMove }) => {
-	const rows = "87654321";
 	const cols = "abcdefgh";
 	const board = fen.split(" ")[0];
 
@@ -15,7 +14,7 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 		const rows = fen.split("/");
 		return rows.map((row) => {
 			let squares: (string | null)[] = [];
-			for (let char of row) {
+			for (const char of row) {
 				if (isNaN(parseInt(char))) {
 					// If it's a piece
 					squares.push(char);
@@ -31,7 +30,7 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
   const boardArray = fenToArray(board);
 
 	return (
-		<div className="chessboard grid w-96 h-96">
+		<div className="chessboard grid w-344px h-344px">
 			{boardArray.map((row, rowIndex) => {
 				return row.map((piece, colIndex) => {
 					const square = `${cols[colIndex]}${8 - rowIndex}`;

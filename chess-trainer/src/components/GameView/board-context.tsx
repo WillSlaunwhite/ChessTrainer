@@ -20,11 +20,7 @@ export const useBoard = () => {
 };
 
 export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
-  const [fen, setFen] = useState("r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4");
+	const [fen, setFen] = useState("r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4");
 
-  return (
-    <BoardContext.Provider value={{ fen, setFen }}>
-      {children}
-    </BoardContext.Provider>
-  );
+	return <BoardContext.Provider value={{ fen, setFen }}>{children}</BoardContext.Provider>;
 };

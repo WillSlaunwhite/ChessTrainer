@@ -7,6 +7,7 @@ import { ChessboardInteractionProvider } from "./chess-context";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
 import { BoardProvider } from "./board-context";
+import { HistoryProvider } from "./history-context";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
@@ -61,7 +62,9 @@ const GameView: React.FC<GameViewProps> = () => {
 			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories} />
 			<ChessboardInteractionProvider>
 				<BoardProvider>
-					<ChessboardContainer />
+					<HistoryProvider>
+						<ChessboardContainer />
+					</HistoryProvider>
 				</BoardProvider>
 			</ChessboardInteractionProvider>
 		</div>

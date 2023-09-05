@@ -2,64 +2,70 @@ import React, { useCallback, useState } from "react";
 import { BoardProvider } from "../../contexts/board-context";
 import { ChessboardInteractionProvider } from "../../contexts/chess-context";
 import { HistoryProvider } from "../../contexts/history-context";
-import { italianGameMainLine } from "../../models/constants";
+import { italianGameHungarian, italianGameMainLine, italianGameTwoKnights } from "../../models/constants";
 import ChessboardContainer from "../chessboard/chessboard-container";
 import ExplanationComponent from "../text/explanation";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
+import { useQuiz } from "../../contexts/quiz-context";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
 }
 
 const GameView: React.FC<GameViewProps> = () => {
+	const [quizState, setQuizState] = useQuiz();
 	const [moveHistories, setMoveHistories] = useState<string[][]>([[], [], []]);
-	const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
-	const [score, setScore] = useState(0);
-	const [isCorrect, setIsCorrect] = useState<boolean[]>([]);
+
 	const [summary] = useState("");
 	const showSummary = false;
-	const questions = italianGameMainLine;
+
 	console.log("game view");
 
 	const handleMove = useCallback(
 		(move: string) => {
-			const tempCurrentBlockIndex = currentBlockIndex;
-
+			const lines = [italianGameMainLine, italianGameTwoKnights, italianGameHungarian];
+			const updatedQuizState = { ...quizState };
+			const currentLine = lines[updatedQuizState.currentLine];
+			const correctAnswer = currentLine.whiteMoves[updatedQuizState.currentMoveIndex];
 			const updatedMoveHistories = [...moveHistories];
-			updatedMoveHistories[currentBlockIndex].push(move);
+			console.log('current line ' + updatedQuizState.currentLine);
+
+			updatedMoveHistories[updatedQuizState.currentLine].push(move);
+
+			console.log('before ' + updatedQuizState.isCorrect);
+			const updatedIsCorrect = [...updatedQuizState.isCorrect];
+			if (move === correctAnswer) {
+				updatedIsCorrect[updatedQuizState.currentLine] = true;
+				console.log('after ' + updatedIsCorrect);
+				updatedQuizState.score += 1;
+			} else {
+				updatedIsCorrect[updatedQuizState.currentLine] = false;
+				console.log('after ' + updatedIsCorrect.length);
+				updatedQuizState.wrongMoves.push({ line: updatedQuizState.currentLine, move: updatedQuizState.currentMoveIndex });
+			}
+
+			if (updatedQuizState.currentLine < 2) {
+				updatedQuizState.currentLine += 1;
+			} else {
+				updatedQuizState.currentLine = 0;
+			}
+			updatedQuizState.currentMoveIndex += 1;
+
+			// this if statement is incorrect
+			// if (moveHistories[currentBlockIndex].length == lines[currentBlockIndex].whiteMoves.length) {
+			// summary
+			// }
+			// if (updatedQuizState.currentLine === 2) {
+			// 	updatedQuizState.currentLine = 0;
+			// } else {
+			// 	updatedQuizState.currentLine += 1;
+			// }
+
 			setMoveHistories(updatedMoveHistories);
-
-			const updatedIsCorrect = [...isCorrect];
-			if (move === questions.whiteMoves[tempCurrentBlockIndex]) {
-				updatedIsCorrect[tempCurrentBlockIndex] = true;
-				setScore(score + 1);
-			} else {
-				updatedIsCorrect[tempCurrentBlockIndex] = false;
-			}
-			console.log("current block index " + currentBlockIndex);
-			console.log("temp block index " + tempCurrentBlockIndex);
-
-			console.log(updatedIsCorrect);
-
-			setIsCorrect(updatedIsCorrect);
-
-			if (currentBlockIndex >= 2) {
-				// const emptyArr: boolean | null[] = [];
-				// emptyArr.fill(null);
-				setIsCorrect(new Array(3).fill(null));
-				if (moveHistories[currentBlockIndex].length == questions.whiteMoves.length) {
-					// summary
-				}
-				setCurrentBlockIndex(0);
-				console.log("before isCorrect " + isCorrect);
-
-				console.log("after " + isCorrect);
-			} else {
-				setCurrentBlockIndex(currentBlockIndex + 1);
-			}
+			setQuizState(updatedQuizState);
 		},
-		[currentBlockIndex, isCorrect, moveHistories, questions.whiteMoves, score],
+		[moveHistories, quizState, setQuizState],
 	);
 
 	return (
@@ -67,10 +73,12 @@ const GameView: React.FC<GameViewProps> = () => {
 			{showSummary && <SummaryComponent summary={summary} />}
 			<ExplanationComponent
 				explanation={
-					isCorrect ? questions.correctExplanations[] : questions.incorrectExplanations[moveHistories.length]
+					quizState.isCorrect[quizState.currentMoveIndex]
+						? italianGameMainLine.correctExplanations[quizState.currentMoveIndex]
+						: italianGameMainLine.incorrectExplanations[quizState.currentMoveIndex]
 				}
 			/>
-			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories} />
+			<MoveContainer isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLine} moveHistories={moveHistories} />
 			<ChessboardInteractionProvider>
 				<BoardProvider>
 					<HistoryProvider>

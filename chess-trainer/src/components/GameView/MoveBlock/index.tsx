@@ -6,7 +6,7 @@ interface MoveProps {
 	isCurrent: boolean;
 }
 
-const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
+const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory}) => {
 	// const borderColor = isCorrect === null && !isCurrent ? "border-gray-900" : isCurrent ? "border-blue-500" : isCorrect ? "border-green-500" : "border-red-500";
 
 	const getBorderColor = () => {

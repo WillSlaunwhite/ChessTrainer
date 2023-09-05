@@ -131,4 +131,5 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	);
 };
 
-export default React.memo(ChessboardComponent);
+const ChessboardComponentMemo = React.memo(ChessboardComponent);
+export default ChessboardComponentMemo;

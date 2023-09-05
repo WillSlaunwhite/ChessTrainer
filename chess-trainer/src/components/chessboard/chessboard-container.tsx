@@ -8,7 +8,11 @@ import { useChessboard } from "../../contexts/chess-context";
 
 const game = new Chess();
 
-const ChessboardContainer: React.FC = () => {
+interface ChessboardContainerProps {
+	handleMoveParent: (move: string) => void;
+}
+
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({handleMoveParent}) => {
 	const { fen, setFen } = useBoard();
 	const { moveHistory, setMoveHistory } = useHistory();
 	const { setSelectedSquare } = useChessboard();
@@ -34,6 +38,9 @@ const ChessboardContainer: React.FC = () => {
 
 					setFen(game.fen());
 					setSelectedSquare(null);
+
+					handleMoveParent(moves[i].san);
+					
 					break;
 				}
 			}
@@ -55,7 +62,7 @@ const ChessboardContainer: React.FC = () => {
 				}, 1000);
 			}
 		},
-		[moveHistory, setFen, setMoveHistory, setSelectedSquare],
+		[handleMoveParent, moveHistory, setFen, setMoveHistory, setSelectedSquare],
 	);
 
 	return <ChessboardPresentation fen={fen} onMove={handleMove} />;

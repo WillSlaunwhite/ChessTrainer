@@ -1,10 +1,10 @@
 import { Chess, Square } from "chess.js";
-import { italianGameMainLine } from "../../models/constants";
-import { useBoard } from "../GameView/board-context";
-import { useChessboard } from "../GameView/chess-context";
-import ChessboardPresentation from "./chessboard-presentation";
 import { useCallback } from "react";
-import { useHistory } from "../GameView/history-context";
+import { useBoard } from "../../contexts/board-context";
+import { italianGameMainLine } from "../../models/constants";
+import ChessboardPresentation from "./chessboard-presentation";
+import { useHistory } from "../../contexts/history-context";
+import { useChessboard } from "../../contexts/chess-context";
 
 const game = new Chess();
 
@@ -41,7 +41,7 @@ const ChessboardContainer: React.FC = () => {
 			if (game.turn() === "b") {
 				setTimeout(() => {
 					const whiteMoveIndex = moveHistory.length;
-					const blackMoveSan = italianGameMainLine.black[whiteMoveIndex];
+					const blackMoveSan = italianGameMainLine.blackMoves[whiteMoveIndex];
 					const possibleMoves = game.moves({ verbose: true });
 
 					const blackMove = possibleMoves.find((move) => move.san === blackMoveSan);

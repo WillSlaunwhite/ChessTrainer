@@ -1,17 +1,15 @@
-import { Chess } from "chess.js";
 import React, { useCallback, useState } from "react";
-import { questions } from "../../models/constants";
+import { BoardProvider } from "../../contexts/board-context";
+import { ChessboardInteractionProvider } from "../../contexts/chess-context";
+import { HistoryProvider } from "../../contexts/history-context";
+import { italianGameMainLine } from "../../models/constants";
 import ChessboardContainer from "../chessboard/chessboard-container";
 import ExplanationComponent from "../text/explanation";
-import { ChessboardInteractionProvider } from "./chess-context";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
-import { BoardProvider } from "./board-context";
-import { HistoryProvider } from "./history-context";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
-	chess: Chess;
 }
 
 const GameView: React.FC<GameViewProps> = () => {
@@ -21,12 +19,13 @@ const GameView: React.FC<GameViewProps> = () => {
 	const [isCorrect, setIsCorrect] = useState<boolean[]>([]);
 	const [summary, setSummary] = useState("");
 	const showSummary = false;
+	const questions = italianGameMainLine;
 	console.log("game view");
 
 	const handleMove = useCallback(
 		(move: string) => {
 			if (currentBlockIndex === 2) {
-				if (moveHistories[currentBlockIndex].length == questions.length) {
+				if (moveHistories[currentBlockIndex].length == questions.whiteMoves.length) {
 					// summary
 				}
 				setCurrentBlockIndex(0);
@@ -40,7 +39,7 @@ const GameView: React.FC<GameViewProps> = () => {
 			setMoveHistories(updatedMoveHistories);
 
 			const updatedIsCorrect = [...isCorrect];
-			if (move === questions[currentBlockIndex].correctMove) {
+			if (move === questions.whiteMoves[currentBlockIndex]) {
 				updatedIsCorrect[currentBlockIndex] = true;
 				setScore(score + 1);
 			} else {
@@ -48,7 +47,7 @@ const GameView: React.FC<GameViewProps> = () => {
 			}
 			setIsCorrect(updatedIsCorrect);
 		},
-		[currentBlockIndex, isCorrect, moveHistories, score],
+		[currentBlockIndex, isCorrect, moveHistories, questions.whiteMoves, score],
 	);
 
 	return (
@@ -56,7 +55,7 @@ const GameView: React.FC<GameViewProps> = () => {
 			{showSummary && <SummaryComponent summary={summary} />}
 			<ExplanationComponent
 				explanation={
-					isCorrect ? questions[currentBlockIndex].correctExplanation : questions[currentBlockIndex].incorrectExplanation
+					isCorrect ? questions.whiteMoves[currentBlockIndex] : questions.whiteMoves[currentBlockIndex]
 				}
 			/>
 			<MoveContainer isCorrect={isCorrect} currentBlockIndex={currentBlockIndex} moveHistories={moveHistories} />

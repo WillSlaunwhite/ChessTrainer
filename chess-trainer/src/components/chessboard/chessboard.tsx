@@ -2,8 +2,8 @@ import { Chess, Square } from "chess.js";
 import Chessboard from "chessboardjsx";
 import React, { useCallback, useEffect, useState } from "react";
 import { italianGameMainLine } from "../../models/constants";
-import { useBoard } from "../GameView/board-context";
-import { useChessboard } from "../GameView/chess-context";
+import { useBoard } from "../../contexts/board-context";
+import { useChessboard } from "../../contexts/chess-context";
 
 interface ChessboardProps {
 	chess: Chess;
@@ -64,7 +64,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 
 					const whiteMoveIndex = chess.history.length;
 					console.log(whiteMoveIndex);
-					const blackMoveSan = italianGameMainLine.black[whiteMoveIndex];
+					const blackMoveSan = italianGameMainLine.blackMoves[whiteMoveIndex];
 					console.log(blackMoveSan);
 					const possibleMoves = chess.moves({ verbose: true });
 					console.log(possibleMoves);

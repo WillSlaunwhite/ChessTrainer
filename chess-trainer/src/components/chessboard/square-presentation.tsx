@@ -11,8 +11,7 @@ import WhiteKnight from "../pieces/white-knight";
 import WhitePawn from "../pieces/white-pawn";
 import WhiteQueen from "../pieces/white-queen";
 import WhiteRook from "../pieces/white-rook";
-import { useBoard } from "../GameView/board-context";
-import { useChessboard } from "../GameView/chess-context";
+import { useChessboard } from "../../contexts/chess-context";
 
 interface SquarePresentationProps {
 	square: string;

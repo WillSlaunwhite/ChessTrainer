@@ -1,4 +1,4 @@
-import { useChessboard } from "../GameView/chess-context";
+import { useChessboard } from "../../contexts/chess-context";
 import SquarePresentation from "./square-presentation";
 
 interface SquareContainerProps {

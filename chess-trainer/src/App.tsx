@@ -1,13 +1,11 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import "./App.scss";
 import GameView from "./components/GameView/game-view";
+import { BoardProvider } from "./contexts/board-context";
 import HomeView from "./views/home-view";
-import { Chess } from "chess.js";
-import { BoardProvider } from "./components/GameView/board-context";
 
 function App() {
 	const [isQuizActive, setIsQuizActive] = useState(false);
-	const chess = useRef(new Chess());
 	console.log("app");
 
 	return (
@@ -16,7 +14,7 @@ function App() {
 				{!isQuizActive ? (
 					<HomeView setIsQuizActive={setIsQuizActive}></HomeView>
 				) : (
-					<GameView chess={chess.current} setIsQuizActive={setIsQuizActive}></GameView>
+					<GameView setIsQuizActive={setIsQuizActive}></GameView>
 				)}
 			</BoardProvider>
 		</div>

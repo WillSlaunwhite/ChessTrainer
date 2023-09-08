@@ -6,6 +6,6 @@ interface SquareProps {
   isSelected: boolean;
 }
 
-const Square: React.FC<SquareProps> = ({position, color, piece, onSelect, isSelected}) {
-  return 
-}
+// const Square: React.FC<SquareProps> = ({position, color, piece, onSelect, isSelected}) => {
+//   return 
+// }

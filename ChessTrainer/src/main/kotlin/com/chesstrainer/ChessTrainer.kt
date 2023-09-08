@@ -1,5 +1,8 @@
 package com.chesstrainer
 
+import com.chesstrainer.repositories.MasterGameRepository
+import com.chesstrainer.utils.readAndParsePGN
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -21,6 +24,18 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class ChessTrainer : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder): SpringApplicationBuilder {
         return builder.sources(ChessTrainer::class.java)
+    }
+
+    @Bean
+    fun databaseInitializer(masterGameRepository: MasterGameRepository) = CommandLineRunner {
+        // Check if the database is empty (this is just a basic check, you can have more advanced logic)
+        if(masterGameRepository.count() == 0L) {
+            val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/GiuocoPiano.pgn") // Path to your PGN files
+            games.forEach { game ->
+                println(game)
+                masterGameRepository.save(game)
+            }
+        }
     }
 
     @Bean

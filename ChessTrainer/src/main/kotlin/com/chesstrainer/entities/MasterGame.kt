@@ -1,5 +1,6 @@
 package com.chesstrainer.entities
 
+import com.chesstrainer.converters.DateConverter
 import com.chesstrainer.converters.ResultConverter
 import com.chesstrainer.converters.RoundConverter
 import com.chesstrainer.converters.StringListConverter
@@ -14,6 +15,7 @@ data class MasterGame(
     val id: Long = 0,
     val event: String? = null,
     val site: String? = null,
+    @Convert(converter = DateConverter::class)
     val date: String? = null,
     @Convert(converter = RoundConverter::class)
     val round: String? = null,

@@ -6,6 +6,7 @@ import com.chesstrainer.entities.Opening
 import com.chesstrainer.enums.Result
 import java.io.File
 import java.lang.Double
+import java.util.*
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
@@ -66,21 +67,31 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
 //                val opening: Opening,
 
                 if (result != " ") {
+                    val parsedDate = currentGameMetadata["Date"] ?: ""
+                    val dateToUse = if (isValidDate(parsedDate)) parsedDate else null
+
                     val res =
                         if (result.equals("1-0")) Result.WHITE else if (result.equals("0-1")) Result.BLACK else Result.DRAW
                     val game = MasterGame(
                         event = currentGameMetadata["Event"],
                         site = currentGameMetadata["Site"],
-                        date = currentGameMetadata["Date"],
+                        date = dateToUse,
                         round = currentGameMetadata["Round"] ?: "",
                         white = currentGameMetadata["White"] ?: "",
                         black = currentGameMetadata["Black"] ?: "",
                         result = res,
-                        whiteElo = if (currentGameMetadata["WhiteElo"] != "") Integer.valueOf(currentGameMetadata["WhiteElo"]) else null,
-                        blackElo = if (currentGameMetadata["BlackElo"] != "") Integer.valueOf(currentGameMetadata["BlackElo"]) else null,
+                        whiteElo = currentGameMetadata["WhiteElo"]?.toIntOrNull(),
+                        blackElo = currentGameMetadata["BlackElo"]?.toIntOrNull(),
                         eco = currentGameMetadata["ECO"] ?: "",
                         moves = if (currentMoves.toList().size < 20) currentMoves.toList() else currentMoves.toList()
-                            .subList(0, 20)
+                            .subList(0, 20),
+                        opening = Opening(
+                            1,
+                            "Italian Game - Main Line",
+                            "The Italian Game begins with 1.e4 e5 2.Nf3 Nc6 3.Bc4, emphasizing rapid dvelopment, central control, and a Kingside presence.",
+                            listOf("1.e4 e5", "2.Nf3 Nc6", "3.Bc4"),
+                            listOf()
+                        ),
                     )
                     games.add(game)
                     currentGameMetadata.clear()
@@ -107,4 +118,20 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
 fun readAndParsePGN(filePath: String): List<MasterGame> {
     val lines = File(filePath).readLines()
     return parsePGN(lines)
+}
+
+fun isValidDate(date: String): Boolean {
+    val parts = date.split(".")
+    if (parts.size != 3) return false
+
+    val year = parts[0].toIntOrNull() ?: return false
+    val month = parts[1].toIntOrNull() ?: return false
+    val day = parts[2].toIntOrNull() ?: return false
+
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month - 1, day)
+
+    return year == calendar.get(Calendar.YEAR) &&
+            month == calendar.get(Calendar.MONTH) + 1 &&
+            day == calendar.get(Calendar.DAY_OF_MONTH)
 }

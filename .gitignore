@@ -25,9 +25,7 @@ replay_pid*
 DB/.chesstrainerdb.sql.swp
 .DS_Store
 CHESS_REQUIREMENTS.pdf
-pgn-files/GiuocoPiano.pgn
-pgn-files/Hungarian.pgn
-pgn-files/TwoKnights.pgn
+pgn-files/*
 .gitignore
 pgn-files/test.pgn
 .DS_Store

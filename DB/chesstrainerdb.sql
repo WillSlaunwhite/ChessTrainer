@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE INDEX `username_UNIQUE` (`username` ASC)
 ) ENGINE = InnoDB;
 
+
 -- -----------------------------------------------------
 -- Table `opening`
 -- -----------------------------------------------------
@@ -45,10 +46,12 @@ CREATE TABLE IF NOT EXISTS `opening` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
-  `moves_sequence` TEXT NOT NULL,
+  `moves_sequence` VARCHAR(1000) NOT NULL,
   `difficulty_level` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC)
 ) ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `game`
@@ -59,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `game` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `opening_id` INT NOT NULL,
-  `moves` VARCHAR(255) NOT NULL,  -- Considering PGN format for the 10 moves
+  `moves` VARCHAR(1000) NOT NULL,
   `outcome` ENUM('win', 'loss', 'draw') NULL,
   `mistakes` INT NULL,
   `start_time` DATETIME NOT NULL,
@@ -68,6 +71,31 @@ CREATE TABLE IF NOT EXISTS `game` (
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   FOREIGN KEY (`opening_id`) REFERENCES `opening` (`id`)
 ) ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `master_games`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `master_games`;
+
+CREATE TABLE IF NOT EXISTS `master_games` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `opening_id` INT NOT NULL,
+  `white` VARCHAR(255) NOT NULL,
+  `black` VARCHAR(255) NOT NULL,
+  `result` ENUM('1-0', '0-1', '1/2-1/2') NULL,
+  `event` VARCHAR(255) NULL,
+  `site` VARCHAR(255) NULL,
+  `date` DATE NULL,
+  `round` VARCHAR(45) NULL,
+  `white_elo` INT NULL,
+  `black_elo` INT NULL,
+  `eco` VARCHAR(10) NULL,
+  `moves` VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`opening_id`) REFERENCES `opening` (`id`)
+) ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `user_progress`
@@ -85,6 +113,7 @@ CREATE TABLE IF NOT EXISTS `userProgress` (
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   FOREIGN KEY (`opening_id`) REFERENCES `opening` (`id`)
 ) ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `leaderboard`
@@ -106,3 +135,8 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS; 
 
 INSERT INTO user(id, username, password, role, email, registration_date, last_login) VALUES (1, 'chess_user', '$2a$10$5C451TAuy.Dd/lx/QFnVsOwZ27/SbZTUH3IuNLy1ChQXMybJHMHa2', "user", "chess_user@chesstrainer.com", NOW(), NOW());
+
+INSERT INTO opening(id, name, description, moves_sequence, difficulty_level) VALUES 
+(1, 'Italian Game - Main Line', 'The Italian Game begins with 1.e4 e5 2.Nf3 Nc6 3.Bc4, emphasizing rapid dvelopment, central control, and a Kingside presence.', '1.e4 e5 2.Nf3 Nc6 3.Bc4', 'Intermediate'),
+(2, 'Two Knights Defense', 'The Two Knights Defense is a chess opening that begins with the moves: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6', '1.e4 e5 2.Nf3 Nc6 3.Bc4 Nf6', 'Intermediate'),
+(3, 'Hungarian Defense', 'The Hungarian Defense, or Ufimtsev Defence, is a chess opening that begins with the moves: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Be7', '1.e4 e5 2.Nf3 Nc6 3.Bc4 Be7', 'Beginner');

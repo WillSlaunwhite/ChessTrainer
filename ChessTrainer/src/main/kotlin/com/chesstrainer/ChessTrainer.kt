@@ -1,5 +1,6 @@
 package com.chesstrainer
 
+import com.chesstrainer.entities.MasterGame
 import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.utils.readAndParsePGN
 import org.springframework.boot.CommandLineRunner
@@ -29,13 +30,15 @@ class ChessTrainer : SpringBootServletInitializer() {
     @Bean
     fun databaseInitializer(masterGameRepository: MasterGameRepository) = CommandLineRunner {
         // Check if the database is empty (this is just a basic check, you can have more advanced logic)
-        if(masterGameRepository.count() == 0L) {
-            val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/GiuocoPiano.pgn") // Path to your PGN files
-            games.forEach { game ->
-                println(game)
-                masterGameRepository.save(game)
-            }
-        }
+//        val games = mutableSetOf<MasterGame>()
+//        games.addAll(
+//            masterGameRepository.findAll()
+//        ) // Path to your PGN files
+//        masterGameRepository.saveAllAndFlush(games)
+
+//        games.forEach { game ->
+//            println(game)
+//        }
     }
 
     @Bean

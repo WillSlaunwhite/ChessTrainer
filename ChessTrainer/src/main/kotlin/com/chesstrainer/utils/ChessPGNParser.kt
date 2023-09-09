@@ -1,22 +1,11 @@
 package com.chesstrainer.utils
 
-import com.chesstrainer.entities.ChessGame
 import com.chesstrainer.entities.MasterGame
 import com.chesstrainer.entities.Opening
 import com.chesstrainer.enums.Result
 import java.io.File
-import java.lang.Double
 import java.util.*
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
 
-fun main() {
-    val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/test.pgn")
-    println("Parsed ${games.size} games")
-    games.forEach { game ->
-        println("Game between ${game.white} and ${game.black} ended with result ${game.result}. Moves: ${game.moves}")
-    }
-}
 
 fun isGameResult(line: String): Boolean {
     return line.contains(Regex("[0-1]-[0-1]|1/2-1/2"))

@@ -29,38 +29,21 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
                 val result = movesWithResult.last() // The last element is the game result
                 val movesWithoutResult = movesWithResult.dropLast(1).joinToString(" ")
 
-                val moveMatcher =
-                    Regex("(\\d+\\.)\\s*([\\w\\+\\#\\-\\=]+)\\s*([\\w\\+\\#\\-\\=]*)").findAll(movesWithoutResult)
+                val moveMatcher = Regex("(\\d+\\.)\\s*([\\w\\+\\#\\-\\=]+)\\s*([\\w\\+\\#\\-\\=]*)").findAll(movesWithoutResult)
 
                 for (match in moveMatcher) {
-                    currentMoves.add(match.groupValues[1] + match.groupValues[2])
+                    currentMoves.add(match.groupValues[2])
                     if (match.groupValues[3].isNotEmpty()) {
-                        currentMoves.add(match.groupValues[1] + match.groupValues[3])
+                        currentMoves.add(match.groupValues[3])
                     }
                 }
-
-
-//                val id: Long,
-//                val event: String? = null,
-//                val site: String = "?",
-//                val date: String? = null,
-//                val round: Int? = null,
-//                val white: String,
-//                val black: String,
-//                val whiteElo: Int? = null,
-//                val blackElo: Int? = null,
-//                val result: Result,
-//                val eco: String,
-//                val moves: List<String>,
-//                @ManyToOne @JoinColumn(name = "opening_id")
-//                val opening: Opening,
 
                 if (result != " ") {
                     val parsedDate = currentGameMetadata["Date"] ?: ""
                     val dateToUse = if (isValidDate(parsedDate)) parsedDate else null
 
                     val res =
-                        if (result.equals("1-0")) Result.WHITE else if (result.equals("0-1")) Result.BLACK else Result.DRAW
+                        if (result == "1-0") Result.WHITE else if (result == "0-1") Result.BLACK else Result.DRAW
                     val game = MasterGame(
                         event = currentGameMetadata["Event"],
                         site = currentGameMetadata["Site"],
@@ -72,8 +55,9 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
                         whiteElo = currentGameMetadata["WhiteElo"]?.toIntOrNull(),
                         blackElo = currentGameMetadata["BlackElo"]?.toIntOrNull(),
                         eco = currentGameMetadata["ECO"] ?: "",
-                        moves = if (currentMoves.toList().size < 20) currentMoves.toList() else currentMoves.toList()
-                            .subList(0, 20),
+//                        moves = if (currentMoves.toList().size < 20) currentMoves.toList() else currentMoves.toList()
+//                            .subList(0, 20),
+                        moves = currentMoves.toList(),
                         opening = Opening(
                             1,
                             "Italian Game - Main Line",
@@ -86,16 +70,20 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
                     currentGameMetadata.clear()
                     currentMoves.clear()
                 }
+
             }
 
             else -> {
                 val moveMatcher = Regex("(\\d+\\.)\\s*([\\w\\+\\#\\-\\=]+)\\s*([\\w\\+\\#\\-\\=]*)").findAll(line)
+
                 for (match in moveMatcher) {
-                    currentMoves.add(match.groupValues[1] + match.groupValues[2])
+                    currentMoves.add(match.groupValues[2])
                     if (match.groupValues[3].isNotEmpty()) {
-                        currentMoves.add(match.groupValues[1] + match.groupValues[3])
+                        currentMoves.add(match.groupValues[3])
                     }
                 }
+
+
             }
 
         }

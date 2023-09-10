@@ -1,6 +1,7 @@
 package com.chesstrainer
 
 import com.chesstrainer.entities.MasterGame
+import com.chesstrainer.repositories.ChessTrieRepository
 import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.utils.readAndParsePGN
 import org.springframework.boot.CommandLineRunner
@@ -21,20 +22,20 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @PropertySource("classpath:secrets.properties")
 @EntityScan("com.chesstrainer.entities")
 @EnableJpaRepositories("com.chesstrainer.repositories")
-@ComponentScan("com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services")
+@ComponentScan("com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services", "com.chesstrainer.repositories")
 class ChessTrainer : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder): SpringApplicationBuilder {
         return builder.sources(ChessTrainer::class.java)
     }
 
     @Bean
-    fun databaseInitializer(masterGameRepository: MasterGameRepository) = CommandLineRunner {
-        // Check if the database is empty (this is just a basic check, you can have more advanced logic)
-//        val games = mutableSetOf<MasterGame>()
-//        games.addAll(
-//            masterGameRepository.findAll()
-//        ) // Path to your PGN files
+    fun databaseInitializer(masterGameRepository: MasterGameRepository, chessTrieRepository: ChessTrieRepository) = CommandLineRunner {
+//        val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/Hungarian.pgn")
 //        masterGameRepository.saveAllAndFlush(games)
+        chessTrieRepository.initialize()
+        println("IN INITIALIZER")
+//        chessTrieRepository.trie.printTrie(chessTrieRepository.trie.root)
+//        println("IN INITIALIZER 2")
 
 //        games.forEach { game ->
 //            println(game)

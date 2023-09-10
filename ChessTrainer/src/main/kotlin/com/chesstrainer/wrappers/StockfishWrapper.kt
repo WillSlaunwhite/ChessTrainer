@@ -17,7 +17,7 @@ class StockfishWrapper : Closeable {
     fun evaluatePosition(fen: String): Double {
         sendCommand("position fen $fen")
         sendCommand("go movetime 5000")
-        val output = getOutput(3000) // wait for 5 seconds; adjust as needed
+        val output = getOutput(5000) // wait for 5 seconds; adjust as needed
 
         println("GET OUTPUT: $output") // debug log
 

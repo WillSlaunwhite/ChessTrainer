@@ -1,15 +1,12 @@
 package com.chesstrainer
 
-import com.chesstrainer.entities.MasterGame
-import com.chesstrainer.repositories.ChessTrieRepository
 import com.chesstrainer.repositories.MasterGameRepository
-import com.chesstrainer.utils.readAndParsePGN
+import com.chesstrainer.services.ChessTrieService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.boot.runApplication
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -29,11 +26,14 @@ class ChessTrainer : SpringBootServletInitializer() {
     }
 
     @Bean
-    fun databaseInitializer(masterGameRepository: MasterGameRepository, chessTrieRepository: ChessTrieRepository) = CommandLineRunner {
-//        val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/Hungarian.pgn")
+    fun databaseInitializer(masterGameRepository: MasterGameRepository, chessTrieService: ChessTrieService) = CommandLineRunner {
 //        masterGameRepository.saveAllAndFlush(games)
-        chessTrieRepository.initialize()
-        println("IN INITIALIZER")
+        chessTrieService.initialize()
+//        println("IN INITIALIZER")
+//        val games = mutableSetOf<MasterGame>()
+//        games.addAll(masterGameRepository.findAll())
+
+//        masterGameRepository.saveAllAndFlush(games)
 //        chessTrieRepository.trie.printTrie(chessTrieRepository.trie.root)
 //        println("IN INITIALIZER 2")
 

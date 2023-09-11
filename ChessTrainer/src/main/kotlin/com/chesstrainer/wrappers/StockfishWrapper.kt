@@ -14,7 +14,7 @@ class StockfishWrapper : Closeable {
     private lateinit var writer: BufferedWriter
 
 
-    fun evaluatePosition(fen: String): Double {
+    fun evaluatePosition(fen: String): Evaluation {
         sendCommand("position fen $fen")
         sendCommand("go movetime 5000")
         val output = getOutput(5000) // wait for 5 seconds; adjust as needed
@@ -53,11 +53,17 @@ class StockfishWrapper : Closeable {
         }
     }
 
-    private fun parseEvaluation(output: String): Double {
-        val scorePattern = "score cp (-?\\d+)".toRegex()
-        val matches = scorePattern.findAll(output).toList()
-        val lastMatch = matches.lastOrNull()?.groups?.get(1)?.value?.toDoubleOrNull()
-        return lastMatch ?: 0.0
+    private fun parseEvaluation(output: String): Evaluation {
+        val scorePatternCp = "score cp (-?\\d+)".toRegex()
+        val pvPattern = " pv (.+)".toRegex()
+
+        val cpMatch = scorePatternCp.find(output)
+        val pvMatch = pvPattern.find(output)
+
+        val cpValue = cpMatch?.groups?.get(1)?.value?.toDoubleOrNull()
+        val pvValue = pvMatch?.groups?.get(1)?.value
+
+        return Evaluation(cpValue, pvValue)
     }
 
     private fun sendCommand(command: String) {
@@ -81,7 +87,6 @@ class StockfishWrapper : Closeable {
         return ""
     }
 
-
     private fun stopEngine() {
         try {
             sendCommand("quit")
@@ -96,3 +101,5 @@ class StockfishWrapper : Closeable {
         stopEngine()
     }
 }
+
+data class Evaluation(val centipawns: Double?, val principalVariation: String?)

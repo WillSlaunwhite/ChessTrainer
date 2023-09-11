@@ -61,7 +61,7 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
                         opening = Opening(
                             1,
                             "Italian Game - Main Line",
-                            "The Italian Game begins with 1.e4 e5 2.Nf3 Nc6 3.Bc4, emphasizing rapid dvelopment, central control, and a Kingside presence.",
+                            "The Italian Game begins with 1.e4 e5 2.Nf3 Nc6 3.Bc4, emphasizing rapid development, central control, and a Kingside presence.",
                             listOf("1.e4 e5", "2.Nf3 Nc6", "3.Bc4"),
                             listOf()
                         ),

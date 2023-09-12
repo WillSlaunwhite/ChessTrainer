@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @PropertySource("classpath:secrets.properties")
 @EntityScan("com.chesstrainer.entities")
 @EnableJpaRepositories("com.chesstrainer.repositories")
-@ComponentScan("com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services", "com.chesstrainer.repositories")
+@ComponentScan("com.chesstrainer.threading","com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services", "com.chesstrainer.repositories")
 class ChessTrainer : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder): SpringApplicationBuilder {
         return builder.sources(ChessTrainer::class.java)

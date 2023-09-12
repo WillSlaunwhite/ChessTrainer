@@ -14,30 +14,29 @@ class StockfishWrapper : Closeable {
     private lateinit var writer: BufferedWriter
 
 
-    fun evaluatePosition(fen: String): Evaluation {
-        sendCommand("position fen $fen")
-        sendCommand("go movetime 5000")
-        val output = getOutput(5000) // wait for 5 seconds; adjust as needed
-
-        println("GET OUTPUT: $output") // debug log
-
-        val parseEvaluation = parseEvaluation(output)
-        println("PARSE EVAL: $parseEvaluation") // debug log
-
-        return parseEvaluation
-    }
-
-
-    fun getBestMove(fen: String, depth: Int = 10): String {
-        sendCommand("position fen $fen")
-        sendCommand("go movetime 5000")
-        val output = getOutput(5000) // wait for 5 seconds; adjust as needed
-        return output.split("bestmove ")[1].split(" ")[0]
-    }
-
-
     init {
         startEngine()
+    }
+
+    fun evaluate(fen: String): Pair<String, Evaluation> {
+        sendCommand("position fen $fen")
+        sendCommand("go depth 16")
+        val output = getOutput(10000)
+        val splitOutput = output.split("bestmove ")
+        var evaluation = Evaluation(0.0, "")
+        val bestMove: String
+
+        if (splitOutput.size > 1) {
+            bestMove = splitOutput[1].split(" ")[0]
+//        val bestMove = output.split("bestmove ")[1].split(" ")[0]
+            println("SPLIT OUTPUT $splitOutput")
+            evaluation = parseEvaluation(output)
+        } else {
+            println("Failed to parse Stockfish output: $output")
+            bestMove = "error"
+        }
+
+        return Pair(bestMove, evaluation)
     }
 
     private fun startEngine() {
@@ -71,20 +70,18 @@ class StockfishWrapper : Closeable {
         writer.flush()
     }
 
-    private fun getOutput(waitTime: Long = 500): String {
-        try {
-            Thread.sleep(waitTime)
-            var line: String?
-            var output: String = ""
-            while (reader.ready().also { line = reader.readLine() } && line != null) {
-                output += line + "\n"
+    private fun getOutput(timeoutMillis: Long = 5000): String {
+        val endTime = System.currentTimeMillis() + timeoutMillis
+        var output = ""
+        while (System.currentTimeMillis() < endTime) {
+            if (reader.ready()) {
+                val line: String = reader.readLine()
+                output += "$line\n"
+                if (line.contains("bestmove")) break
             }
-            println("GET OUTPUT: $output")
-            return output
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
-        return ""
+        println("GET OUTPUT: $output")
+        return output
     }
 
     private fun stopEngine() {

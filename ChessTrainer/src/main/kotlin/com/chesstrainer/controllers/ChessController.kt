@@ -17,7 +17,7 @@ class ChessController(private val chessTrieService: ChessTrieService) {
     }
 
     @PostMapping("/evaluate")
-    fun validateMove(@RequestBody move: Move): ResponseEntity<Evaluation> {
+    fun validateMove(@RequestBody move: Move): ResponseEntity<Pair<String, Evaluation>> {
         val evaluation = chessTrieService.evaluatePosition(move.fen, move.move)
         return ResponseEntity.ok(evaluation)
     }

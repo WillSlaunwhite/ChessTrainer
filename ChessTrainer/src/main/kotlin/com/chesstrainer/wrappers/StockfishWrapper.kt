@@ -1,13 +1,9 @@
 package com.chesstrainer.wrappers
 
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.Closeable
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
+
 
 class StockfishWrapper : Closeable {
-
     private val processBuilder = ProcessBuilder("stockfish")
     private lateinit var process: Process
     private lateinit var reader: BufferedReader
@@ -16,33 +12,96 @@ class StockfishWrapper : Closeable {
 
     init {
         startEngine()
+        clearInitialMessages()
     }
 
-    fun evaluate(fen: String): Pair<String, Evaluation> {
-        sendCommand("position fen $fen")
-        sendCommand("go depth 16")
-        val output = getOutput(10000)
-        val splitOutput = output.split("bestmove ")
-        var evaluation = Evaluation(0.0, "")
-        val bestMove: String
+    fun evaluate(fen: String, move: String): Pair<String, Evaluation> {
+        println("MOVE MOVE MOVE MOVE MOVE MOVE MOVE MOVE  $move")
+        sendCommand("position fen $fen moves $move")
+        sendCommand("go depth 15")
+        val output = getOutputUntilBestMove()
 
-        if (splitOutput.size > 1) {
-            bestMove = splitOutput[1].split(" ")[0]
-//        val bestMove = output.split("bestmove ")[1].split(" ")[0]
-            println("SPLIT OUTPUT $splitOutput")
-            evaluation = parseEvaluation(output)
-        } else {
-            println("Failed to parse Stockfish output: $output")
-            bestMove = "error"
-        }
+        val bestMove = extractBestMove(output)
+        val evaluation = parseEvaluation(output)
+
 
         return Pair(bestMove, evaluation)
+    }
+
+    private fun extractBestMove(output: String): String {
+        // using trie for this instead, keeping just in case
+        val pattern = "bestmove (\\S+)".toRegex()
+        val match = pattern.find(output)
+        return match?.groups?.get(1)?.value ?: "error"
+    }
+
+    private fun parseEvaluation(stockfishOutput: String): Evaluation {
+        var lastEvaluation: Evaluation? = null
+
+        for (line in stockfishOutput.split("\n")) {
+            if (line.contains("depth") && line.contains("score cp")) {
+                lastEvaluation = Evaluation(extractEvaluation(line), extractPrincipalVariation(line))
+            }
+        }
+        return lastEvaluation ?: throw Exception("Failed to parse Stockfish output.")
+    }
+
+
+    private fun getOutputUntilBestMove(): String {
+        val output = StringBuilder()
+        while (true) {
+            val line = reader.readLine() ?: break
+            println("LINE $line")
+            output.append(line).append("\n")
+            if (line.contains("bestmove")) break
+        }
+        return output.toString()
+    }
+
+
+    // HELPER FUNCTIONS
+    private fun extractDepth(line: String): Int? {
+        val pattern = "depth (\\d+)".toRegex()
+        val match = pattern.find(line)
+        println("EXTRACT DEPTH ${match?.groups?.get(1)?.value?.toIntOrNull()}")
+        return match?.groups?.get(1)?.value?.toIntOrNull()
+    }
+
+    private fun extractEvaluation(line: String): Double? {
+        val pattern = "score cp (-?\\d+)".toRegex()
+        val match = pattern.find(line)
+        println("EXTRACT EVALUATION ${match?.groups?.get(1)?.value?.toDoubleOrNull()}")
+        return match?.groups?.get(1)?.value?.toDoubleOrNull()
+    }
+
+    private fun extractNodes(line: String): Int? {
+        val pattern = "nodes (\\d+)".toRegex()
+        val match = pattern.find(line)
+        println("EXTRACT NODES ${match?.groups?.get(1)?.value?.toIntOrNull()}")
+        return match?.groups?.get(1)?.value?.toIntOrNull()
+    }
+
+    private fun extractTime(line: String): Int? {
+        val pattern = "time (\\d+)".toRegex()
+        val match = pattern.find(line)
+        println("EXTRACT TIME ${match?.groups?.get(1)?.value?.toIntOrNull()}")
+        return match?.groups?.get(1)?.value?.toIntOrNull()
+    }
+
+    private fun extractPrincipalVariation(line: String): String? {
+        val pattern = " pv (.+)".toRegex()
+        val match = pattern.find(line)
+        return match?.groups?.get(1)?.value
+    }
+
+    private fun sendCommand(command: String) {
+        writer.write("$command\n")
+        writer.flush()
     }
 
     private fun startEngine() {
         process = processBuilder.start()
         reader = BufferedReader(InputStreamReader(process.inputStream))
-        reader.readLine()
         writer = BufferedWriter(OutputStreamWriter(process.outputStream))
     }
 
@@ -50,38 +109,6 @@ class StockfishWrapper : Closeable {
         while (reader.ready()) {
             reader.readLine()
         }
-    }
-
-    private fun parseEvaluation(output: String): Evaluation {
-        val scorePatternCp = "score cp (-?\\d+)".toRegex()
-        val pvPattern = " pv (.+)".toRegex()
-
-        val cpMatch = scorePatternCp.find(output)
-        val pvMatch = pvPattern.find(output)
-
-        val cpValue = cpMatch?.groups?.get(1)?.value?.toDoubleOrNull()
-        val pvValue = pvMatch?.groups?.get(1)?.value
-
-        return Evaluation(cpValue, pvValue)
-    }
-
-    private fun sendCommand(command: String) {
-        writer.write(command + "\n")
-        writer.flush()
-    }
-
-    private fun getOutput(timeoutMillis: Long = 5000): String {
-        val endTime = System.currentTimeMillis() + timeoutMillis
-        var output = ""
-        while (System.currentTimeMillis() < endTime) {
-            if (reader.ready()) {
-                val line: String = reader.readLine()
-                output += "$line\n"
-                if (line.contains("bestmove")) break
-            }
-        }
-        println("GET OUTPUT: $output")
-        return output
     }
 
     private fun stopEngine() {

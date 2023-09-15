@@ -2,6 +2,7 @@ package com.chesstrainer.services
 
 import com.chesstrainer.datastructures.ChessTrie
 import com.chesstrainer.entities.MasterGame
+import com.chesstrainer.enums.MoveClassification
 import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.wrappers.Evaluation
 import com.chesstrainer.wrappers.StockfishWrapper
@@ -10,33 +11,69 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.stereotype.Service
 import java.util.concurrent.Future
+import java.util.concurrent.LinkedBlockingQueue
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 @Service
 class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     private val trie: ChessTrie = ChessTrie()
+    private val stockfishPool = LinkedBlockingQueue<StockfishWrapper>()
 
-    @Autowired
-    @Qualifier("stockfishExecutor")
-    private lateinit var stockfishExecutor: ThreadPoolTaskExecutor
+    init {
+        for (i in 1..10) {
+            stockfishPool.offer(StockfishWrapper())
+        }
+    }
+
+
+    companion object {
+
+        const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
+        const val BEST_MOVE_THRESHOLD = 0.5     // If a move is within this score of the best, it's considered best
+        const val GOOD_MOVE_THRESHOLD = 1.0     // Beyond this, a move is considered a blunder
+        const val INACCURACY_THRESHOLD = 2.0    // Beyond this, a move is considered an inaccuracy
+        const val BLUNDER_THRESHOLD = 4.0       // If a move is within this score of the best, it's considered good
+    }
+
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
-        val future: Future<Pair<String, Evaluation>> = stockfishExecutor.submit<Pair<String, Evaluation>> {
-            val stockfish = StockfishWrapper()
-            val result = stockfish.evaluate(fen)
-            stockfish.close()
-            result
+        val stockfish = stockfishPool.take()
+        val result = stockfish.evaluate(fen, move)
+//        println(classifyMove(result.second, ))
+        stockfishPool.offer(stockfish)
+        return result
+    }
+
+    fun classifyMove(evaluation: Evaluation, moveFrequency: Int): MoveClassification {
+        val pv = evaluation.principalVariation
+        val cp = evaluation.centipawns
+
+        if (moveFrequency > COMMON_MOVE_THRESHOLD) {
+            return MoveClassification.BOOK_MOVE
         }
 
-        return future.get()
+        if (cp != null) {
+            return when {
+                cp <= BEST_MOVE_THRESHOLD -> MoveClassification.BEST_MOVE
+                cp <= GOOD_MOVE_THRESHOLD -> MoveClassification.VERY_GOOD_MOVE
+                cp <= INACCURACY_THRESHOLD -> MoveClassification.GOOD_MOVE
+                cp > BLUNDER_THRESHOLD -> MoveClassification.BLUNDER
+                else -> MoveClassification.INACCURACY
+            }
+        }
+
+        return MoveClassification.ERROR
     }
 
     fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
         return moveSequences.map { trie.findNextMoves(it) }
     }
 
+//    private fun convertFenToMovesSequence(fen: String): List<String> {
+//
+//    }
 
     @PostConstruct
     fun initialize() {
@@ -45,10 +82,5 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         games.forEach { game ->
             trie.insert(game.moves.take(40))
         }
-    }
-
-    @PreDestroy
-    fun teardown() {
-        stockfishExecutor.shutdown()
     }
 }

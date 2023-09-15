@@ -1,13 +1,12 @@
 package com.chesstrainer
 
 import com.chesstrainer.repositories.MasterGameRepository
-import com.chesstrainer.utils.readAndParsePGN
+import com.chesstrainer.services.ChessTrieService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.boot.runApplication
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -20,22 +19,27 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @PropertySource("classpath:secrets.properties")
 @EntityScan("com.chesstrainer.entities")
 @EnableJpaRepositories("com.chesstrainer.repositories")
-@ComponentScan("com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services")
+@ComponentScan("com.chesstrainer.threading","com.chesstrainer.controllers", "com.chesstrainer.security", "com.chesstrainer.services", "com.chesstrainer.repositories")
 class ChessTrainer : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder): SpringApplicationBuilder {
         return builder.sources(ChessTrainer::class.java)
     }
 
     @Bean
-    fun databaseInitializer(masterGameRepository: MasterGameRepository) = CommandLineRunner {
-        // Check if the database is empty (this is just a basic check, you can have more advanced logic)
-        if(masterGameRepository.count() == 0L) {
-            val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/GiuocoPiano.pgn") // Path to your PGN files
-            games.forEach { game ->
-                println(game)
-                masterGameRepository.save(game)
-            }
-        }
+    fun databaseInitializer(masterGameRepository: MasterGameRepository, chessTrieService: ChessTrieService) = CommandLineRunner {
+//        masterGameRepository.saveAllAndFlush(games)
+        chessTrieService.initialize()
+//        println("IN INITIALIZER")
+//        val games = mutableSetOf<MasterGame>()
+//        games.addAll(masterGameRepository.findAll())
+
+//        masterGameRepository.saveAllAndFlush(games)
+//        chessTrieRepository.trie.printTrie(chessTrieRepository.trie.root)
+//        println("IN INITIALIZER 2")
+
+//        games.forEach { game ->
+//            println(game)
+//        }
     }
 
     @Bean

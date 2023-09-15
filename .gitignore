@@ -28,5 +28,3 @@ CHESS_REQUIREMENTS.pdf
 pgn-files/*
 .gitignore
 pgn-files/test.pgn
-.DS_Store
-.DS_Store

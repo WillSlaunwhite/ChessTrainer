@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `game` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `opening_id` INT NOT NULL,
-  `moves` VARCHAR(1000) NOT NULL,
+  `moves` VARCHAR(10000) NOT NULL,
   `outcome` ENUM('win', 'loss', 'draw') NULL,
   `mistakes` INT NULL,
   `start_time` DATETIME NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `master_games` (
   `white_elo` INT NULL,
   `black_elo` INT NULL,
   `eco` VARCHAR(10) NULL,
-  `moves` VARCHAR(1000) NOT NULL,
+  `moves` VARCHAR(10000) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`opening_id`) REFERENCES `opening` (`id`)
 ) ENGINE = InnoDB;

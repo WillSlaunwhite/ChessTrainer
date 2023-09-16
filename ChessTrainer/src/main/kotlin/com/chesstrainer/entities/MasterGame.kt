@@ -29,7 +29,7 @@ data class MasterGame(
     val result: Result,
     val eco: String,
     @Convert(converter = StringListConverter::class)
-    val moves: List<String>? = mutableListOf(),
+    val moves: List<String> = mutableListOf(),
     @ManyToOne @JoinColumn(name = "opening_id")
     val opening: Opening? = null,
 ) {

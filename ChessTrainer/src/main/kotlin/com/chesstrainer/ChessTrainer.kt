@@ -30,7 +30,7 @@ class ChessTrainer : SpringBootServletInitializer() {
     fun databaseInitializer(masterGameRepository: MasterGameRepository) = CommandLineRunner {
         // Check if the database is empty (this is just a basic check, you can have more advanced logic)
         if(masterGameRepository.count() == 0L) {
-            val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/GiuocoPiano.pgn") // Path to your PGN files
+            val games = readAndParsePGN("/Users/william/Projects/ChessTrainer/pgn-files/GiuocoPiano.pgn") // Path to your PGN files
             games.forEach { game ->
                 println(game)
                 masterGameRepository.save(game)

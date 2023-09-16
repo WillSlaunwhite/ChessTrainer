@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
 fun main() {
-    val games = readAndParsePGN("/Users/tristan/Projects/ChessTrainer/pgn-files/test.pgn")
+    val games = readAndParsePGN("/Users/william/Projects/ChessTrainer/pgn-files/test.pgn")
     println("Parsed ${games.size} games")
     games.forEach { game ->
         println("Game between ${game.white} and ${game.black} ended with result ${game.result}. Moves: ${game.moves}")

@@ -10,7 +10,7 @@ class DateConverter : AttributeConverter<String, String> {
         return dateStr?.replace("?", "01") ?: "2023-01-01"
     }
 
-    override fun convertToEntityAttribute(dbData: String): String {
+    override fun convertToEntityAttribute(dbData: String?): String? {
         return dbData
     }
 }

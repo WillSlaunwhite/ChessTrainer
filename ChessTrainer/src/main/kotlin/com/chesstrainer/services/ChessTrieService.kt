@@ -21,7 +21,7 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     private val stockfishPool = LinkedBlockingQueue<StockfishWrapper>()
 
     init {
-        for (i in 1..10) {
+        for (i in 1..3) {
             stockfishPool.offer(StockfishWrapper())
         }
     }
@@ -68,6 +68,7 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     }
 
     fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
+        trie.printTrie(trie.root)
         return moveSequences.map { trie.findNextMoves(it) }
     }
 
@@ -82,5 +83,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         games.forEach { game ->
             trie.insert(game.moves.take(40))
         }
+        trie.printTrie(trie.root)
     }
 }

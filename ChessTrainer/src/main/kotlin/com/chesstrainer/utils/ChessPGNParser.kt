@@ -5,15 +5,12 @@ import com.chesstrainer.entities.Opening
 import com.chesstrainer.enums.Result
 import java.io.File
 import java.util.*
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
 
 fun main() {
-    val games = readAndParsePGN("/Users/william/Projects/ChessTrainer/pgn-files/TwoKnights.pgn")
-    println("Parsed ${games.size} games")
-    games.forEach { game ->
-        println("Game between ${game.white} and ${game.black} ended with result ${game.result}. Moves: ${game.moves}")
-    }
+//    println("Parsed ${games.size} games")
+//    games.forEach { game ->
+//        println("Game between ${game.white} and ${game.black} ended with result ${game.result}. Moves: ${game.moves}")
+//    }
 }
 
 fun isGameResult(line: String): Boolean {
@@ -38,7 +35,8 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
                 val result = movesWithResult.last() // The last element is the game result
                 val movesWithoutResult = movesWithResult.dropLast(1).joinToString(" ")
 
-                val moveMatcher = Regex("(\\d+\\.)\\s*([\\w\\+\\#\\-\\=]+)\\s*([\\w\\+\\#\\-\\=]*)").findAll(movesWithoutResult)
+                val moveMatcher =
+                    Regex("(\\d+\\.)\\s*([\\w\\+\\#\\-\\=]+)\\s*([\\w\\+\\#\\-\\=]*)").findAll(movesWithoutResult)
 
                 for (match in moveMatcher) {
                     currentMoves.add(match.groupValues[2])
@@ -68,10 +66,10 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
 //                            .subList(0, 20),
                         moves = currentMoves.toList(),
                         opening = Opening(
-                            1,
-                            "Italian Game - Main Line",
-                            "The Italian Game begins with 1.e4 e5 2.Nf3 Nc6 3.Bc4, emphasizing rapid development, central control, and a Kingside presence.",
-                            listOf("1.e4 e5", "2.Nf3 Nc6", "3.Bc4"),
+                            2,
+                            "Two Knights Defense",
+                            "The Two Knights Defense is a dynamic and aggressive response to the Italian Game. After 1.e4 e5 2.Nf3 Nc6 3.Bc4, Black immediately challenges White's central pawn with 3...Nf6. This opening often leads to sharp play with both sides having chances for a kingside attack. It's named for the two knights that are developed by move 3, and it has been a favorite of many top players throughout history.",
+                            listOf("1.e4 e5", "2.Nf3 Nc6", "3.Bc4 Nf6"),
                             listOf()
                         ),
                     )
@@ -97,7 +95,6 @@ fun parsePGN(pgnContent: List<String>): List<MasterGame> {
 
         }
     }
-    println("end $games")
     return games
 }
 

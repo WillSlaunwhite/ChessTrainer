@@ -1,4 +1,4 @@
-import MoveBlock from "./MoveBlock";
+import MoveBlock from "../../components/common/MoveBlock";
 
 
 interface MoveContainerProps {

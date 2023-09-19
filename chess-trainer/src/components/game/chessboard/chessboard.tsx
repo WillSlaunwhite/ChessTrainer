@@ -1,9 +1,9 @@
 import { Chess, Square } from "chess.js";
 import Chessboard from "chessboardjsx";
 import React, { useCallback, useEffect, useState } from "react";
-import { italianGameMainLine } from "../../models/constants";
-import { useBoard } from "../../contexts/board-context";
-import { useChessboard } from "../../contexts/chess-context";
+import { italianGameMainLine } from "../../../models/constants";
+import { useBoard } from "../../../contexts/board-context";
+import { useChessboard } from "../../../contexts/chess-context";
 
 interface ChessboardProps {
 	chess: Chess;

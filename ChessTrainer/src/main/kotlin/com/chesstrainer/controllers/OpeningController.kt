@@ -1,5 +1,6 @@
 package com.chesstrainer.controllers
 
+import com.chesstrainer.data.DetailedOpeningDTO
 import com.chesstrainer.data.OpeningDTO
 import com.chesstrainer.services.OpeningService
 import org.springframework.http.ResponseEntity
@@ -16,6 +17,15 @@ class OpeningController(private val openingService: OpeningService) {
     fun startOpening(@PathVariable openingName: String): ResponseEntity<OpeningDTO> {
         val formattedOpeningName = openingName.replace("-", " ")
         return openingService.getOpeningByName(formattedOpeningName)?.let {
+
+            ResponseEntity.ok(it)
+        } ?: ResponseEntity.notFound().build()
+    }
+
+    @GetMapping("/{openingName}/start/detail")
+    fun startOpeningDetailed(@PathVariable openingName: String): ResponseEntity<DetailedOpeningDTO> {
+        val formattedOpeningName = openingName.replace("-", " ")
+        return openingService.getDetailedOpeningByName(formattedOpeningName)?.let {
 
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()

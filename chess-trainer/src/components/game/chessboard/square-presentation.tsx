@@ -1,18 +1,18 @@
 import React from "react";
-import { useChessboard } from "../../contexts/chess-context";
+import { useChessboard } from "../../../contexts/chess-context";
 
-import BlackBishop from "../pieces/black-bishop";
-import BlackKing from "../pieces/black-king";
-import BlackKnight from "../pieces/black-knight";
-import BlackPawn from "../pieces/black-pawn";
-import BlackQueen from "../pieces/black-queen";
-import BlackRook from "../pieces/black-rook";
-import WhiteBishop from "../pieces/white-bishop";
-import WhiteKing from "../pieces/white-king";
-import WhiteKnight from "../pieces/white-knight";
-import WhitePawn from "../pieces/white-pawn";
-import WhiteQueen from "../pieces/white-queen";
-import WhiteRook from "../pieces/white-rook";
+import BlackBishop from "../pieces/black/black-bishop";
+import WhiteBishop from "../pieces/white/white-bishop";
+import BlackKing from "../pieces/black/black-king";
+import BlackKnight from "../pieces/black/black-knight";
+import BlackPawn from "../pieces/black/black-pawn";
+import BlackQueen from "../pieces/black/black-queen";
+import BlackRook from "../pieces/black/black-rook";
+import WhiteKing from "../pieces/white/white-king";
+import WhiteKnight from "../pieces/white/white-knight";
+import WhitePawn from "../pieces/white/white-pawn";
+import WhiteQueen from "../pieces/white/white-queen";
+import WhiteRook from "../pieces/white/white-rook";
 
 interface SquarePresentationProps {
 	square: string;

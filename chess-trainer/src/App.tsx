@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.scss";
-import GameView from "./components/GameView/game-view";
+import GameView from "./views/GameView/game-view";
 import { BoardProvider } from "./contexts/board-context";
 import HomeView from "./views/home-view";
 

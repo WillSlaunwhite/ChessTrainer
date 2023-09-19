@@ -1,10 +1,10 @@
 import { Chess, Square } from "chess.js";
 import { useCallback } from "react";
-import { useBoard } from "../../contexts/board-context";
-import { italianGameMainLine } from "../../models/constants";
+import { useBoard } from "../../../contexts/board-context";
+import { italianGameMainLine } from "../../../models/constants";
 import ChessboardPresentation from "./chessboard-presentation";
-import { useHistory } from "../../contexts/history-context";
-import { useChessboard } from "../../contexts/chess-context";
+import { useHistory } from "../../../contexts/history-context";
+import { useChessboard } from "../../../contexts/chess-context";
 
 const game = new Chess();
 

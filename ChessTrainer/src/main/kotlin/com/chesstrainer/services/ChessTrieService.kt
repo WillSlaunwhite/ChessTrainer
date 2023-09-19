@@ -30,10 +30,7 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     companion object {
 
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
-        const val BEST_MOVE_THRESHOLD = 0.5     // If a move is within this score of the best, it's considered best
-        const val GOOD_MOVE_THRESHOLD = 1.0     // Beyond this, a move is considered a blunder
-        const val INACCURACY_THRESHOLD = 2.0    // Beyond this, a move is considered an inaccuracy
-        const val BLUNDER_THRESHOLD = 4.0       // If a move is within this score of the best, it's considered good
+        const val PLAYABLE_MOVE_THRESHOLD = 1000  // If a move has been played more than this, it's playable
     }
 
 

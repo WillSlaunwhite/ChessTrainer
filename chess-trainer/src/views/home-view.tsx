@@ -1,6 +1,6 @@
 import React from "react";
-import WelcomeMessageComponent from "../components/text/welcome-message";
-import OpeningsMenu from "../components/containers/openings-menu";
+import WelcomeMessageComponent from "../components/common/text/welcome-message";
+import OpeningsMenu from "../components/game/openings-menu";
 import SidebarComponent from "../components/sidebar/sidebar";
 import { useBoard } from "../contexts/board-context";
 

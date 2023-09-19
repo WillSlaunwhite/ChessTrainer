@@ -27,7 +27,7 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 		});
 	};
 
-  const boardArray = fenToArray(board);
+	const boardArray = fenToArray(board);
 
 	return (
 		<div className="chessboard grid w-344px h-344px">

@@ -80,11 +80,9 @@ const GameView: React.FC<GameViewProps> = () => {
 			/>
 			<MoveContainer isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLine} moveHistories={moveHistories} />
 			<ChessboardInteractionProvider>
-				<BoardProvider>
 					<HistoryProvider>
 						<ChessboardContainer handleMoveParent={handleMove} />
 					</HistoryProvider>
-				</BoardProvider>
 			</ChessboardInteractionProvider>
 		</div>
 	);

@@ -35,7 +35,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
 
         http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers(HttpMethod.GET, "/api/bids/*").permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/search/**").permitAll()
             .antMatchers(HttpMethod.POST, "/api/openings/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/openings/**").permitAll()
@@ -43,7 +43,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/authenticate").permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers("/api/**").authenticated().anyRequest().permitAll().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

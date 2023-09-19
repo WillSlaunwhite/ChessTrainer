@@ -12,10 +12,12 @@ interface ChessboardContainerProps {
 	handleMoveParent: (move: string) => void;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({handleMoveParent}) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent }) => {
 	const { fen, setFen } = useBoard();
 	const { moveHistory, setMoveHistory } = useHistory();
 	const { setSelectedSquare } = useChessboard();
+	console.log("Rendering Chessboard Container with FEN: ", fen);
+	
 	game.load(fen);
 
 	const handleMove = useCallback(
@@ -40,7 +42,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({handleMovePare
 					setSelectedSquare(null);
 
 					handleMoveParent(moves[i].san);
-					
+
 					break;
 				}
 			}

@@ -19,8 +19,8 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 	onMove,
 }) => {
 	const [squareStyles, setSquareStyles] = useState({});
-	const {selectedSquare, setSelectedSquare} = useChessboard();
-	const { fen, setFen} = useBoard();
+	const { selectedSquare, setSelectedSquare } = useChessboard();
+	const { fen, setFen } = useBoard();
 
 	console.log("chessboard");
 
@@ -33,6 +33,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 		(move: { from: string; to: string }) => {
 			const { from, to } = move;
 			const moves = chess.moves({ square: from as Square, verbose: true });
+			console.log("chessboard");
 
 			for (let i = 0; i < moves.length; i++) {
 				if (moves[i].to === to) {
@@ -42,7 +43,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 
 
 					const newFen = chess.fen();
-					if(fen !== newFen) {
+					if (fen !== newFen) {
 						setFen(newFen);
 					}
 
@@ -75,7 +76,7 @@ const ChessboardComponent: React.FC<ChessboardProps> = ({
 						const blackMoveResult = chess.move(blackMove);
 						if (blackMoveResult) {
 							console.log(blackMoveResult);
-							
+
 							setFen(chess.fen());
 						}
 					}

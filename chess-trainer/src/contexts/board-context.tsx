@@ -6,6 +6,7 @@ interface BoardContextProps {
 }
 
 interface BoardProviderProps {
+  initialFen?: string;
 	children: React.ReactNode;
 }
 
@@ -19,8 +20,8 @@ export const useBoard = () => {
   return context;
 };
 
-export const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
-	const [fen, setFen] = useState("r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4");
+export const BoardProvider: React.FC<BoardProviderProps> = ({ children, initialFen }) => {
+	const [fen, setFen] = useState(initialFen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
 	return <BoardContext.Provider value={{ fen, setFen }}>{children}</BoardContext.Provider>;
 };

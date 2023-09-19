@@ -53,10 +53,10 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
         if (cp != null) {
             return when {
-                cp <= BEST_MOVE_THRESHOLD -> MoveClassification.BEST_MOVE
-                cp <= GOOD_MOVE_THRESHOLD -> MoveClassification.VERY_GOOD_MOVE
-                cp <= INACCURACY_THRESHOLD -> MoveClassification.GOOD_MOVE
-                cp > BLUNDER_THRESHOLD -> MoveClassification.BLUNDER
+//                cp <= BEST_MOVE_THRESHOLD -> MoveClassification.BEST_MOVE
+//                cp <= GOOD_MOVE_THRESHOLD -> MoveClassification.VERY_GOOD_MOVE
+//                cp <= INACCURACY_THRESHOLD -> MoveClassification.GOOD_MOVE
+//                cp > BLUNDER_THRESHOLD -> MoveClassification.BLUNDER
                 else -> MoveClassification.INACCURACY
             }
         }

@@ -37,6 +37,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers(HttpMethod.GET, "/api/bids/*").permitAll()
             .antMatchers(HttpMethod.GET, "/api/search/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/openings/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/openings/**").permitAll()
             .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers(HttpMethod.POST, "/authenticate").permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers("/api/**").authenticated().anyRequest().permitAll().and().sessionManagement()

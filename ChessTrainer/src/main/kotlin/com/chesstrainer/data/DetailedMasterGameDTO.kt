@@ -2,4 +2,4 @@ package com.chesstrainer.data
 
 import com.chesstrainer.enums.Result
 
-data class DetailedMasterGameDTO(val id: Long, val event: String?, val white: String, val black: String, val result: Result, val eco: String, val moves: List<String>)
+class DetailedMasterGameDTO(id: Long, event: String?, white: String, black: String, result: Result, eco: String, val moves: List<String>) : MasterGameDTO(id, event, white, black, result, eco)

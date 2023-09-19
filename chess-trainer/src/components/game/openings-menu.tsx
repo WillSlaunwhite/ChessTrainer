@@ -24,8 +24,7 @@ const OpeningsMenu: React.FC<{ setFen: (fen: string) => void; setIsQuizActive: (
 				<List className="mt-1">
 					{openings.map((opening) => (
 						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening)}>{opening.name}</ListItem>
-					))
-					}
+					))}
 				</List>
 			</Card>
 		</div>

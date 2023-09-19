@@ -1,3 +1,3 @@
 package com.chesstrainer.data
 
-data class DetailedOpeningDTO(val id: Long, val name: String, val description: String?, val moveSequence: List<String>, val masterGames: List<MasterGameDTO>, val difficulty: String?)
+class DetailedOpeningDTO(id: Long, name: String, description: String?, moveSequence: List<String>, difficulty: String?, val masterGames: List<MasterGameDTO>) : OpeningDTO(id, name, description, moveSequence, difficulty)

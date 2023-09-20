@@ -1,19 +1,25 @@
+import { useState } from "react";
 import MoveBlock from "../../components/common/MoveBlock";
+import { useHistory } from "../../contexts/history-context";
 
 
 interface MoveContainerProps {
 	isCorrect: boolean[];
-	moveHistories: string[][];
 	currentBlockIndex: number;
 }
 
-const MoveContainer: React.FC<MoveContainerProps> = ({isCorrect, moveHistories, currentBlockIndex}) => {
+
+const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex }) => {
+	const [currentColor, setCurrentColor] = useState<'white' | 'black'>('white')
+	const { moveHistories } = useHistory();
+
+
 	return (
 		<div className="block-container flex flex-row justify-center mb-2">
-			{[0, 1, 2].map((i) => (
+			{moveHistories.map((moveHistory, i) => (
 				<MoveBlock
 					key={i}
-					moveHistory={moveHistories[i]}
+					moveHistory={moveHistory}
 					isCurrent={i === currentBlockIndex}
 					isCorrect={isCorrect[i]}
 				/>

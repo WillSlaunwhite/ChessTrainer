@@ -1,13 +1,9 @@
 import { createContext, useContext, useState } from "react";
 
-interface Move {
-	from: string;
-	to: string;
-}
 
 interface HistoryContextProps {
-	moveHistory: Move[];
-	setMoveHistory: (moveHistory: Move[]) => void;
+	moveHistories: string[][];
+	setMoveHistories: (moveHistory: string[][]) => void;
 }
 
 interface HistoryProviderProps {
@@ -25,7 +21,7 @@ export const useHistory = () => {
 };
 
 export const HistoryProvider: React.FC<HistoryProviderProps> = ({ children }) => {
-	const [moveHistory, setMoveHistory] = useState<Move[]>([]);
+	const [moveHistories, setMoveHistories] = useState<string[][]>([[], [], []]);
 
-	return <HistoryContext.Provider value={{ moveHistory, setMoveHistory }}>{children}</HistoryContext.Provider>;
+	return <HistoryContext.Provider value={{ moveHistories, setMoveHistories }}>{children}</HistoryContext.Provider>;
 };

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import MoveHistory from "./move-history";
 
 interface MoveProps {
@@ -6,11 +7,10 @@ interface MoveProps {
 	isCurrent: boolean;
 }
 
-const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory}) => {
-	// const borderColor = isCorrect === null && !isCurrent ? "border-gray-900" : isCurrent ? "border-blue-500" : isCorrect ? "border-green-500" : "border-red-500";
+const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
 
 	const getBorderColor = () => {
-		if (isCorrect === null && isCorrect) {
+		if (isCorrect === null && isCurrent) {
 			return "border-blue-500";
 		} else if (isCorrect === false) {
 			return "border-red-500";
@@ -20,6 +20,29 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory}) => {
 			return "border-gray-900";
 		}
 	};
+
+
+	useEffect(() => {
+		const fetchNextMoves = async () => {
+			console.log("MOVE HISTORY: ", moveHistory);
+			
+			const response = await fetch('http://localhost:8085/api/chess/next-moves', {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ currentMoves: moveHistory })
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log("DATA: ", data);
+				
+			}
+		};
+
+		fetchNextMoves()
+	}, [moveHistory]);
 
 	return (
 		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] h-24 mx-1 border-4 ${getBorderColor()}`}>

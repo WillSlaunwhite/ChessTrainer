@@ -10,11 +10,12 @@ const game = new Chess();
 
 interface ChessboardContainerProps {
 	handleMoveParent: (move: string) => void;
+	currentLineIndex: number;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent }) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
 	const { fen, setFen } = useBoard();
-	const { moveHistory, setMoveHistory } = useHistory();
+	const { moveHistories, setMoveHistories } = useHistory();
 	const { setSelectedSquare } = useChessboard();
 	console.log("Rendering Chessboard Container with FEN: ", fen);
 	
@@ -34,7 +35,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 				if (moves[i].to === destination) {
 					game.move(move);
 
-					const newMoveHistory = [...moveHistory];
+					const newMoveHistory = [...moveHistories[currentLineIndex]];
 					newMoveHistory.push(move);
 					setMoveHistory(newMoveHistory)
 

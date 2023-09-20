@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { BoardProvider } from "../../contexts/board-context";
+import ExplanationComponent from "../../components/common/text/explanation";
+import ChessboardContainer from "../../components/game/chessboard/chessboard-container";
 import { ChessboardInteractionProvider } from "../../contexts/chess-context";
 import { HistoryProvider } from "../../contexts/history-context";
+import { useQuiz } from "../../contexts/quiz-context";
 import { italianGameHungarian, italianGameMainLine, italianGameTwoKnights } from "../../models/constants";
-import ChessboardContainer from "../../components/game/chessboard/chessboard-container";
-import ExplanationComponent from "../../components/common/text/explanation";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";
-import { useQuiz } from "../../contexts/quiz-context";
 
 interface GameViewProps {
 	setIsQuizActive: (isActive: boolean) => void;
@@ -78,12 +77,12 @@ const GameView: React.FC<GameViewProps> = () => {
 						: italianGameMainLine.incorrectExplanations[quizState.currentMoveIndex]
 				}
 			/>
-			<MoveContainer isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLine} moveHistories={moveHistories} />
-			<ChessboardInteractionProvider>
-					<HistoryProvider>
-						<ChessboardContainer handleMoveParent={handleMove} />
-					</HistoryProvider>
-			</ChessboardInteractionProvider>
+			<HistoryProvider>
+				<MoveContainer isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLine}/>
+				<ChessboardInteractionProvider>
+					<ChessboardContainer currentLineIndex={quizState.currentLine} handleMoveParent={handleMove} />
+				</ChessboardInteractionProvider>
+			</HistoryProvider>
 		</div>
 	);
 };

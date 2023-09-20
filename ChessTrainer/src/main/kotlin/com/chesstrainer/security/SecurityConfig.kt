@@ -39,6 +39,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.GET, "/api/search/**").permitAll()
             .antMatchers(HttpMethod.POST, "/api/openings/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/openings/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/chess/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/chess/**").permitAll()
             .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers(HttpMethod.POST, "/authenticate").permitAll().antMatchers("/authenticate").permitAll()
             .antMatchers("/api/**").authenticated().anyRequest().permitAll().and().sessionManagement()

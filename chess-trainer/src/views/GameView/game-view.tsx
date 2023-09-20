@@ -51,16 +51,6 @@ const GameView: React.FC<GameViewProps> = () => {
 			}
 			updatedQuizState.currentMoveIndex += 1;
 
-			// this if statement is incorrect
-			// if (moveHistories[currentBlockIndex].length == lines[currentBlockIndex].whiteMoves.length) {
-			// summary
-			// }
-			// if (updatedQuizState.currentLine === 2) {
-			// 	updatedQuizState.currentLine = 0;
-			// } else {
-			// 	updatedQuizState.currentLine += 1;
-			// }
-
 			setMoveHistories(updatedMoveHistories);
 			setQuizState(updatedQuizState);
 		},

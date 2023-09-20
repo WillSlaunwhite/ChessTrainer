@@ -1,4 +1,3 @@
-import { useState } from "react";
 import MoveBlock from "../../components/common/MoveBlock";
 import { useHistory } from "../../contexts/history-context";
 
@@ -10,7 +9,7 @@ interface MoveContainerProps {
 
 
 const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex }) => {
-	const [currentColor, setCurrentColor] = useState<'white' | 'black'>('white')
+	// const [currentColor, setCurrentColor] = useState<'white' | 'black'>('white')
 	const { moveHistories } = useHistory();
 
 

@@ -1,10 +1,9 @@
 import { Chess, Square } from "chess.js";
 import { useCallback } from "react";
 import { useBoard } from "../../../contexts/board-context";
-import { italianGameMainLine } from "../../../models/constants";
-import ChessboardPresentation from "./chessboard-presentation";
-import { useHistory } from "../../../contexts/history-context";
 import { useChessboard } from "../../../contexts/chess-context";
+import { useHistory } from "../../../contexts/history-context";
+import ChessboardPresentation from "./chessboard-presentation";
 
 const game = new Chess();
 
@@ -18,55 +17,68 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 	const { moveHistories, setMoveHistories } = useHistory();
 	const { setSelectedSquare } = useChessboard();
 	console.log("Rendering Chessboard Container with FEN: ", fen);
-	
+
 	game.load(fen);
 
-	const handleMove = useCallback(
-		(source: string, destination: string) => {
+	const handlePawnPromotion = (source: string, destination: string) => {
+		// need to replace with ui component
+		const promotionPiece = window.prompt("Choose a piece (q, r, b, n):");
+
+		if (["q", "r", "b", "n"].includes(promotionPiece || "q")) {
 			const move = {
 				from: source,
 				to: destination,
-				promotion: "q",
+				promotion: promotionPiece || undefined,
 			};
 
+			const moveResult = game.move(move);
+			if (moveResult && moveResult.san) {
+				const updatedHistory = [...moveHistories[currentLineIndex], moveResult.san];
+				const updatedHistories = [...moveHistories];
+				updatedHistories[currentLineIndex] = updatedHistory;
+				setMoveHistories(updatedHistories);
+			}
+
+			setFen(game.fen());
+			setSelectedSquare(null);
+			handleMoveParent(`${move.from}-${move.to}=${promotionPiece}`);
+		} else {
+			// might want to handle this differently
+			alert("Invalid promotion piece.");
+		}
+	};
+
+
+
+	const handleMove = useCallback(
+		(source: string, destination: string) => {
 			const moves = game.moves({ square: source as Square, verbose: true });
 
-			for (let i = 0; i < moves.length; i++) {
-				if (moves[i].to === destination) {
-					game.move(move);
-
-					const newMoveHistory = [...moveHistories[currentLineIndex]];
-					newMoveHistory.push(move);
-					setMoveHistory(newMoveHistory)
-
-					setFen(game.fen());
-					setSelectedSquare(null);
-
-					handleMoveParent(moves[i].san);
-
-					break;
-				}
+			// check for promotion
+			if (game.get(source as Square)?.type === 'p' && (destination[1] === '8' || destination[1] === '1')) {
+				handlePawnPromotion(source, destination);
+				return;
 			}
 
-			if (game.turn() === "b") {
-				setTimeout(() => {
-					const whiteMoveIndex = moveHistory.length;
-					const blackMoveSan = italianGameMainLine.blackMoves[whiteMoveIndex];
-					const possibleMoves = game.moves({ verbose: true });
+			// look for move, if found, execute it
+			const executedMove = moves.find(m => m.to === destination);
+			if (executedMove) {
+				game.move(executedMove);
 
-					const blackMove = possibleMoves.find((move) => move.san === blackMoveSan);
-
-					if (blackMove) {
-						const blackMoveResult = game.move(blackMove);
-						if (blackMoveResult) {
-							setFen(game.fen());
-						}
-					}
-				}, 1000);
+				const updatedHistory = [...moveHistories[currentLineIndex], executedMove.san];
+				const updatedHistories = [...moveHistories];
+				updatedHistories[currentLineIndex] = updatedHistory;
+				
+				setMoveHistories(updatedHistories);
+				setFen(game.fen());
+				setSelectedSquare(null);
+				handleMoveParent(executedMove.san);
 			}
+
 		},
-		[handleMoveParent, moveHistory, setFen, setMoveHistory, setSelectedSquare],
+		[handleMoveParent, moveHistories, setMoveHistories, setFen, setSelectedSquare],
 	);
+
 
 	return <ChessboardPresentation fen={fen} onMove={handleMove} />;
 };

@@ -1,39 +1,49 @@
 import { List, ListItem, Card } from "@material-tailwind/react";
 import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
+import { useHistory } from "../../contexts/history-context";
+import { ChessInstance } from "chess.js";
 
 
 const OpeningsMenu: React.FC<{ setFen: (fen: string) => void; setIsQuizActive: (isActive: boolean) => void }> = ({ setFen, setIsQuizActive }) => {
+	const { moveHistories, setMoveHistories } = useHistory();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 
-	const openGame = (opening: OpeningDTO) => {
-		const tempGame = new Chess();
-
-		const components = opening.moveSequence[0].split(/\s+/);
-
-		const moves = components.map(move => move.replace(/^\d+\./, ''));
-		console.log(`Parsed Moves: ${moves.join(",")}`);
-		console.log(`Moves after splitting and filtering: ${moves.join(",")}`);
-
-		console.log(`MOVE SEQUENCE ${components}`);
-		console.log(`MOVES ${moves}`);
-
+	const executeMovesOnGame = (game: ChessInstance, moves: string[]): void => {
 		for (let move of moves) {
-			const result = tempGame.move(move);
+			const result = game.move(move);
 
 			// If the move is invalid, log it for troubleshooting
 			if (!result) {
 				console.error(`Failed to apply move: ${move}`);
 			}
 		}
-		
 
-		// moves.forEach(move => tempGame.move(move));
+		setMoveHistories(prevHistories => {
+			const newHistories = [...prevHistories];
+			newHistories[0] = [...newHistories[0], ...moves];
+			console.log("IN MOVE HISTORIES: ", newHistories);
+			return newHistories;
+		});
+
+		console.log("IN MOVE HISTORIES 2: ", moveHistories);
+	}
+
+	const openGame = (opening: OpeningDTO) => {
+		const tempGame = new Chess();
+
+		const components = opening.moveSequence[0].split(/\s+/);
+		const moves = components.map(move => move.replace(/^\d+\./, ''));
+		console.log(`MOVE COMPONENTS ${components}`);
+		console.log(`MOVES ${moves}`);
+
+		executeMovesOnGame(tempGame, moves);
+
 		const resultingFen = tempGame.fen()
-		// opening.moveSequence[0].split(" ").filter(move => !move.match(/^\d+\./)).forEach(move => tempGame.move(move))
-		console.log(`opening: ${opening.name} \njoined sequence: ${opening.moveSequence.join(" ")}`)
 		setFen(resultingFen);
-		console.log("TEMP FEN ", resultingFen);
+
+		console.log("IN OPEN GAME: ", moveHistories);
+
 		setIsQuizActive(true);
 	}
 

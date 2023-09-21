@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 
 interface HistoryContextProps {
 	currentFens: string[];
-	setCurrentFens: (currentFens: string[]) => void;
+	setCurrentFens: React.Dispatch<React.SetStateAction<string[]>>;
 	moveHistories: string[][];
-	setMoveHistories: (moveHistory: string[][]) => void;
+	setMoveHistories: React.Dispatch<React.SetStateAction<string[][]>>;
 }
 
 interface HistoryProviderProps {

@@ -1,8 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
 interface ChessboardInteractionContextProps {
-	selectedSquare: string | null;
-	setSelectedSquare: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 interface ChessboardInteractionProviderProps {

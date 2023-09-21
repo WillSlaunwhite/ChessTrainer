@@ -15,7 +15,7 @@ interface ChessboardContainerProps {
 const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
 	const { fen, setFen } = useBoard();
 	const { moveHistories, setMoveHistories } = useHistory();
-	const { currentFens, setCurrentFens } = useHistory();
+	const { setCurrentFens } = useHistory();
 	const { setSelectedSquare } = useChessboard();
 	console.log("Rendering Chessboard Container with FEN: ", fen);
 
@@ -70,9 +70,15 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 				const updatedHistories = [...moveHistories];
 				updatedHistories[currentLineIndex] = updatedHistory;
 
-				setMoveHistories(updatedHistories);
+				setMoveHistories((prevHistories: string[][]) => {
+					const updatedHistories = [...prevHistories];
+					updatedHistories[currentLineIndex].push(executedMove.san);
+					return updatedHistories;
+				})
+
+
 				setFen(game.fen());
-				setCurrentFens(prevFens => {
+				setCurrentFens((prevFens: string[]) => {
 					const updatedFens = [...prevFens];
 					updatedFens[currentLineIndex] = game.fen();
 					console.log("FENS UPDATED: ", updatedFens);

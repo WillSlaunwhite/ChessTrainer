@@ -40,7 +40,7 @@ const GameView: React.FC<GameViewProps> = () => {
 				updatedQuizState.score += 1;
 			} else {
 				updatedIsCorrect[updatedQuizState.currentLine] = false;
-				console.log('after ' + updatedIsCorrect.length);
+				console.log('wrong after ' + updatedIsCorrect);
 				updatedQuizState.wrongMoves.push({ line: updatedQuizState.currentLine, move: updatedQuizState.currentMoveIndex });
 			}
 
@@ -51,7 +51,12 @@ const GameView: React.FC<GameViewProps> = () => {
 			}
 			updatedQuizState.currentMoveIndex += 1;
 
-			setMoveHistories(updatedMoveHistories);
+			setMoveHistories(prevHistories => {
+				const updatedHistories = [...prevHistories];
+				updatedHistories[updatedQuizState.currentLine].push(move);
+				return updatedHistories;
+			})
+			
 			setQuizState(updatedQuizState);
 		},
 		[moveHistories, quizState, setQuizState],

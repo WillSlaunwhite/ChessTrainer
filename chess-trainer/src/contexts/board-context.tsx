@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
 interface BoardContextProps {
-  fen: string;
-  setFen: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface BoardProviderProps {

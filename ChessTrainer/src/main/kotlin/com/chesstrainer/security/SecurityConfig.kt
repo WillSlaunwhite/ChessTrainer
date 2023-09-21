@@ -28,7 +28,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userService as UserDetailsService?).passwordEncoder(encoder)
+        auth.userDetailsService(userService).passwordEncoder(encoder)
     }
 
     @Throws(Exception::class)

@@ -64,8 +64,8 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         return MoveClassification.ERROR
     }
 
-    fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
-        return moveSequences.map { trie.findNextMoves(it) }
+    fun nextMovesForSequences(moveSequences: List<String>): Map<String, Int> {
+        return  trie.findNextMoves(moveSequences)
     }
 
 //    private fun convertFenToMovesSequence(fen: String): List<String> {

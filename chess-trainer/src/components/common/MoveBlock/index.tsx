@@ -31,13 +31,15 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({ currentMoves: moveHistory })
+				body: JSON.stringify( moveHistory )
 			});
 
-			if (response.ok) {
+			if (!response.ok) {
+				const errorData = await response.json();
+				console.error("API Error:", errorData);
+			} else {
 				const data = await response.json();
 				console.log("DATA: ", data);
-				
 			}
 		};
 

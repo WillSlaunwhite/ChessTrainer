@@ -6,6 +6,7 @@ interface QuizState {
 	score: number;
 	wrongMoves: { line: number; move: number }[];
 	isCorrect: boolean[];
+	isActive: boolean;
 	finished: boolean;
 }
 
@@ -30,6 +31,7 @@ export const QuizInteractionProvider: React.FC<QuizStateProviderProps> = ({ chil
 		score: 0,
 		wrongMoves: [],
 		isCorrect: [],
+		isActive: false, 
 		finished: false,
 	});
 

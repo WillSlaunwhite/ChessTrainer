@@ -1,32 +1,29 @@
 import { List, ListItem, Card } from "@material-tailwind/react";
 import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
-import { useHistory } from "../../contexts/history-context";
 import { ChessInstance } from "chess.js";
+import { useGameState } from "../../contexts/game/game-context";
+import { useQuiz } from "../../contexts/quiz/quiz-context";
 
 
-const OpeningsMenu: React.FC<{ setFen: (fen: string) => void; setIsQuizActive: (isActive: boolean) => void }> = ({ setFen, setIsQuizActive }) => {
-	const { moveHistories, setMoveHistories } = useHistory();
+const OpeningsMenu: React.FC = () => {
+	const [gameState, setGameState] = useGameState();
+	const [quizState, setQuizState] = useQuiz();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
+	const moveHistories = gameState.moveHistories;
 
 	const executeMovesOnGame = (game: ChessInstance, moves: string[]): void => {
 		for (let move of moves) {
 			const result = game.move(move);
-
 			// If the move is invalid, log it for troubleshooting
 			if (!result) {
 				console.error(`Failed to apply move: ${move}`);
 			}
 		}
 
-		setMoveHistories(prevHistories => {
-			const newHistories = [...prevHistories];
-			newHistories[0] = [...newHistories[0], ...moves];
-			console.log("IN MOVE HISTORIES: ", newHistories);
-			return newHistories;
-		});
-
-		console.log("IN MOVE HISTORIES 2: ", moveHistories);
+		const newHistories = [...moveHistories];
+		newHistories[0] = [...newHistories[0], ...moves];
+		setGameState(prevState => ({ ...prevState, moveHistories: newHistories}))
 	}
 
 	const openGame = (opening: OpeningDTO) => {
@@ -40,11 +37,11 @@ const OpeningsMenu: React.FC<{ setFen: (fen: string) => void; setIsQuizActive: (
 		executeMovesOnGame(tempGame, moves);
 
 		const resultingFen = tempGame.fen()
-		setFen(resultingFen);
+		setGameState(prevState => ({ ...prevState, fen: resultingFen}))
 
 		console.log("IN OPEN GAME: ", moveHistories);
 
-		setIsQuizActive(true);
+		setQuizState(prevState => ({ ...prevState, isActive: true  }))
 	}
 
 	useEffect(() => {

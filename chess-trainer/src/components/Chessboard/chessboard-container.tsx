@@ -1,5 +1,5 @@
 import { Chess, Square } from "chess.js";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import ChessboardPresentation from "./chessboard-presentation";
 
@@ -11,6 +11,7 @@ interface ChessboardContainerProps {
 }
 
 const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
+	const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
 	const [gameState, setGameState] = useGameState();
 	const moveHistories = gameState.moveHistories;
 	const fen = gameState.fen;
@@ -70,13 +71,13 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 				updatedFens[currentLineIndex] = game.fen();
 
 				setGameState(prevState => ({ ...prevState, moveHistories: updatedHistories, fen: game.fen(), currentFens: updatedFens, selectedSquare: null }));
-
+				setSelectedSquare(null);
 				handleMoveParent(executedMove.san);
 			}
 		},
 		[handleMoveParent, gameState],
 	);
-	return <ChessboardPresentation fen={fen} onMove={handleMove} />;
+	return <ChessboardPresentation fen={fen} onMove={handleMove} setSelectedSquare={setSelectedSquare} selectedSquare={selectedSquare} />;
 };
 
 export default ChessboardContainer;

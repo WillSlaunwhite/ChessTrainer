@@ -1,31 +1,27 @@
-import { useGameState } from "../../contexts/game/game-context";
 import SquarePresentation from "./square-presentation";
 
 interface SquareContainerProps {
 	square: string;
 	piece: string;
 	onMove: (source: string, destination: string) => void;
+	selectedSquare: string | null;
+	setSelectedSquare: (square: string | null) => void;
 }
 
-const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
-	const [gameState, setGameState] = useGameState();
-	const selectedSquare = gameState.selectedSquare;
-
+const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove, selectedSquare, setSelectedSquare }) => {
 	const handleClick = () => {
-		if (selectedSquare === null) {
-			setSelectedSquare(square);
-			if (selectedSquare === square) {
-				setSelectedSquare(null);
-			}
-		} else {
-			onMove(selectedSquare, square);
+		if (square === selectedSquare) {
 			setSelectedSquare(null);
+		} else {
+			if(selectedSquare) {
+				onMove(selectedSquare, square);
+			}
+			setSelectedSquare(square);
 		}
 	};
-
 	const isSelected = square === selectedSquare;
 
-	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} />;
+	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} selectedSquare={selectedSquare}/>;
 };
 
 export default SquareContainer;

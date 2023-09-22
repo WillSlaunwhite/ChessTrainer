@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import "../node_modules/tailwindcss/tailwind.css";
 import App from "./App.tsx";
 import "./index.scss";
-import "/src/components/game/chessboard/chessboard.scss";
 import React from "react";
 import { QuizInteractionProvider } from "./contexts/quiz/quiz-context.tsx";
 

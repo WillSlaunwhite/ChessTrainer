@@ -1,4 +1,4 @@
-import { useChessboard } from "../../../contexts/chess-context";
+import { useGameState } from "../../contexts/game/game-context";
 import SquarePresentation from "./square-presentation";
 
 interface SquareContainerProps {
@@ -8,7 +8,8 @@ interface SquareContainerProps {
 }
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
-	const { selectedSquare, setSelectedSquare } = useChessboard();
+	const [gameState, setGameState] = useGameState();
+	const selectedSquare = gameState.selectedSquare;
 
 	const handleClick = () => {
 		if (selectedSquare === null) {

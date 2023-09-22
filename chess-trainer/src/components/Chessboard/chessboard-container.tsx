@@ -1,8 +1,6 @@
 import { Chess, Square } from "chess.js";
 import { useCallback } from "react";
-import { useBoard } from "../../../contexts/board-context";
-import { useChessboard } from "../../../contexts/chess-context";
-import { useHistory } from "../../../contexts/history-context";
+import { useGameState } from "../../contexts/game/game-context";
 import ChessboardPresentation from "./chessboard-presentation";
 
 const game = new Chess();
@@ -13,10 +11,10 @@ interface ChessboardContainerProps {
 }
 
 const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
-	const { fen, setFen } = useBoard();
-	const { moveHistories, setMoveHistories } = useHistory();
-	const { setCurrentFens } = useHistory();
-	const { setSelectedSquare } = useChessboard();
+	const [gameState, setGameState] = useGameState();
+	const moveHistories = gameState.moveHistories;
+	const fen = gameState.fen;
+	const currentFens = gameState.currentFens;
 	console.log("Rendering Chessboard Container with FEN: ", fen);
 
 	game.load(fen);
@@ -37,18 +35,16 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 				const updatedHistory = [...moveHistories[currentLineIndex], moveResult.san];
 				const updatedHistories = [...moveHistories];
 				updatedHistories[currentLineIndex] = updatedHistory;
-				setMoveHistories(updatedHistories);
+				setGameState(prevState => ({ ...prevState, moveHistories: updatedHistories }));
 			}
 
-			setFen(game.fen());
-			setSelectedSquare(null);
+			setGameState(prevState => ({ ...prevState, fen: game.fen(), selectedSquare: null }));
 			handleMoveParent(`${move.from}-${move.to}=${promotionPiece}`);
 		} else {
 			// might want to handle this differently
 			alert("Invalid promotion piece.");
 		}
 	};
-
 
 
 	const handleMove = useCallback(
@@ -70,30 +66,16 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 				const updatedHistories = [...moveHistories];
 				updatedHistories[currentLineIndex] = updatedHistory;
 
-				setMoveHistories((prevHistories: string[][]) => {
-					const updatedHistories = [...prevHistories];
-					updatedHistories[currentLineIndex].push(executedMove.san);
-					return updatedHistories;
-				})
+				const updatedFens = [...currentFens];
+				updatedFens[currentLineIndex] = game.fen();
 
+				setGameState(prevState => ({ ...prevState, moveHistories: updatedHistories, fen: game.fen(), currentFens: updatedFens, selectedSquare: null }));
 
-				setFen(game.fen());
-				setCurrentFens((prevFens: string[]) => {
-					const updatedFens = [...prevFens];
-					updatedFens[currentLineIndex] = game.fen();
-					console.log("FENS UPDATED: ", updatedFens);
-
-					return updatedFens;
-				});
-				setSelectedSquare(null);
 				handleMoveParent(executedMove.san);
 			}
-
 		},
-		[handleMoveParent, moveHistories, setMoveHistories, setFen, setSelectedSquare],
+		[handleMoveParent, gameState],
 	);
-
-
 	return <ChessboardPresentation fen={fen} onMove={handleMove} />;
 };
 

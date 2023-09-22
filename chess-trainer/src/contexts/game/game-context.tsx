@@ -26,12 +26,12 @@ export const useGameState = () => {
 
 
 export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }) => {
-	const [gameState, setGameState] = useState<GameState>({
-		currentFens: [startingFen, startingFen, startingFen],
-		moveHistories: [[], [], []],
-		fen: "",
-		selectedSquare: null,
-	});
+    const [gameState, setGameState] = useState<GameState>({
+        currentFens: [startingFen, startingFen, startingFen],
+        moveHistories: [[], [], []],
+        fen: "",
+        selectedSquare: null,
+    });
 
     return <GameContext.Provider value={[gameState, setGameState]}>{children}</GameContext.Provider>;
 };

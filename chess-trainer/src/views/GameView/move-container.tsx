@@ -1,4 +1,4 @@
-import MoveBlock from "../../components/common/MoveBlock";
+import MoveBlock from "../../components/MoveBlock";
 import { useHistory } from "../../contexts/history-context";
 
 

@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
-import ExplanationComponent from "../../components/common/text/explanation";
-import ChessboardContainer from "../../components/game/chessboard/chessboard-container";
+import ExplanationComponent from "../../components/Common/text/explanation";
+import ChessboardContainer from "../../components/Chessboard/chessboard-container";
 import { ChessboardInteractionProvider } from "../../contexts/chess-context";
 import { HistoryProvider } from "../../contexts/history-context";
-import { useQuiz } from "../../contexts/quiz-context";
+import { useQuiz } from "../../contexts/quiz/quiz-context";
 import { italianGameHungarian, italianGameMainLine, italianGameTwoKnights } from "../../models/constants";
 import MoveContainer from "./move-container";
 import SummaryComponent from "./summary";

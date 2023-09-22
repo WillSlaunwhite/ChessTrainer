@@ -5,7 +5,7 @@ import App from "./App.tsx";
 import "./index.scss";
 import "/src/components/game/chessboard/chessboard.scss";
 import React from "react";
-import { QuizInteractionProvider } from "./contexts/quiz-context.tsx";
+import { QuizInteractionProvider } from "./contexts/quiz/quiz-context.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>

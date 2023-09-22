@@ -19,7 +19,6 @@ class OpeningController(private val openingService: OpeningService) {
     fun startOpening(@PathVariable openingName: String): ResponseEntity<OpeningDTO> {
         val formattedOpeningName = openingName.replace("-", " ")
         return openingService.getOpeningByName(formattedOpeningName)?.let {
-
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }
@@ -28,7 +27,6 @@ class OpeningController(private val openingService: OpeningService) {
     fun startOpeningDetailed(@PathVariable openingName: String): ResponseEntity<DetailedOpeningDTO> {
         val formattedOpeningName = openingName.replace("-", " ")
         return openingService.getDetailedOpeningByName(formattedOpeningName)?.let {
-
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }

@@ -24,3 +24,11 @@ export interface OpeningLine {
 	incorrectExplanations: string[];
 	wrongAnswers: string[];
 }
+
+export interface SquareProps {
+	position: string;
+	color: 'light' | 'dark';
+	piece?: string;
+	onSelect: (position: string) => void
+	isSelected: boolean;
+}

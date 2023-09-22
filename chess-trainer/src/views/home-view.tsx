@@ -1,7 +1,7 @@
 import React from "react";
-import WelcomeMessageComponent from "../components/common/text/welcome-message";
-import OpeningsMenu from "../components/game/openings-menu";
-import SidebarComponent from "../components/sidebar/sidebar";
+import WelcomeMessageComponent from "../components/Common/text/welcome-message";
+import OpeningsMenu from "../components/MainMenu/openings-menu";
+import SidebarComponent from "../components/Sidebar/sidebar";
 import { useBoard } from "../contexts/board-context";
 import { HistoryProvider } from "../contexts/history-context";
 

@@ -64,8 +64,9 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         return MoveClassification.ERROR
     }
 
-    fun nextMovesForSequences(moveSequences: List<String>): Map<String, Int> {
-        return  trie.findNextMoves(moveSequences)
+    fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
+        println("MOVE SEQUENCES: $moveSequences")
+        return moveSequences.map { trie.findNextMoves(it) }
     }
 
 //    private fun convertFenToMovesSequence(fen: String): List<String> {
@@ -74,7 +75,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
     @PostConstruct
     fun initialize() {
-        // CREATES TRIE
         val games: MutableList<MasterGame> = masterGameRepo.findAll()
         games.forEach { game ->
             trie.insert(game.moves.take(40))

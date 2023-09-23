@@ -1,20 +1,23 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer } from "react";
+import { gameReducer } from "./gameReducer";
+import { GameActionTypes } from "./gameActions";
 
 
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-interface GameState {
+export interface GameState {
     currentFens: string[];
     moveHistories: string[][];
     fen: string;
     selectedSquare: string | null;
+    pieceAtSquare: string;
 }
 
 interface GameStateProviderProps {
     children: React.ReactNode;
 }
 
-const GameContext = createContext<[GameState, React.Dispatch<React.SetStateAction<GameState>>] | undefined>(undefined);
+const GameContext = createContext<[GameState, React.Dispatch<GameActionTypes>] | undefined>(undefined);
 
 export const useGameState = () => {
     const context = useContext(GameContext);
@@ -26,12 +29,14 @@ export const useGameState = () => {
 
 
 export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }) => {
-    const [gameState, setGameState] = useState<GameState>({
+    const [gameState, dispatch] = useReducer(gameReducer, {
         currentFens: [startingFen, startingFen, startingFen],
         moveHistories: [[], [], []],
         fen: "",
         selectedSquare: null,
+        pieceAtSquare: ""
     });
 
-    return <GameContext.Provider value={[gameState, setGameState]}>{children}</GameContext.Provider>;
+    return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;
+    
 };

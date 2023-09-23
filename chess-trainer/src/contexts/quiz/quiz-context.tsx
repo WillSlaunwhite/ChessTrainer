@@ -1,7 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useReducer } from "react";
+import { quizReducer } from "./quizReducer";
+import { QuizActionTypes } from "./quizActions";
 
-interface QuizState {
-	currentLine: number;
+export interface QuizState {
+	currentLineIndex: number;
 	currentMoveIndex: number;
 	score: number;
 	wrongMoves: { line: number; move: number }[];
@@ -14,7 +16,7 @@ interface QuizStateProviderProps {
 	children: React.ReactNode;
 }
 
-const QuizContext = createContext<[QuizState, React.Dispatch<React.SetStateAction<QuizState>>] | undefined>(undefined);
+const QuizContext = createContext<[QuizState, React.Dispatch<QuizActionTypes>] | undefined>(undefined);
 
 export const useQuiz = () => {
 	const context = useContext(QuizContext);
@@ -25,19 +27,26 @@ export const useQuiz = () => {
 };
 
 export const QuizInteractionProvider: React.FC<QuizStateProviderProps> = ({ children }) => {
-	const [quizState, setQuizState] = useState<QuizState>({
-		currentLine: 0,
+	const [quizState, dispatch] = useReducer(quizReducer, {
+		currentLineIndex: 0,
 		currentMoveIndex: 0,
 		score: 0,
 		wrongMoves: [],
 		isCorrect: [],
-		isActive: false, 
+		isActive: false,
 		finished: false,
 	});
 
-	return(
-		<QuizContext.Provider value={[quizState, setQuizState]}>
+	return (
+		<QuizContext.Provider value={[quizState, dispatch]}>
 			{children}
 		</QuizContext.Provider>
 	);
+
+	// return (
+    //     <QuizContext.Provider value={[quizState, dispatch]}>
+    //         {children}
+    //     </QuizContext.Provider>
+    // );
+
 };

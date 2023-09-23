@@ -51,9 +51,7 @@ const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, 
 
 	return (
 		<div
-			className={`flex justify-center items-center w-full h-full ${backgroundColor} square ${selected ? "selected" : ""} ${
-				square === selectedSquare ? "highlighted" : ""
-			}`}
+			className={`flex justify-center items-center w-full h-full ${backgroundColor} square ${selected ? "highlighted" : ""}`}
 			onClick={onClick}
 		>
 			{PieceComponent && <PieceComponent />}

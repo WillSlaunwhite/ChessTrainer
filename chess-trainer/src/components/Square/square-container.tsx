@@ -18,6 +18,7 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove
 		} else {
 			if (selectedSquare) {
 				onMove(selectedSquare, square);
+				return;
 			}
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } })
 		}

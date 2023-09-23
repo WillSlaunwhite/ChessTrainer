@@ -1,12 +1,19 @@
 import { Chess, Square } from "chess.js";
 import { GameState } from "./game-context";
 import { GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, MakeMoveAction, MakeMoveWithPromotionAction, SELECT_SQUARE } from "./gameActions";
+import { ChessInstance } from "chess.js";
 
-const game = new Chess();
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
+    console.log("STATE FIRST INIT FEN: ", state.fen)
+    
+    let game: ChessInstance;
+    if (state.fen) game = new Chess(state.fen); else game = new Chess();
+
     switch (action.type) {
         case SELECT_SQUARE:
+            console.log("IN SELECT SQUARE");
+            
             return {
                 ...state,
                 selectedSquare: action.payload.square
@@ -14,7 +21,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case GET_PIECE_AT_SQUARE:
             const { square } = action.payload;
-            game.load(state.fen);
+            // game.load(game.fen());
             const piece = game.get(square as Square)?.type
             return {
                 ...state,
@@ -23,47 +30,58 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case MAKE_MOVE: {
             const payload = action.payload as MakeMoveAction['payload'];
-            const { source, destination, currentLineIndex } = payload;
+            const { source, destination } = payload;
+
+            console.log("IN MAKE MOVE GAME: ", game.fen());
+            console.log("IN MAKE MOVE: ", state.fen);
 
             game.load(state.fen);
-            const moveResult = game.move({ from: source, to: destination })
 
-            if (!moveResult) return state;
+            const validMoves = game.moves({ square: source, verbose: true});
 
-            const updatedHistory = [...state.moveHistories[currentLineIndex], moveResult.san];
-            const updatedHistories = [...state.moveHistories];
-            updatedHistories[currentLineIndex] = updatedHistory;
+            const isValidMove = validMoves.some(move => move.to === destination);
+
+            if (!isValidMove) {
+                return {
+                    ...state,
+                    selectedSquare: null
+                }
+            }
+            
+            game.move({ from: source, to: destination });
+
+            console.log("IN MAKE MOVE GAME AFTER: ", game.fen());
+            console.log("IN MAKE MOVE AFTER: ", state.fen);
+
 
             return {
                 ...state,
                 fen: game.fen(),
-                moveHistories: updatedHistories,
-                selectedSquare: null
+                selectedSquare: null,
             };
         }
 
         case MAKE_MOVE_WITH_PROMOTION: {
             const payload = action.payload as MakeMoveWithPromotionAction['payload'];
-            const { source, destination, promotionPiece, currentLineIndex } = payload;
+            const { source, destination, promotionPiece } = payload;
 
-            game.load(state.fen);
+            game.load(game.fen());
             const moveResult = game.move({ from: source, to: destination, promotion: promotionPiece })
 
             if (!moveResult) return state;
 
-            const updatedHistory = [...state.moveHistories[currentLineIndex], moveResult.san];
-            const updatedHistories = [...state.moveHistories];
-            updatedHistories[currentLineIndex] = updatedHistory;
 
             return {
                 ...state,
                 fen: game.fen(),
-                moveHistories: updatedHistories,
                 selectedSquare: null
             };
         }
 
         case INIT_GAME:
+            console.log("IN INITTT GAMMMEEE: ", action.payload.fen);
+            
+            game.load(action.payload.fen);
             return {
                 ...state,
                 fen: action.payload.fen

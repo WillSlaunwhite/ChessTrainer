@@ -1,10 +1,10 @@
 export const SELECT_SQUARE = "SELECT_SQUARE";
 export const MAKE_MOVE = "MAKE_MOVE";
-export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE";
+export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const INIT_GAME = "INIT_GAME";
 export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
 
-interface SelectSquareAction {
+export interface SelectSquareAction {
     type: typeof SELECT_SQUARE;
     payload: {
         square: string | null;
@@ -16,7 +16,6 @@ export interface MakeMoveAction {
     payload: {
         source: string;
         destination: string;
-        currentLineIndex: number;
     };
 }
 
@@ -26,11 +25,10 @@ export interface MakeMoveWithPromotionAction {
         source: string;
         destination: string;
         promotionPiece: string;
-        currentLineIndex: number;
     };
 }
 
-interface InitGameAction {
+export interface InitGameAction {
     type: typeof INIT_GAME;
     payload: {
         fen: string;
@@ -38,7 +36,7 @@ interface InitGameAction {
     };
 }
 
-interface GetPieceAtSquareAction {
+export interface GetPieceAtSquareAction {
     type: typeof GET_PIECE_AT_SQUARE;
     payload: {
         square: string;

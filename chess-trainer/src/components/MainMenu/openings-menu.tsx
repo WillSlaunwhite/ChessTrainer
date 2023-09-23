@@ -1,16 +1,17 @@
-import { List, ListItem, Card } from "@material-tailwind/react";
+import { Card, List, ListItem } from "@material-tailwind/react";
 import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
-import { ChessInstance } from "chess.js";
 import { useGameState } from "../../contexts/game/game-context";
-import { useQuiz } from "../../contexts/quiz/quiz-context";
+import { INIT_GAME } from "../../contexts/game/gameActions";
+import { ChessInstance } from "chess.js";
+import { useNavigate } from "react-router";
 
 
 const OpeningsMenu: React.FC = () => {
-	const [gameState, setGameState] = useGameState();
-	const [quizState, setQuizState] = useQuiz();
+	const [gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const moveHistories = gameState.moveHistories;
+	const navigate = useNavigate();
 
 	const executeMovesOnGame = (game: ChessInstance, moves: string[]): void => {
 		for (let move of moves) {
@@ -23,7 +24,7 @@ const OpeningsMenu: React.FC = () => {
 
 		const newHistories = [...moveHistories];
 		newHistories[0] = [...newHistories[0], ...moves];
-		setGameState(prevState => ({ ...prevState, moveHistories: newHistories}))
+		// setGameState(prevState => ({ ...prevState, moveHistories: newHistories}))
 	}
 
 	const openGame = (opening: OpeningDTO) => {
@@ -36,12 +37,10 @@ const OpeningsMenu: React.FC = () => {
 
 		executeMovesOnGame(tempGame, moves);
 
-		const resultingFen = tempGame.fen()
-		setGameState(prevState => ({ ...prevState, fen: resultingFen}))
-
-		console.log("IN OPEN GAME: ", moveHistories);
-
-		setQuizState(prevState => ({ ...prevState, isActive: true  }))
+		console.log("FEN: ", tempGame.fen());
+		
+		dispatch({ type: INIT_GAME, payload:{ fen: tempGame.fen(), moveSequence: moves}});
+		navigate('/game')
 	}
 
 	useEffect(() => {

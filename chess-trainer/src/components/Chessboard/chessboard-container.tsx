@@ -1,83 +1,57 @@
-import { Chess, Square } from "chess.js";
-import { useCallback, useState } from "react";
+import { useEffect } from "react";
 import { useGameState } from "../../contexts/game/game-context";
+import { GET_PIECE_AT_SQUARE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION } from "../../contexts/game/gameActions";
+import { useQuiz } from "../../contexts/quiz/quiz-context";
 import ChessboardPresentation from "./chessboard-presentation";
 
-const game = new Chess();
-
 interface ChessboardContainerProps {
-	handleMoveParent: (move: string) => void;
-	currentLineIndex: number;
+	handleMoveParent: (source: string, destination: string) => void;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
-	const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
-	const [gameState, setGameState] = useGameState();
-	const moveHistories = gameState.moveHistories;
-	const fen = gameState.fen;
-	const currentFens = gameState.currentFens;
-	console.log("Rendering Chessboard Container with FEN: ", fen);
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent }) => {
+	const [gameState, gameDispatch] = useGameState();
+	const [quizState] = useQuiz();
 
-	game.load(fen);
-
-	const handlePawnPromotion = (source: string, destination: string) => {
-		// need to replace with ui component
-		const promotionPiece = window.prompt("Choose a piece (q, r, b, n):");
-
-		if (["q", "r", "b", "n"].includes(promotionPiece || "q")) {
-			const move = {
-				from: source,
-				to: destination,
-				promotion: promotionPiece || undefined,
-			};
-
-			const moveResult = game.move(move);
-			if (moveResult && moveResult.san) {
-				const updatedHistory = [...moveHistories[currentLineIndex], moveResult.san];
-				const updatedHistories = [...moveHistories];
-				updatedHistories[currentLineIndex] = updatedHistory;
-				setGameState(prevState => ({ ...prevState, moveHistories: updatedHistories }));
+	const handleMove = (source: string, destination: string) => {
+		gameDispatch({
+			type: GET_PIECE_AT_SQUARE,
+			payload: {
+				square: source
 			}
+		});
+		const pieceAtSource = gameState.pieceAtSquare;
 
-			setGameState(prevState => ({ ...prevState, fen: game.fen(), selectedSquare: null }));
-			handleMoveParent(`${move.from}-${move.to}=${promotionPiece}`);
+		// check for promotion
+		if (pieceAtSource === 'p' && (destination[1] === '8' || destination[1] === '1')) {
+			const promotionPiece = window.prompt("Choose a piece (q, r, b, n):") || undefined;
+			gameDispatch({
+				type: MAKE_MOVE_WITH_PROMOTION,
+				payload: {
+					source,
+					destination,
+					promotionPiece,
+					currentLineIndex: quizState.currentLineIndex
+				}
+			});
 		} else {
-			// might want to handle this differently
-			alert("Invalid promotion piece.");
+			gameDispatch({
+				type: MAKE_MOVE,
+				payload: {
+					source,
+					destination,
+					currentLineIndex: quizState.currentLineIndex
+				}
+			});
 		}
+
+		handleMoveParent(source, destination);
 	};
 
+	useEffect(() => {
+		gameDispatch({ type: INIT_GAME, payload: { fen: gameState.fen } });
+	}, [gameState.fen, gameDispatch]);
 
-	const handleMove = useCallback(
-		(source: string, destination: string) => {
-			const moves = game.moves({ square: source as Square, verbose: true });
-
-			// check for promotion
-			if (game.get(source as Square)?.type === 'p' && (destination[1] === '8' || destination[1] === '1')) {
-				handlePawnPromotion(source, destination);
-				return;
-			}
-
-			// look for move, if found, execute it
-			const executedMove = moves.find(m => m.to === destination);
-			if (executedMove) {
-				game.move(executedMove);
-
-				const updatedHistory = [...moveHistories[currentLineIndex], executedMove.san];
-				const updatedHistories = [...moveHistories];
-				updatedHistories[currentLineIndex] = updatedHistory;
-
-				const updatedFens = [...currentFens];
-				updatedFens[currentLineIndex] = game.fen();
-
-				setGameState(prevState => ({ ...prevState, moveHistories: updatedHistories, fen: game.fen(), currentFens: updatedFens, selectedSquare: null }));
-				setSelectedSquare(null);
-				handleMoveParent(executedMove.san);
-			}
-		},
-		[handleMoveParent, gameState],
-	);
-	return <ChessboardPresentation fen={fen} onMove={handleMove} setSelectedSquare={setSelectedSquare} selectedSquare={selectedSquare} />;
+	return <ChessboardPresentation fen={gameState.fen} onMove={handleMove} />;
 };
 
 export default ChessboardContainer;

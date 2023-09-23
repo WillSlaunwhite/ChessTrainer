@@ -1,6 +1,6 @@
 import { Button } from "@material-tailwind/react/components/Button";
 import { useState } from "react";
-import Rules from "../text/rules";
+import Rules from "../Common/text/rules";
 
 const SidebarComponent: React.FC = () => {
 	const [showRules, setShowRules] = useState(false);

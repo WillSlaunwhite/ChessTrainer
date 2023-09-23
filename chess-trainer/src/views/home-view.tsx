@@ -1,16 +1,14 @@
 import React from "react";
-import WelcomeMessageComponent from "../components/text/welcome-message";
-import OpeningsMenu from "../components/containers/openings-menu";
-import SidebarComponent from "../components/sidebar/sidebar";
-import { useBoard } from "../contexts/board-context";
+import WelcomeMessageComponent from "../components/Common/text/welcome-message";
+import OpeningsMenu from "../components/MainMenu/openings-menu";
+import SidebarComponent from "../components/Sidebar/sidebar";
 
-const HomeView: React.FC<{  setIsQuizActive: (isActive: boolean) => void }> = ({ setIsQuizActive}) => {
-	const {setFen} = useBoard();
+const HomeView: React.FC = () => {
 
 	return (
 		<div className="home-container w-full h-full flex flex-col">
 			<WelcomeMessageComponent />
-			<OpeningsMenu setFen={setFen} setIsQuizActive={setIsQuizActive}/>
+				<OpeningsMenu/>
 			<SidebarComponent />
 		</div>
 	);

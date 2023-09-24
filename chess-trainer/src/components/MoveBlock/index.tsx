@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import MoveHistory from "./move-history";
 
 interface MoveProps {
-	isCorrect: boolean | null;
+	// isCorrect: boolean | null;
 	moveHistory: string[];
-	isCurrent: boolean;
+	// isCurrent: boolean;
 }
 
 const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {

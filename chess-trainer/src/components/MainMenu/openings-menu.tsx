@@ -23,7 +23,7 @@ const OpeningsMenu: React.FC = () => {
 		}
 
 		const newHistories = [...moveHistories];
-		newHistories[0] = [...newHistories[0], ...moves];
+		newHistories[gameState.] = [...newHistories[0], ...moves];
 		// setGameState(prevState => ({ ...prevState, moveHistories: newHistories}))
 	}
 
@@ -40,7 +40,8 @@ const OpeningsMenu: React.FC = () => {
 		console.log("FEN: ", tempGame.fen());
 		
 		dispatch({ type: INIT_GAME, payload:{ fen: tempGame.fen(), moveSequence: moves}});
-		navigate('/game')
+		
+		navigate('/game');
 	}
 
 	useEffect(() => {

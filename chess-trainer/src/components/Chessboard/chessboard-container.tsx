@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import { useGameState } from "../../contexts/game/game-context";
-import { GET_PIECE_AT_SQUARE, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE } from "../../contexts/game/gameActions";
-import { useQuiz } from "../../contexts/quiz/quiz-context";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION } from "../../contexts/game/gameActions";
 import ChessboardPresentation from "./chessboard-presentation";
 
 interface ChessboardContainerProps {
@@ -8,43 +8,31 @@ interface ChessboardContainerProps {
 }
 
 const ChessboardContainer: React.FC<ChessboardContainerProps> = () => {
-	const [gameState, gameDispatch] = useGameState();
+	const [gameState, dispatch] = useGameState();
 
 	const handleMove = (source: string, destination: string) => {
-		gameDispatch({
-			type: GET_PIECE_AT_SQUARE,
-			payload: {
-				square: source
-			}
-		});
-		const pieceAtSource = gameState.pieceAtSquare;
+		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
+	};
 
-		// check for promotion
-		if (pieceAtSource === 'p' && (destination[1] === '8' || destination[1] === '1')) {
+	console.log("************** INITIAL MOVES FROM CHESSBOARD: ", gameState.initialMoves);
+	
+
+	useEffect(() => {
+		if (gameState.isPawnPromotion) {
 			const promotionPiece = window.prompt("Choose a piece (q, r, b, n):") || "q";
-			gameDispatch({
-				type: MAKE_MOVE_WITH_PROMOTION,
+			dispatch({
+				type: EXECUTE_PAWN_PROMOTION,
 				payload: {
-					source,
-					destination,
-					promotionPiece,
-				}
-			});
-		} else {
-			gameDispatch({
-				type: MAKE_MOVE,
-				payload: {
-					source,
-					destination,
+					source: gameState.promotionSource,
+					destination: gameState.promotionDestination,
+					promotion: promotionPiece
 				}
 			});
 		}
-		gameDispatch({type: SELECT_SQUARE, payload: { square: null}});
-
-		// handleMoveParent(source, destination);
-	};
+	}, [gameState.isPawnPromotion]);
 
 	return <ChessboardPresentation fen={gameState.fen} onMove={handleMove} />;
 };
+
 
 export default ChessboardContainer;

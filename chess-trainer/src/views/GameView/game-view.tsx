@@ -8,8 +8,10 @@ import MoveContainer from "./move-container";
 
 
 const GameView: React.FC = () => {
-	const [gameState, gameDispatch] = useGameState();
+	const [gameState] = useGameState();
 	const [quizState] = useQuiz();
+
+	console.log("########################### INITIAL MOVES IN GAME VIEW: ", gameState.initialMoves);
 
 	// const handleMove = useCallback(
 	// 	(source: string, destination: string) => {
@@ -33,7 +35,7 @@ const GameView: React.FC = () => {
 						: italianGameMainLine.incorrectExplanations[quizState.currentMoveIndex]
 				}
 			/>
-			<MoveContainer moveHistories={gameState.moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLineIndex} />
+			<MoveContainer moveHistories={gameState.initialMoves} isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLineIndex} />
 			<ChessboardContainer />
 		</div>
 	);

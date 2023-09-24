@@ -26,7 +26,7 @@ class OpeningService(private val openingRepository: OpeningRepository) {
         }
     }
 
-    fun getOpenings(): List<OpeningDTO>{
-        return openingRepository.findAll().map{ convertToOpeningDTO(it) }
+    fun getOpenings(): List<OpeningDTO> {
+        return openingRepository.findAll().map { convertToOpeningDTO(it) }
     }
 }

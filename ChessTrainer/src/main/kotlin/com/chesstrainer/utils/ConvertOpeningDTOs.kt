@@ -9,7 +9,7 @@ fun convertToOpeningDTO(opening: Opening): OpeningDTO {
         id = opening.id,
         name = opening.name,
         description = opening.description,
-        moveSequence = opening.moveSequence,
+        moveSequence = opening.baseMoveSequence,
         difficulty = opening.difficulty,
     )
 }
@@ -19,7 +19,7 @@ fun convertToDetailedOpeningDTO(opening: Opening): DetailedOpeningDTO {
         id = opening.id,
         name = opening.name,
         description = opening.description,
-        moveSequence = opening.moveSequence,
+        moveSequence = opening.baseMoveSequence,
         masterGames = opening.masterGames.map { convertToMasterGameDTO(it) },
         difficulty = opening.difficulty,
     )

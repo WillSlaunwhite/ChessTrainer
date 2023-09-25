@@ -12,11 +12,14 @@ data class Opening(
     val name: String,
     val description: String? = null,
     @Convert(converter = StringListConverter::class)
-    @Column(name = "moves_sequence")
-    val moveSequence: List<String>,
+    @Column(name = "base_moves_sequence")
+    val baseMoveSequence: List<String> = listOf(),
     @OneToMany(mappedBy = "opening")
     @JsonManagedReference
     val masterGames: List<MasterGame>,
+    @OneToMany(mappedBy = "opening")
+    @JsonManagedReference
+    val variations: List<Variation>,
     @Column(name = "difficulty_level")
     val difficulty: String? = null,
 )

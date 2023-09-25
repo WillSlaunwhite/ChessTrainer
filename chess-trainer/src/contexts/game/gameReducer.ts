@@ -1,19 +1,18 @@
-import { Chess, Square } from "chess.js";
+import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, MakeMoveAction, MakeMoveWithPromotionAction, SELECT_SQUARE } from "./gameActions";
-import { ChessInstance } from "chess.js";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_VARIATIONS, SWITCH_LINES } from "./gameActions";
 
+export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
+    const validMoves = game.moves({ square: source, verbose: true });
+    return validMoves.some(move => move.to === destination);
+};
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
-    console.log("STATE FIRST INIT FEN: ", state.fen)
-    
     let game: ChessInstance;
     if (state.fen) game = new Chess(state.fen); else game = new Chess();
 
     switch (action.type) {
         case SELECT_SQUARE:
-            console.log("IN SELECT SQUARE");
-            
             return {
                 ...state,
                 selectedSquare: action.payload.square
@@ -21,56 +20,81 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case GET_PIECE_AT_SQUARE:
             const { square } = action.payload;
-            // game.load(game.fen());
-            const piece = game.get(square as Square)?.type
+            const color = game.get(square as Square)?.color;
+            const piece = game.get(square as Square)?.type;
             return {
                 ...state,
-                pieceAtSquare: piece
+                pieceAtSquare: piece,
+                colorOfPiece: color
             };
 
-        case MAKE_MOVE: {
-            const payload = action.payload as MakeMoveAction['payload'];
-            const { source, destination } = payload;
-
-            console.log("IN MAKE MOVE GAME: ", game.fen());
-            console.log("IN MAKE MOVE: ", state.fen);
-
-            game.load(state.fen);
-
-            const validMoves = game.moves({ square: source, verbose: true});
-
-            const isValidMove = validMoves.some(move => move.to === destination);
-
-            if (!isValidMove) {
+        case CHECK_MOVE_LEGALITY: {
+            const { source, destination } = action.payload;
+            const isValid: boolean = isValidMove(game, source, destination);
+            if (isValid) {
+                const pieceAtSource = game.get(source);
+                if (pieceAtSource?.type === 'p' &&
+                    ((pieceAtSource.color === 'w' && destination[1] === '8') ||
+                        (pieceAtSource.color === 'b' && destination[1] === '1'))) {
+                    return {
+                        ...state,
+                        isPawnPromotion: true,
+                        promotionSource: source,
+                        promotionDestination: destination
+                    };
+                } else {
+                    game.move({ from: source, to: destination });
+                    return {
+                        ...state,
+                        fen: game.fen(),
+                        selectedSquare: null
+                    }
+                }
+            } else {
                 return {
                     ...state,
                     selectedSquare: null
                 }
-            }
-            
-            game.move({ from: source, to: destination });
+            };
+        }
 
-            console.log("IN MAKE MOVE GAME AFTER: ", game.fen());
-            console.log("IN MAKE MOVE AFTER: ", state.fen);
+        case EXECUTE_PAWN_PROMOTION: {
+            const { source, destination, promotion} = action.payload;
+            game.move({ from: source, to: destination, promotion: promotion});
+            return {
+                ...state,
+                fen: game.fen(),
+                selectedSquare: null,
+                isPawnPromotion: false
+            };
+        }
 
+        case MAKE_MOVE: {
+            const { source, destination } = action.payload;
+            game.load(state.fen);
+
+            const moveResult = game.move({ from: source, to: destination });
+            const wasMoveValid = !!moveResult;
 
             return {
                 ...state,
                 fen: game.fen(),
                 selectedSquare: null,
+                lastMoveValid: wasMoveValid,
             };
         }
 
         case MAKE_MOVE_WITH_PROMOTION: {
-            const payload = action.payload as MakeMoveWithPromotionAction['payload'];
-            const { source, destination, promotionPiece } = payload;
+            const { source, destination, promotionPiece } = action.payload;
 
-            game.load(game.fen());
-            const moveResult = game.move({ from: source, to: destination, promotion: promotionPiece })
+            if (!isValidMove(game, source, destination)) {
+                return {
+                    ...state,
+                    selectedSquare: null
+                }
+            }
 
-            if (!moveResult) return state;
-
-
+            game.move({ from: source, to: destination, promotion: promotionPiece });
             return {
                 ...state,
                 fen: game.fen(),
@@ -79,13 +103,27 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         }
 
         case INIT_GAME:
-            console.log("IN INITTT GAMMMEEE: ", action.payload.fen);
-            
             game.load(action.payload.fen);
+            
             return {
                 ...state,
-                fen: action.payload.fen
+                fen: action.payload.fen,
+                moveHistories: action.payload.moveHistories,
+                currentFens: action.payload.currentFens,
+            };
+        
+        case SET_VARIATIONS:
+            return {
+                ...state,
+                variations: action.payload.variations
             }
+
+        case SWITCH_LINES:
+            return {
+                ...state,
+                fen: action.payload.fen,
+            }
+
         default:
             return state;
     }

@@ -26,9 +26,9 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 			return squares;
 		});
 	};
-
+	
 	const boardArray = fenToArray(board);
-
+	
 	return (
 		<div className="chessboard grid w-344px h-344px">
 			{boardArray.map((row, rowIndex) => {

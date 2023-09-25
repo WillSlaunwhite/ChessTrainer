@@ -44,7 +44,7 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 	}, [moveHistory]);
 
 	return (
-		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] h-24 mx-1 border-4 ${getBorderColor()}`}>
+		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] overflow-scroll h-24 mx-1 border-4 ${getBorderColor()}`}>
 			<div className="move-history tracking-wide text-center">
 				<MoveHistory moveHistory={moveHistory} />
 			</div>

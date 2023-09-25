@@ -11,6 +11,13 @@ export interface GameState {
     fen: string;
     selectedSquare: string | null;
     pieceAtSquare: string;
+    colorOfPiece: string;
+    lastMoveValid: boolean;
+    isPawnPromotion: boolean;
+    promotionSource: string;
+    promotionDestination: string;
+    initialMoves: string[];
+    variations: VariationDTO[];
 }
 
 interface GameStateProviderProps {
@@ -34,7 +41,14 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         moveHistories: [[], [], []],
         fen: "",
         selectedSquare: null,
-        pieceAtSquare: ""
+        pieceAtSquare: "",
+        colorOfPiece: "",
+        lastMoveValid: false,
+        isPawnPromotion: false,
+        promotionSource: "",
+        promotionDestination: "",
+        initialMoves: [],
+        variations: []
     });
 
     return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;

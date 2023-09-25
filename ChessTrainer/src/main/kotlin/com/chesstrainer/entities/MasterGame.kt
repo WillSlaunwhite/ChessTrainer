@@ -30,7 +30,7 @@ data class MasterGame(
     val result: Result,
     val eco: String,
     @Convert(converter = StringListConverter::class)
-    val moves: List<String> = mutableListOf(),
+    val moves: List<String> = listOf(),
     @ManyToOne @JoinColumn(name = "opening_id")
     @JsonBackReference
     val opening: Opening? = null,

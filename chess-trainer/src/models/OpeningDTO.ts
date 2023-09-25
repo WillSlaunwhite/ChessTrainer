@@ -2,7 +2,8 @@ interface OpeningDTO {
     id: string | number;
     name: string;
     description: string;
-    moveSequence: string[];
+    baseMovesSequence: string[];
+    variations: VariationDTO[];
     difficulty: string | number;
 }
 

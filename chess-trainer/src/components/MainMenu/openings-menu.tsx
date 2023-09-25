@@ -1,54 +1,52 @@
 import { Card, List, ListItem } from "@material-tailwind/react";
 import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { useGameState } from "../../contexts/game/game-context";
 import { INIT_GAME } from "../../contexts/game/gameActions";
-import { ChessInstance } from "chess.js";
-import { useNavigate } from "react-router";
-
 
 const OpeningsMenu: React.FC = () => {
 	const [gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
-	const moveHistories = gameState.moveHistories;
 	const navigate = useNavigate();
 
-	const executeMovesOnGame = (game: ChessInstance, moves: string[]): void => {
-		for (let move of moves) {
-			const result = game.move(move);
-			// If the move is invalid, log it for troubleshooting
-			if (!result) {
-				console.error(`Failed to apply move: ${move}`);
-			}
-		}
-
-		const newHistories = [...moveHistories];
-		newHistories[gameState.] = [...newHistories[0], ...moves];
-		// setGameState(prevState => ({ ...prevState, moveHistories: newHistories}))
-	}
-
-	const openGame = (opening: OpeningDTO) => {
+	const openGame = (openingName: string) => {
 		const tempGame = new Chess();
+		fetch(`http://localhost:8085/api/openings/${openingName}/start`)
+			.then((res) => res.json())
+			.then((opening: OpeningDTO) => {
+				const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
+				const fens: string[] = []
 
-		const components = opening.moveSequence[0].split(/\s+/);
-		const moves = components.map(move => move.replace(/^\d+\./, ''));
-		console.log(`MOVE COMPONENTS ${components}`);
-		console.log(`MOVES ${moves}`);
+				const fullMoveSequences = opening.variations.map(variation => {
+					if (variation.movesSequence[0]) {
+						return baseSequence.concat(variation.movesSequence)
+					} else { return baseSequence }
+				});
 
-		executeMovesOnGame(tempGame, moves);
+				fullMoveSequences.forEach(sequence => {
+					sequence.forEach(move => {
+						console.log(move);
+						
+						tempGame.move(move);
+					});
+					fens.push(tempGame.fen());
+					tempGame.reset();
+				});
 
-		console.log("FEN: ", tempGame.fen());
-		
-		dispatch({ type: INIT_GAME, payload:{ fen: tempGame.fen(), moveSequence: moves}});
-		
-		navigate('/game');
+				dispatch({ type: INIT_GAME, payload: { fen: fens[0], moveHistories: fullMoveSequences, currentFens: fens } });
+				navigate('/game');
+			})
+			.catch((error) => console.error('Failed to fetch variations: ', error));
 	}
 
 	useEffect(() => {
 		fetch('http://localhost:8085/api/openings/')
 			.then((res) => res.json())
-			.then((data) => setOpenings(data))
-			.catch((error) => console.error('Failed to fetch openings: ', error))
+			.then((openings: OpeningDTO[]) => {
+				setOpenings(openings);
+			})
+			.catch((error) => console.error('Failed to fetch openings: ', error));
 	}, []);
 
 	return (
@@ -57,9 +55,8 @@ const OpeningsMenu: React.FC = () => {
 			<Card className="w-10/12">
 				<List className="mt-1">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening)}>{opening.name}</ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening.name)}>{opening.name}</ListItem>
 					))}
-
 				</List>
 			</Card>
 		</div>

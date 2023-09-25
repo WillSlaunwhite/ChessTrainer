@@ -4,18 +4,16 @@ import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION } from "../../contexts/game
 import ChessboardPresentation from "./chessboard-presentation";
 
 interface ChessboardContainerProps {
-	// handleMoveParent: (source: string, destination: string) => void;
+	handleMoveParent: () => void;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = () => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent }) => {
 	const [gameState, dispatch] = useGameState();
 
 	const handleMove = (source: string, destination: string) => {
 		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
+		// handleMoveParent();
 	};
-
-	console.log("************** INITIAL MOVES FROM CHESSBOARD: ", gameState.initialMoves);
-	
 
 	useEffect(() => {
 		if (gameState.isPawnPromotion) {

@@ -1,5 +1,7 @@
 export const INCREMENT_MOVE = 'INCREMENT_MOVE';
 export const INCREMENT_LINE = 'INCREMENT_LINE';
+export const DECREMENT_LINE = 'DECREMENT_LINE';
+export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
 export const UPDATE_SCORE = 'UPDATE_SCORE';
 export const ADD_WRONG_MOVE = 'ADD_WRONG_MOVE';
 export const SET_CORRECTNESS = 'SET_CORRECTNESS';
@@ -12,6 +14,15 @@ interface IncrementMoveAction {
 
 interface IncrementLineAction {
     type: typeof INCREMENT_LINE;
+}
+
+interface DecrementLineAction {
+    type: typeof DECREMENT_LINE;
+}
+
+interface SetCurrentLineNumberAction {
+    type: typeof SET_CURRENT_LINE_NUMBER;
+    payload: { line: number; }
 }
 
 interface UpdateScoreAction {
@@ -36,4 +47,4 @@ interface FinishQuizAction {
     type: typeof FINISH_QUIZ;
 }
 
-export type QuizActionTypes = IncrementMoveAction | IncrementLineAction | UpdateScoreAction | AddWrongMoveAction | SetCorrectnessAction | ToggleQuizAction | FinishQuizAction;
+export type QuizActionTypes = IncrementMoveAction | IncrementLineAction | UpdateScoreAction | AddWrongMoveAction | SetCorrectnessAction | ToggleQuizAction | FinishQuizAction | DecrementLineAction | SetCurrentLineNumberAction;

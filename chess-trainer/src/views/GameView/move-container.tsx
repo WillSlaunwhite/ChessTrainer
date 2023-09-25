@@ -4,7 +4,7 @@ import MoveBlock from "../../components/MoveBlock";
 interface MoveContainerProps {
 	isCorrect: boolean[];
 	currentBlockIndex: number;
-	moveHistories: string[];
+	moveHistories: string[][];
 }
 
 
@@ -13,14 +13,14 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 
 	return (
 		<div className="block-container flex flex-row justify-center mb-2">
-			{/* {moveHistories.map((moveHistory, i) => ( */}
+			{moveHistories.map((moveHistory, i) => (
 				<MoveBlock
-					// key={i}
-					moveHistory={moveHistories}
-					// isCurrent={i === currentBlockIndex}
-					// isCorrect={isCorrect[i]}
+					key={i}
+					moveHistory={moveHistory}
+					isCurrent={i === currentBlockIndex}
+					isCorrect={isCorrect[i]}
 				/>
-			{/* ))} */}
+			))}
 		</div>
 	);
 };

@@ -42,11 +42,4 @@ export const QuizInteractionProvider: React.FC<QuizStateProviderProps> = ({ chil
 			{children}
 		</QuizContext.Provider>
 	);
-
-	// return (
-    //     <QuizContext.Provider value={[quizState, dispatch]}>
-    //         {children}
-    //     </QuizContext.Provider>
-    // );
-
 };

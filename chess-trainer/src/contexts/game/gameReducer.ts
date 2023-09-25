@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_VARIATIONS, SWITCH_LINES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -104,13 +104,25 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case INIT_GAME:
             game.load(action.payload.fen);
-            console.log("*********INITIAL MOVE SEQUENCE: ", action.payload.moveSequence);
             
             return {
                 ...state,
                 fen: action.payload.fen,
-                initialMoves: action.payload.moveSequence
+                moveHistories: action.payload.moveHistories,
+                currentFens: action.payload.currentFens,
             };
+        
+        case SET_VARIATIONS:
+            return {
+                ...state,
+                variations: action.payload.variations
+            }
+
+        case SWITCH_LINES:
+            return {
+                ...state,
+                fen: action.payload.fen,
+            }
 
         default:
             return state;

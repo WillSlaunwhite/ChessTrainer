@@ -1,5 +1,5 @@
 import { QuizState } from "./quiz-context";
-import { ADD_WRONG_MOVE, FINISH_QUIZ, INCREMENT_LINE, INCREMENT_MOVE, QuizActionTypes, SET_CORRECTNESS, TOGGLE_QUIZ_ACTIVE, UPDATE_SCORE } from "./quizActions";
+import { ADD_WRONG_MOVE, DECREMENT_LINE, FINISH_QUIZ, INCREMENT_LINE, INCREMENT_MOVE, QuizActionTypes, SET_CORRECTNESS, SET_CURRENT_LINE_NUMBER, TOGGLE_QUIZ_ACTIVE, UPDATE_SCORE } from "./quizActions";
 
 export const quizReducer = (state: QuizState, action: QuizActionTypes): QuizState => {
     switch (action.type) {
@@ -8,6 +8,12 @@ export const quizReducer = (state: QuizState, action: QuizActionTypes): QuizStat
 
         case INCREMENT_LINE:
             return { ...state, currentLineIndex: state.currentLineIndex + 1 };
+
+        case DECREMENT_LINE:
+            return { ...state, currentLineIndex: state.currentLineIndex - 1 };
+
+        case SET_CURRENT_LINE_NUMBER:
+            return { ...state, currentLineIndex: action.payload.line }
 
         case UPDATE_SCORE:
             return { ...state, score: state.score + 1 };

@@ -18,6 +18,7 @@ export interface GameState {
     promotionDestination: string;
     initialMoves: string[];
     variations: VariationDTO[];
+    san: string;
 }
 
 interface GameStateProviderProps {
@@ -48,7 +49,8 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         promotionSource: "",
         promotionDestination: "",
         initialMoves: [],
-        variations: []
+        variations: [],
+        san: "",
     });
 
     return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;

@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_VARIATIONS, SWITCH_LINES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -18,16 +18,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 selectedSquare: action.payload.square
             };
 
-        case GET_PIECE_AT_SQUARE:
-            const { square } = action.payload;
-            const color = game.get(square as Square)?.color;
-            const piece = game.get(square as Square)?.type;
-            return {
-                ...state,
-                pieceAtSquare: piece,
-                colorOfPiece: color
-            };
-
         case CHECK_MOVE_LEGALITY: {
             const { source, destination } = action.payload;
             const isValid: boolean = isValidMove(game, source, destination);
@@ -43,11 +33,15 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                         promotionDestination: destination
                     };
                 } else {
-                    game.move({ from: source, to: destination });
+                    const newMove = game.move({ from: source, to: destination });
+                    // added this for troubleshooting purposes
+                    const newSan = newMove.san
+                    console.log("*************** IN REDUCER, NEW SAN: ", newSan);
                     return {
                         ...state,
                         fen: game.fen(),
-                        selectedSquare: null
+                        selectedSquare: null,
+                        san: newSan
                     }
                 }
             } else {
@@ -59,15 +53,29 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         }
 
         case EXECUTE_PAWN_PROMOTION: {
-            const { source, destination, promotion} = action.payload;
-            game.move({ from: source, to: destination, promotion: promotion});
+            const { source, destination, promotion } = action.payload;
+            const newMove = game.move({ from: source, to: destination, promotion: promotion });
+            const newSan = newMove.san;
+            console.log("*************** IN REDUCER, NEW MOVE: ", newMove);
+
             return {
                 ...state,
                 fen: game.fen(),
                 selectedSquare: null,
-                isPawnPromotion: false
+                isPawnPromotion: false,
+                san: newSan
             };
         }
+
+        case GET_PIECE_AT_SQUARE:
+            const { square } = action.payload;
+            const color = game.get(square as Square)?.color;
+            const piece = game.get(square as Square)?.type;
+            return {
+                ...state,
+                pieceAtSquare: piece,
+                colorOfPiece: color
+            };
 
         case MAKE_MOVE: {
             const { source, destination } = action.payload;
@@ -104,18 +112,24 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case INIT_GAME:
             game.load(action.payload.fen);
-            
+
             return {
                 ...state,
                 fen: action.payload.fen,
                 moveHistories: action.payload.moveHistories,
                 currentFens: action.payload.currentFens,
             };
-        
+
         case SET_VARIATIONS:
             return {
                 ...state,
                 variations: action.payload.variations
+            }
+
+        case UPDATE_MOVE_HISTORIES:
+            return {
+                ...state,
+                moveHistories: action.payload.moveHistories
             }
 
         case SWITCH_LINES:

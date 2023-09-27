@@ -4,16 +4,20 @@ import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION } from "../../contexts/game
 import ChessboardPresentation from "./chessboard-presentation";
 
 interface ChessboardContainerProps {
-	handleMoveParent: () => void;
+	handleMoveParent: (newMove: string) => void;
+	currentLineIndex: number;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent }) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
 	const [gameState, dispatch] = useGameState();
 
 	const handleMove = (source: string, destination: string) => {
 		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
-		// handleMoveParent();
 	};
+
+	useEffect(()=> {
+		handleMoveParent(gameState.san);
+	}, [gameState.san]);
 
 	useEffect(() => {
 		if (gameState.isPawnPromotion) {
@@ -29,7 +33,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 		}
 	}, [gameState.isPawnPromotion]);
 
-	return <ChessboardPresentation fen={gameState.fen} onMove={handleMove} />;
+	return <ChessboardPresentation fen={gameState.currentFens[currentLineIndex]} onMove={handleMove} />;
 };
 
 

@@ -5,7 +5,7 @@ export const INIT_GAME = "INIT_GAME";
 export const MAKE_MOVE = "MAKE_MOVE";
 export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const SELECT_SQUARE = "SELECT_SQUARE";
-export const SET_BOARD_FROM_ACTION = "SET_BOARD_FROM_ACTION";
+export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
 export const SET_VARIATIONS = "SET_VARIATIONS";
 export const SWITCH_LINES = "SWITCH_LINES";
 export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
@@ -67,9 +67,10 @@ export interface SelectSquareAction {
 }
 
 export interface SetBoardFromHistoryAction {
-    type: typeof SET_BOARD_FROM_ACTION;
+    type: typeof SET_BOARD_FROM_HISTORY;
     payload: {
         moveHistory: string[];
+        lineIndex: number;
     }
 }
 

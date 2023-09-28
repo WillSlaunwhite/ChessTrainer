@@ -9,11 +9,12 @@ interface MoveContainerProps {
 
 
 const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories }) => {
-
+	console.log("MOVE CONTAINER MOVE HISTORIES: ", moveHistories);
+	const moveHistoriesArray = Object.values(moveHistories);
 
 	return (
-		<div className="block-container flex flex-row justify-center mb-2">
-			{moveHistories.map((moveHistory, i) => (
+		<div className="block-container flex flex-row w-full h-full justify-center mb-2">
+			{moveHistoriesArray.map((moveHistory, i) => (
 				<MoveBlock
 					key={i}
 					moveHistory={moveHistory}

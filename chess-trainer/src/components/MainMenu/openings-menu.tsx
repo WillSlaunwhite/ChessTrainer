@@ -26,13 +26,14 @@ const OpeningsMenu: React.FC = () => {
 
 				fullMoveSequences.forEach(sequence => {
 					sequence.forEach(move => {
-						console.log(move);
-						
-						tempGame.move(move);
+						// console.log(move);
+						if(move != "") { tempGame.move(move); }
 					});
 					fens.push(tempGame.fen());
 					tempGame.reset();
 				});
+				console.log("OPENINGS MENU, FULL MOVE SEQUENCES: ", fullMoveSequences);
+				
 
 				dispatch({ type: INIT_GAME, payload: { fen: fens[0], moveHistories: fullMoveSequences, currentFens: fens } });
 				navigate('/game');

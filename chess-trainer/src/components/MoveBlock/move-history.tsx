@@ -6,6 +6,7 @@ interface MoveHistoryProps {
 }
 
 const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
+  
   return (
     <div className='move-history tracking-wide text-center'>
       {moveHistory.map((move, index) => (

@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -12,12 +12,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
     if (state.fen) game = new Chess(state.fen); else game = new Chess();
 
     switch (action.type) {
-        case SELECT_SQUARE:
-            return {
-                ...state,
-                selectedSquare: action.payload.square
-            };
-
         case CHECK_MOVE_LEGALITY: {
             const { source, destination } = action.payload;
             const isValid: boolean = isValidMove(game, source, destination);
@@ -120,22 +114,54 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 currentFens: action.payload.currentFens,
             };
 
+        case SELECT_SQUARE:
+            return {
+                ...state,
+                selectedSquare: action.payload.square
+            };
+
+        case SET_BOARD_FROM_HISTORY:
+            const lineIndex = action.payload.lineIndex;
+            const moves = state.moveHistories[lineIndex].filter(move => move !== "");
+
+            console.log("IN SET BOARD, LINE INDEX: ", lineIndex, "MOVES: ", moves);
+            console.log("IN SET BOARD, MOVE HISTORIES: ", state.moveHistories);
+            game.reset();
+            moves.forEach(move => { game.move(move); });
+
+            return {
+                ...state,
+                currentFens: {
+                    ...state.currentFens,
+                    [lineIndex]: game.fen()
+                },
+                moveHistories: {
+                    ...state.moveHistories,
+                    [lineIndex]: moves
+                },
+                fen: game.fen(),
+
+            }
+
         case SET_VARIATIONS:
             return {
                 ...state,
                 variations: action.payload.variations
             }
 
-        case UPDATE_MOVE_HISTORIES:
-            return {
-                ...state,
-                moveHistories: action.payload.moveHistories
-            }
-
         case SWITCH_LINES:
             return {
                 ...state,
                 fen: action.payload.fen,
+            }
+
+        case UPDATE_MOVE_HISTORIES:
+            const filteredMoveHistories = action.payload.moveHistories.map(subArray => 
+                subArray.filter(move => move !== "")
+            );
+            return {
+                ...state,
+                moveHistories: filteredMoveHistories
             }
 
         default:

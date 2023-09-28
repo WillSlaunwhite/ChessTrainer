@@ -10,7 +10,7 @@ interface MoveProps {
 const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
 
 	const getBorderColor = () => {
-		if (isCorrect === null && isCurrent) {
+		if (isCurrent) {
 			return "border-blue-500";
 		} else if (isCorrect === false) {
 			return "border-red-500";
@@ -44,7 +44,7 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 	}, [moveHistory]);
 
 	return (
-		<div className={`block-border font-sans text-xl text-gray-600 w-full m-0 overflow-scroll h-28 border-[3px] ${getBorderColor()}`}>
+		<div className={`block-border font-sans text-xl text-gray-600 w-full m-0 overflow-scroll h-28 border-x-2 border-y-4 ${getBorderColor()}`}>
 			<div className="move-history tracking-wide text-center">
 				<MoveHistory moveHistory={moveHistory} />
 			</div>

@@ -11,6 +11,7 @@ interface MoveContainerProps {
 const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories }) => {
 	console.log("MOVE CONTAINER MOVE HISTORIES: ", moveHistories);
 	const moveHistoriesArray = Object.values(moveHistories);
+	// const totalNumMoves = moveHistories.map((history) => { history.map((move) => { ??? })})
 
 	return (
 		<div className="block-container flex flex-row w-full h-full justify-center mb-2">

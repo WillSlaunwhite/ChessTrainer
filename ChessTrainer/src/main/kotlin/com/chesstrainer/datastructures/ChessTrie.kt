@@ -42,7 +42,9 @@ class ChessTrie {
         }
 
         return current.children.mapValues { it.value.frequency }
-    }class ChessTrie {
+    }
+
+    class ChessTrie {
         val root = ChessTrieNode()
 
         fun insert(moveSequence: List<String>) {

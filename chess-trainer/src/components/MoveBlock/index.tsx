@@ -24,19 +24,25 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 
 	useEffect(() => {
 		const fetchNextMoves = async () => {
-			console.log("MOVE HISTORY MOVE BLOCK: ", moveHistory);
-			
+			const fullMoves = [];
+			for (let i = 0; i < moveHistory.length; i += 2) {
+				if (moveHistory[i + 1]) {
+					fullMoves.push(`${moveHistory[i]} ${moveHistory[i + 1]}`);
+				} else {
+					fullMoves.push(moveHistory[i]);
+				}
+			}
 			const response = await fetch('http://localhost:8085/api/chess/next-moves', {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify([moveHistory])
+				body: JSON.stringify([fullMoves])
 			});
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log("DATA: ", data);
+				console.log("DATA: ", data, "\t BODY: ", JSON.stringify([fullMoves]));
 			}
 		};
 
@@ -44,7 +50,7 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 	}, [moveHistory]);
 
 	return (
-		<div className={`block-border font-sans text-xl text-gray-600 w-full m-0 overflow-scroll h-28 border-x-2 border-y-4 ${getBorderColor()}`}>
+		<div className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-36 border-x-2 border-b-4 ${getBorderColor()}`}>
 			<div className="move-history tracking-wide text-center">
 				<MoveHistory moveHistory={moveHistory} />
 			</div>

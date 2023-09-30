@@ -31,3 +31,31 @@ bg-img {
   background: linear-gradient(to bottom, #7a7474, transparent);
   pointer-events: none; /* so it doesn't interfere with scrolling */
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-enter { animation: fadeIn .5s ease-in-out; }
+
+@keyframes gradientBorder {
+  0% {
+      background-position: 100% 0%;
+  }
+  100% {
+      background-position: 0% 100%;
+  }
+}
+
+.gradient-border {
+  background: linear-gradient(90deg, red, yellow, green, blue);
+  background-size: 400% 400%;
+  animation: gradientBorder 3s infinite;
+  border: 4px solid;
+  border-image-source: linear-gradient(90deg, red, yellow, green, blue);
+  border-image-slice: 1;
+}

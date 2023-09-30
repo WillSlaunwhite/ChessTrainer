@@ -6,19 +6,20 @@ import { GameActionTypes } from "./gameActions";
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 export interface GameState {
-    currentFens: string[];
-    moveHistories: string[][];
-    fen: string;
-    selectedSquare: string | null;
-    pieceAtSquare: string;
     colorOfPiece: string;
-    lastMoveValid: boolean;
-    isPawnPromotion: boolean;
-    promotionSource: string;
-    promotionDestination: string;
+    computerColor: 'white' | 'black';
+    currentFens: string[];
+    fen: string;
     initialMoves: string[];
-    variations: VariationDTO[];
+    isPawnPromotion: boolean;
+    lastMoveValid: boolean;
+    moveHistories: string[][];
+    pieceAtSquare: string;
+    promotionDestination: string;
+    promotionSource: string;
     san: string;
+    selectedSquare: string | null;
+    variations: VariationDTO[];
 }
 
 interface GameStateProviderProps {
@@ -38,19 +39,20 @@ export const useGameState = () => {
 
 export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, {
-        currentFens: [startingFen, startingFen, startingFen],
-        moveHistories: [[], [], []],
-        fen: "",
-        selectedSquare: null,
-        pieceAtSquare: "",
         colorOfPiece: "",
-        lastMoveValid: false,
-        isPawnPromotion: false,
-        promotionSource: "",
-        promotionDestination: "",
+        computerColor: "black",
+        currentFens: [startingFen, startingFen, startingFen],
+        fen: "",
         initialMoves: [],
-        variations: [],
+        isPawnPromotion: false,
+        lastMoveValid: false,
+        moveHistories: [[], [], []],
+        pieceAtSquare: "",
+        promotionDestination: "",
+        promotionSource: "",
         san: "",
+        selectedSquare: null,
+        variations: [],
     });
 
     return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;

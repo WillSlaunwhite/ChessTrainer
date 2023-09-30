@@ -5,10 +5,11 @@ interface MoveContainerProps {
 	isCorrect: boolean[];
 	currentBlockIndex: number;
 	moveHistories: string[][];
+    switchLines: (event: React.MouseEvent<HTMLDivElement>, index: number) => void;
 }
 
 
-const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories }) => {
+const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories, switchLines }) => {
 	console.log("MOVE CONTAINER MOVE HISTORIES: ", moveHistories);
 	const moveHistoriesArray = Object.values(moveHistories);
 	// const totalNumMoves = moveHistories.map((history) => { history.map((move) => { ??? })})
@@ -18,9 +19,12 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 			{moveHistoriesArray.map((moveHistory, i) => (
 				<MoveBlock
 					key={i}
-					moveHistory={moveHistory}
+					moveHistories={moveHistories}
 					isCurrent={i === currentBlockIndex}
 					isCorrect={isCorrect[i]}
+					currentIndex={i}
+					onClick={(event) => switchLines(event, i)}
+					blockNumber={i}
 				/>
 			))}
 		</div>

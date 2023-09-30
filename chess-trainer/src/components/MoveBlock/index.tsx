@@ -3,11 +3,15 @@ import MoveHistory from "./move-history";
 
 interface MoveProps {
 	isCorrect: boolean | null;
-	moveHistory: string[];
+	moveHistories: string[][];
 	isCurrent: boolean;
+	currentIndex: number;
+    onClick: (event: React.MouseEvent<HTMLDivElement>, index: number) => void;
+	blockNumber: number;
 }
 
-const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
+const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistories, isCurrent, currentIndex, onClick, blockNumber }) => {
+	const moveHistoriesArray = Object.values(moveHistories);
 
 	const getBorderColor = () => {
 		if (isCurrent) {
@@ -21,38 +25,44 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) =
 		}
 	};
 
+	const convertToFullMoves = (history: string[]) => {
+		const fullMoves = [];
+		for (let i = 0; i < history.length; i += 2) {
+			if (history[i + 1]) {
+				fullMoves.push(`${history[i]} ${history[i + 1]}`);
+			} else {
+				fullMoves.push(history[i]);
+			}
+		}
+		return fullMoves;
+	};
+	
+
 
 	useEffect(() => {
 		const fetchNextMoves = async () => {
-			const fullMoves = [];
-			for (let i = 0; i < moveHistory.length; i += 2) {
-				if (moveHistory[i + 1]) {
-					fullMoves.push(`${moveHistory[i]} ${moveHistory[i + 1]}`);
-				} else {
-					fullMoves.push(moveHistory[i]);
-				}
-			}
+			const allFullMoves = moveHistoriesArray.map(convertToFullMoves);
 			const response = await fetch('http://localhost:8085/api/chess/next-moves', {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify([fullMoves])
+				body: JSON.stringify(allFullMoves)
 			});
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log("DATA: ", data, "\t BODY: ", JSON.stringify([fullMoves]));
+				console.log("DATA: ", data, "\t BODY: ", response.body);
 			}
 		};
 
 		fetchNextMoves()
-	}, [moveHistory]);
+	}, moveHistoriesArray);
 
 	return (
-		<div className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-36 border-x-2 border-b-4 ${getBorderColor()}`}>
+		<div onClick={(event) => onClick(event, blockNumber)} className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-[7.5rem] border-x-2 border-b-4 ${getBorderColor()}`}>
 			<div className="move-history tracking-wide text-center">
-				<MoveHistory moveHistory={moveHistory} />
+				<MoveHistory moveHistory={moveHistoriesArray[currentIndex]} />
 			</div>
 		</div>
 		// move numbers and the move next to it

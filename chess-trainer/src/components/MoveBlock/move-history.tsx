@@ -18,7 +18,7 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
           const blackMove = moves[index + 1] || ""; // in case there isn't a black move
           
           return (
-            <div className='w-full text-left flex align-middle' key={index}>
+            <div className='w-full text-left flex align-middle fade-enter' key={index}>
               <span className='pl-1'>{moveNumber}. </span>
               <Move move={whiteMove} isRecent={isRecent} />
               {blackMove && <span className='mx-auto'> - </span>}

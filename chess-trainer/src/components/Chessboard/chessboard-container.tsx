@@ -4,7 +4,7 @@ import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION } from "../../contexts/game
 import ChessboardPresentation from "./chessboard-presentation";
 
 interface ChessboardContainerProps {
-	handleMoveParent: (newMove: string) => void;
+	handleMoveParent: (newMove: string, moveHistories: string[][]) => void;
 	currentLineIndex: number;
 }
 
@@ -16,7 +16,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 	};
 
 	useEffect(()=> {
-		handleMoveParent(gameState.san);
+		handleMoveParent(gameState.san, gameState.moveHistories);
 	}, [gameState.san]);
 
 	useEffect(() => {

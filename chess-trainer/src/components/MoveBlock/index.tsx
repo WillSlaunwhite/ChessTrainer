@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import MoveHistory from "./move-history";
+import { convertToFullMoves, getBorderColor } from "../../utility/functions";
 
 interface MoveProps {
 	isCorrect: boolean | null;
@@ -12,31 +13,6 @@ interface MoveProps {
 
 const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistories, isCurrent, currentIndex, onClick, blockNumber }) => {
 	const moveHistoriesArray = Object.values(moveHistories);
-
-	const getBorderColor = () => {
-		if (isCurrent) {
-			return "border-blue-500";
-		} else if (isCorrect === false) {
-			return "border-red-500";
-		} else if (isCorrect === true) {
-			return "border-green-500";
-		} else {
-			return "border-gray-900";
-		}
-	};
-
-	const convertToFullMoves = (history: string[]) => {
-		const fullMoves = [];
-		for (let i = 0; i < history.length; i += 2) {
-			if (history[i + 1]) {
-				fullMoves.push(`${history[i]} ${history[i + 1]}`);
-			} else {
-				fullMoves.push(history[i]);
-			}
-		}
-		return fullMoves;
-	};
-	
 
 
 	useEffect(() => {
@@ -60,7 +36,7 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistories, isCurrent, c
 	}, moveHistoriesArray);
 
 	return (
-		<div onClick={(event) => onClick(event, blockNumber)} className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-[7.5rem] border-x-2 border-b-4 ${getBorderColor()}`}>
+		<div onClick={(event) => onClick(event, blockNumber)} className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-[7.5rem] border-x-2 border-b-4 ${getBorderColor(isCurrent, isCorrect!!)}`}>
 			<div className="move-history tracking-wide text-center">
 				<MoveHistory moveHistory={moveHistoriesArray[currentIndex]} />
 			</div>

@@ -1,4 +1,11 @@
-import { OpeningLine } from "./interfaces";
+export interface OpeningLine {
+	lastComputerMove: string;
+	whiteMoves: string[];
+	blackMoves: string[];
+	correctExplanations: string[];
+	incorrectExplanations: string[];
+	wrongAnswers: string[];
+}
 
 export const italianGameMainLine: OpeningLine = {
 	lastComputerMove: "Bc5",
@@ -74,4 +81,3 @@ export const italianGameHungarian: OpeningLine = {
 	],
 	wrongAnswers: []
 };
-

@@ -30,7 +30,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     const newMove = game.move({ from: source, to: destination });
                     // added this for troubleshooting purposes
                     const newSan = newMove.san
-                    console.log("*************** IN REDUCER, NEW SAN: ", newSan);
                     return {
                         ...state,
                         fen: game.fen(),
@@ -50,7 +49,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const { source, destination, promotion } = action.payload;
             const newMove = game.move({ from: source, to: destination, promotion: promotion });
             const newSan = newMove.san;
-            console.log("*************** IN REDUCER, NEW MOVE: ", newMove);
 
             return {
                 ...state,
@@ -124,8 +122,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const lineIndex = action.payload.lineIndex;
             const moves = state.moveHistories[lineIndex].filter(move => move !== "");
 
-            console.log("IN SET BOARD, LINE INDEX: ", lineIndex, "MOVES: ", moves);
-            console.log("IN SET BOARD, MOVE HISTORIES: ", state.moveHistories);
             game.reset();
             moves.forEach(move => { game.move(move); });
 

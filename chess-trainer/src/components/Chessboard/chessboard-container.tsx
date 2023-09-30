@@ -15,7 +15,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
 	};
 
-	useEffect(()=> {
+	useEffect(() => {
 		handleMoveParent(gameState.san, gameState.moveHistories);
 	}, [gameState.san]);
 

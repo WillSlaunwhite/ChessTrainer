@@ -12,6 +12,7 @@ const GameView: React.FC = () => {
 	const [gameState, gameDispatch] = useGameState();
 	const [quizState, quizDispatch] = useQuiz();
 	const handleMoveUpdate = useHandleMoveUpdate(gameState, quizState, gameDispatch, quizDispatch);
+	console.log("game view");
 
 
 	// * TODO IMPLEMENT THIS

@@ -8,11 +8,10 @@ interface MoveContainerProps {
     switchLines: (event: React.MouseEvent<HTMLDivElement>, index: number) => void;
 }
 
-
 const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories, switchLines }) => {
-	console.log("MOVE CONTAINER MOVE HISTORIES: ", moveHistories);
 	const moveHistoriesArray = Object.values(moveHistories);
 	// const totalNumMoves = moveHistories.map((history) => { history.map((move) => { ??? })})
+	
 
 	return (
 		<div className="block-container flex flex-row w-full h-full justify-center mb-2">

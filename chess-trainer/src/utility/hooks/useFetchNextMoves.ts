@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { convertToFullMoves } from "../chessUtils";
 
-export function useFetchNextMoves(moveHistoriesArray: string[][]) {
+export function useFetchNextMoves(moveHistories: string[][]): Record<string, number>[] {
+    const [fetchedMoves, setFetchedMoves] = useState<Record<string, number>[]>([]);
+	const moveHistoriesArray = Object.values(moveHistories);
     useEffect(() => {
         const fetchNextMoves = async () => {
             const allFullMoves = moveHistoriesArray.map(convertToFullMoves);
@@ -16,9 +18,12 @@ export function useFetchNextMoves(moveHistoriesArray: string[][]) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("DATA: ", data);
+                setFetchedMoves(data);
             }
         };
 
         fetchNextMoves()
     }, moveHistoriesArray);
+
+    return fetchedMoves;
 }

@@ -14,6 +14,7 @@ export interface GameState {
     isPawnPromotion: boolean;
     lastMoveValid: boolean;
     moveHistories: string[][];
+    nextMove: string,
     pieceAtSquare: string;
     promotionDestination: string;
     promotionSource: string;
@@ -47,6 +48,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         isPawnPromotion: false,
         lastMoveValid: false,
         moveHistories: [[], [], []],
+        nextMove: "",
         pieceAtSquare: "",
         promotionDestination: "",
         promotionSource: "",

@@ -6,6 +6,7 @@ export const MAKE_MOVE = "MAKE_MOVE";
 export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const SELECT_SQUARE = "SELECT_SQUARE";
 export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
+export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
 export const SET_VARIATIONS = "SET_VARIATIONS";
 export const SWITCH_LINES = "SWITCH_LINES";
 export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
@@ -74,6 +75,13 @@ export interface SetBoardFromHistoryAction {
     }
 }
 
+export interface SetNextMoveAction {
+    type: typeof SET_NEXT_MOVE;
+    payload: {
+        nextMove: string;
+    }
+}
+
 export interface SetVariationsAction {
     type: typeof SET_VARIATIONS;
     payload: {
@@ -96,4 +104,4 @@ export interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SetBoardFromHistoryAction | SetVariationsAction | SwitchLinesAction | SelectSquareAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SetBoardFromHistoryAction | SetNextMoveAction | SetVariationsAction | SwitchLinesAction | SelectSquareAction | UpdateMoveHistories;

@@ -1,3 +1,4 @@
+import React from "react";
 import MoveBlock from "../../components/MoveBlock";
 
 
@@ -18,7 +19,7 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 			{moveHistoriesArray.map((moveHistory, i) => (
 				<MoveBlock
 					key={i}
-					moveHistories={moveHistories}
+					moveHistory={moveHistories[i]}
 					isCurrent={i === currentBlockIndex}
 					isCorrect={isCorrect[i]}
 					currentIndex={i}
@@ -30,4 +31,4 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 	);
 };
 
-export default MoveContainer;
+export default React.memo(MoveContainer);

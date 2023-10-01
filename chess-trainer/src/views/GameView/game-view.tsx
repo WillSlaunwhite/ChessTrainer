@@ -12,8 +12,6 @@ const GameView: React.FC = () => {
 	const [gameState, gameDispatch] = useGameState();
 	const [quizState, quizDispatch] = useQuiz();
 	const handleMoveUpdate = useHandleMoveUpdate(gameState, quizState, gameDispatch, quizDispatch);
-	console.log("game view");
-
 
 	// * TODO IMPLEMENT THIS
 	const checkMoveCorrectness = (move: string) => {
@@ -28,7 +26,7 @@ const GameView: React.FC = () => {
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={gameState.moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={quizState.currentLineIndex} switchLines={switchLine} />
-			<ChessboardContainer handleMoveParent={handleMoveUpdate} currentLineIndex={quizState.currentLineIndex} />
+			<ChessboardContainer handleUserMoveUpdate={handleMoveUpdate} currentLineIndex={quizState.currentLineIndex} />
 		</div>
 	);
 };

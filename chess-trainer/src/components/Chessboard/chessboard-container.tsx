@@ -1,22 +1,39 @@
 import { useEffect } from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION } from "../../contexts/game/gameActions";
+import { extractMoveDetails } from "../../utility/chessUtils";
+import { useHandleComputerMove } from "../../utility/hooks/useHandleComputerMove";
 import ChessboardPresentation from "./chessboard-presentation";
+import React from "react";
 
 interface ChessboardContainerProps {
-	handleMoveParent: (newMove: string, moveHistories: string[][]) => void;
+	handleUserMoveUpdate: (newMove: string, moveHistories: string[][]) => void;
 	currentLineIndex: number;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMoveParent, currentLineIndex }) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleUserMoveUpdate, currentLineIndex }) => {
 	const [gameState, dispatch] = useGameState();
+	const potentialMoves = useHandleComputerMove();
 
 	const handleMove = (source: string, destination: string) => {
 		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
 	};
 
+	const makeComputerMove = (move: string) => {
+		const [source, destination] = extractMoveDetails(move);
+		dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } })
+	}
+
 	useEffect(() => {
-		handleMoveParent(gameState.san, gameState.moveHistories);
+		handleUserMoveUpdate(gameState.san, gameState.moveHistories);
+
+		// after user moves, computer responsds
+		const movePair = potentialMoves[currentLineIndex];
+		if (movePair) {
+			console.log("COMPUTER MOVE: ", extractMoveDetails(movePair.move)[1]);
+			const computerMove = extractMoveDetails(movePair.move);
+			makeComputerMove(computerMove[1]);
+		}
 	}, [gameState.san]);
 
 	useEffect(() => {
@@ -37,4 +54,4 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleMovePar
 };
 
 
-export default ChessboardContainer;
+export default React.memo(ChessboardContainer);

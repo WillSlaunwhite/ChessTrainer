@@ -5,7 +5,6 @@ import GameView from "./views/GameView/game-view";
 import HomeView from "./views/home-view";
 
 function App() {
-	console.log("app");
 
 	return (
 		<Router>

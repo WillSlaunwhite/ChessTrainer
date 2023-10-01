@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -136,7 +136,12 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     [lineIndex]: moves
                 },
                 fen: game.fen(),
+            }
 
+        case SET_NEXT_MOVE:
+            return {
+                ...state,
+                nextMove: action.payload.nextMove
             }
 
         case SET_VARIATIONS:
@@ -152,7 +157,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             }
 
         case UPDATE_MOVE_HISTORIES:
-            const filteredMoveHistories = action.payload.moveHistories.map(subArray => 
+            const filteredMoveHistories = action.payload.moveHistories.map(subArray =>
                 subArray.filter(move => move !== "")
             );
             return {

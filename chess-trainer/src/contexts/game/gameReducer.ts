@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -69,6 +69,22 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 colorOfPiece: color
             };
 
+        case INCREMENT_LINE:
+            return {
+                ...state,
+                currentLineIndex: state.currentLineIndex + 1
+            };
+
+        case INIT_GAME:
+            game.load(action.payload.fen);
+
+            return {
+                ...state,
+                fen: action.payload.fen,
+                moveHistories: action.payload.moveHistories,
+                currentFens: action.payload.currentFens,
+            };
+
         case MAKE_MOVE: {
             const { source, destination } = action.payload;
             game.load(state.fen);
@@ -102,16 +118,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
         }
 
-        case INIT_GAME:
-            game.load(action.payload.fen);
-
-            return {
-                ...state,
-                fen: action.payload.fen,
-                moveHistories: action.payload.moveHistories,
-                currentFens: action.payload.currentFens,
-            };
-
         case SELECT_SQUARE:
             return {
                 ...state,
@@ -138,10 +144,18 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: game.fen(),
             }
 
+        case SET_CURRENT_LINE_NUMBER:
+            return { ...state, currentLineIndex: action.payload.lineNumber }
+
         case SET_NEXT_MOVE:
+            const currentLineIndex = action.payload.lineIndex;
+            const nextMove = action.payload.nextMove;
             return {
                 ...state,
-                nextMove: action.payload.nextMove
+                nextMoves: {
+                    ...state.nextMoves,
+                    [currentLineIndex]: nextMove
+                }
             }
 
         case SET_VARIATIONS:

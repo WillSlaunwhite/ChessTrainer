@@ -1,3 +1,4 @@
+import React from "react";
 import { getBorderColor } from "../../utility/uiUtils";
 import MoveHistory from "./move-history";
 
@@ -12,6 +13,7 @@ interface MoveProps {
 
 const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent, onClick, blockNumber }) => {
 	const moveHistoriesArray = Object.values(moveHistory);
+	console.log("move block");
 
 	return (
 		<div onClick={(event) => onClick(event, blockNumber)} className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-[7.5rem] border-x-2 border-b-4 ${getBorderColor(isCurrent, isCorrect!!)}`}>
@@ -22,4 +24,4 @@ const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent, onC
 	);
 };
 
-export default MoveBlock;
+export default React.memo(MoveBlock);

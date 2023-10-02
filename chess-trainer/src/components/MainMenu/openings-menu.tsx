@@ -33,6 +33,7 @@ const OpeningsMenu: React.FC = () => {
 					tempGame.reset();
 				});
 				console.log("OPENINGS MENU, FULL MOVE SEQUENCES: ", fullMoveSequences);
+				console.log("OPENINGS MENU, FENS[0]: ", fens[0]);
 				
 
 				dispatch({ type: INIT_GAME, payload: { fen: fens[0], moveHistories: fullMoveSequences, currentFens: fens } });

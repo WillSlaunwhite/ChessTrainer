@@ -9,12 +9,13 @@ export interface GameState {
     colorOfPiece: string;
     computerColor: 'white' | 'black';
     currentFens: string[];
+	currentLineIndex: number;
     fen: string;
     initialMoves: string[];
     isPawnPromotion: boolean;
     lastMoveValid: boolean;
     moveHistories: string[][];
-    nextMove: string,
+    nextMoves: string[],
     pieceAtSquare: string;
     promotionDestination: string;
     promotionSource: string;
@@ -42,13 +43,14 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
     const [gameState, dispatch] = useReducer(gameReducer, {
         colorOfPiece: "",
         computerColor: "black",
+		currentLineIndex: 0,
         currentFens: [startingFen, startingFen, startingFen],
         fen: "",
         initialMoves: [],
         isPawnPromotion: false,
         lastMoveValid: false,
         moveHistories: [[], [], []],
-        nextMove: "",
+        nextMoves: [],
         pieceAtSquare: "",
         promotionDestination: "",
         promotionSource: "",

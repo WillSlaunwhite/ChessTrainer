@@ -2,16 +2,18 @@ export const CHECK_MOVE_LEGALITY = "CHECK_MOVE_LEGALITY";
 export const EXECUTE_PAWN_PROMOTION = "EXECUTE_PAWN_PROMOTION";
 export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
 export const INIT_GAME = "INIT_GAME";
+export const INCREMENT_LINE = 'INCREMENT_LINE';
 export const MAKE_MOVE = "MAKE_MOVE";
 export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const SELECT_SQUARE = "SELECT_SQUARE";
 export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
+export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
 export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
 export const SET_VARIATIONS = "SET_VARIATIONS";
 export const SWITCH_LINES = "SWITCH_LINES";
 export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
 
-export interface CheckMoveLegalityAction {
+interface CheckMoveLegalityAction {
     type: typeof CHECK_MOVE_LEGALITY;
     payload: {
         source: string;
@@ -19,7 +21,7 @@ export interface CheckMoveLegalityAction {
     };
 }
 
-export interface ExecutePawnPromotionAction {
+interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
     payload: {
         source: string;
@@ -28,14 +30,14 @@ export interface ExecutePawnPromotionAction {
     };
 }
 
-export interface GetPieceAtSquareAction {
+interface GetPieceAtSquareAction {
     type: typeof GET_PIECE_AT_SQUARE;
     payload: {
         square: string;
     };
 }
 
-export interface InitGameAction {
+interface InitGameAction {
     type: typeof INIT_GAME;
     payload: {
         fen: string;
@@ -44,7 +46,11 @@ export interface InitGameAction {
     };
 }
 
-export interface MakeMoveAction {
+interface IncrementLineAction {
+    type: typeof INCREMENT_LINE;
+}
+
+interface MakeMoveAction {
     type: typeof MAKE_MOVE;
     payload: {
         source: string;
@@ -52,7 +58,7 @@ export interface MakeMoveAction {
     };
 }
 
-export interface MakeMoveWithPromotionAction {
+interface MakeMoveWithPromotionAction {
     type: typeof MAKE_MOVE_WITH_PROMOTION;
     payload: {
         source: string;
@@ -60,14 +66,14 @@ export interface MakeMoveWithPromotionAction {
         promotionPiece: string;
     };
 }
-export interface SelectSquareAction {
+interface SelectSquareAction {
     type: typeof SELECT_SQUARE;
     payload: {
         square: string | null;
     };
 }
 
-export interface SetBoardFromHistoryAction {
+interface SetBoardFromHistoryAction {
     type: typeof SET_BOARD_FROM_HISTORY;
     payload: {
         moveHistory: string[];
@@ -75,28 +81,34 @@ export interface SetBoardFromHistoryAction {
     }
 }
 
-export interface SetNextMoveAction {
+interface SetCurrentLineNumberAction {
+    type: typeof SET_CURRENT_LINE_NUMBER;
+    payload: { lineNumber: number; }
+}
+
+interface SetNextMoveAction {
     type: typeof SET_NEXT_MOVE;
     payload: {
         nextMove: string;
+        lineIndex: number;
     }
 }
 
-export interface SetVariationsAction {
+interface SetVariationsAction {
     type: typeof SET_VARIATIONS;
     payload: {
         variations: VariationDTO[];
     };
 }
 
-export interface SwitchLinesAction {
+interface SwitchLinesAction {
     type: typeof SWITCH_LINES;
     payload: {
         fen: string;
     };
 }
 
-export interface UpdateMoveHistories {
+interface UpdateMoveHistories {
     type: typeof UPDATE_MOVE_HISTORIES;
     payload: {
         moveHistories: string[][];
@@ -104,4 +116,4 @@ export interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SetBoardFromHistoryAction | SetNextMoveAction | SetVariationsAction | SwitchLinesAction | SelectSquareAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SetCurrentLineNumberAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;

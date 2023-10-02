@@ -3,7 +3,6 @@ import { quizReducer } from "./quizReducer";
 import { QuizActionTypes } from "./quizActions";
 
 export interface QuizState {
-	currentLineIndex: number;
 	currentMoveIndex: number;
 	score: number;
 	wrongMoves: { line: number; move: number }[];
@@ -28,7 +27,6 @@ export const useQuiz = () => {
 
 export const QuizInteractionProvider: React.FC<QuizStateProviderProps> = ({ children }) => {
 	const [quizState, dispatch] = useReducer(quizReducer, {
-		currentLineIndex: 0,
 		currentMoveIndex: 0,
 		score: 0,
 		wrongMoves: [],

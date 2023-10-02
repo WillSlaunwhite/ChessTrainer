@@ -11,6 +11,8 @@ interface MoveContainerProps {
 
 const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories, switchLines }) => {
 	const moveHistoriesArray = Object.values(moveHistories);
+	console.log("move container");
+	
 	// const totalNumMoves = moveHistories.map((history) => { history.map((move) => { ??? })})
 	
 

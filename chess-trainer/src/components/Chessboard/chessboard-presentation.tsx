@@ -7,6 +7,8 @@ interface ChessboardPresentationProps {
 }
 
 const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, onMove }) => {
+	console.log("CHESS PRES FEN: ", fen);
+	
 	const cols = "abcdefgh";
 	const board = fen.split(" ")[0];
 
@@ -41,4 +43,4 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 	);
 };
 
-export default ChessboardPresentation;
+export default React.memo(ChessboardPresentation);

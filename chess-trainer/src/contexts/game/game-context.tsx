@@ -12,6 +12,7 @@ export interface GameState {
 	currentLineIndex: number;
     fen: string;
     initialMoves: string[];
+    isComputerTurn: boolean,
     isPawnPromotion: boolean;
     lastMoveValid: boolean;
     moveHistories: string[][];
@@ -47,6 +48,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         currentFens: [startingFen, startingFen, startingFen],
         fen: "",
         initialMoves: [],
+        isComputerTurn: false,
         isPawnPromotion: false,
         lastMoveValid: false,
         moveHistories: [[], [], []],

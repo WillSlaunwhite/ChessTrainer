@@ -7,6 +7,7 @@ export const MAKE_MOVE = "MAKE_MOVE";
 export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const SELECT_SQUARE = "SELECT_SQUARE";
 export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
+export const SET_IS_COMPUTER_TURN = "SET_IS_COMPUTER_TURN";
 export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
 export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
 export const SET_VARIATIONS = "SET_VARIATIONS";
@@ -86,6 +87,11 @@ interface SetCurrentLineNumberAction {
     payload: { lineNumber: number; }
 }
 
+interface SetIsComputerTurnAction {
+    type: typeof SET_IS_COMPUTER_TURN;
+    payload: { isComputerTurn: boolean; }
+}
+
 interface SetNextMoveAction {
     type: typeof SET_NEXT_MOVE;
     payload: {
@@ -116,4 +122,4 @@ interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SetCurrentLineNumberAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction |  SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;

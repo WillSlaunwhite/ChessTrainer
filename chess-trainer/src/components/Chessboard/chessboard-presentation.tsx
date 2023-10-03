@@ -7,8 +7,6 @@ interface ChessboardPresentationProps {
 }
 
 const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, onMove }) => {
-	console.log("CHESS PRES FEN: ", fen);
-	
 	const cols = "abcdefgh";
 	const board = fen.split(" ")[0];
 
@@ -28,9 +26,9 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 			return squares;
 		});
 	};
-	
+
 	const boardArray = fenToArray(board);
-	
+
 	return (
 		<div className="chessboard grid w-344px h-344px">
 			{boardArray.map((row, rowIndex) => {

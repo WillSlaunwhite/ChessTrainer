@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -77,12 +77,20 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case INIT_GAME:
             game.load(action.payload.fen);
+            
+            console.log("New state after INIT_GAME:", {
+                ...state,
+                fen: action.payload.fen,
+                moveHistories: action.payload.moveHistories,
+                currentFens: action.payload.currentFens,
+            });
 
             return {
                 ...state,
                 fen: action.payload.fen,
                 moveHistories: action.payload.moveHistories,
                 currentFens: action.payload.currentFens,
+                initialMoves: action.payload.initialMoves
             };
 
         case MAKE_MOVE: {
@@ -147,6 +155,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case SET_CURRENT_LINE_NUMBER:
             return { ...state, currentLineIndex: action.payload.lineNumber }
 
+        case SET_IS_COMPUTER_TURN:
+            return { ...state, isComputerTurn: action.payload.isComputerTurn }
+            
         case SET_NEXT_MOVE:
             const currentLineIndex = action.payload.lineIndex;
             const nextMove = action.payload.nextMove;

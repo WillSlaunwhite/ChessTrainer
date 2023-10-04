@@ -4,9 +4,14 @@ import { convertToFullMoves } from "../chessUtils";
 export function useFetchNextMoves(moveHistories: string[][]): Record<string, number>[] {
     const [fetchedMoves, setFetchedMoves] = useState<Record<string, number>[]>([]);
 	const moveHistoriesArray = Object.values(moveHistories);
+    const moveHistoriesString = JSON.stringify(moveHistoriesArray);
+    console.log("MOVE HISTORIES ARRAY: ", moveHistoriesArray);
+    
     useEffect(() => {
         const fetchNextMoves = async () => {
             const allFullMoves = moveHistoriesArray.map(convertToFullMoves);
+            console.log("ALL FULL MOVES", allFullMoves);
+            
             const response = await fetch('http://localhost:8085/api/chess/next-moves', {
                 method: "POST",
                 headers: {
@@ -23,7 +28,7 @@ export function useFetchNextMoves(moveHistories: string[][]): Record<string, num
         };
 
         fetchNextMoves()
-    }, moveHistoriesArray);
+    }, [moveHistoriesString]);
 
     return fetchedMoves;
 }

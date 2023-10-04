@@ -5,7 +5,6 @@ import GameView from "./views/GameView/game-view";
 import HomeView from "./views/home-view";
 
 function App() {
-
 	return (
 		<Router>
 			<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">

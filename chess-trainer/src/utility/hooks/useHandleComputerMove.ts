@@ -8,25 +8,25 @@ interface PotentialMove {
     occurrences: number;
 }
 
-export function useHandleComputerMove(): PotentialMove[] {
+export function useHandleComputerMove() {
     const [gameState] = useGameState();
     const fetchedMoves: Record<string, number>[] = useFetchNextMoves(gameState.moveHistories);
+    console.log("moveHistories at start of useHandleComputerMove:", gameState.moveHistories);
 
-    const [probableMoves, setProbableMoves] = useState<PotentialMove[]>([]);
 
-    useEffect(() => {
+    const fetchProbableMoves = (): PotentialMove[] => {
         if (fetchedMoves && fetchedMoves.length) {
-            const mostProbableMoves = fetchedMoves.map(moveData => {
+            return fetchedMoves.map(moveData => {
+                console.log("HELLO");
+
                 const move = getMostProbableMove(moveData);
                 return {
                     move: move,
                     occurrences: moveData[move]
                 };
             });
-
-            setProbableMoves(mostProbableMoves);
         }
-    }, [fetchedMoves]);
-
-    return probableMoves;
+        return [];
+    }
+    return fetchProbableMoves;
 }

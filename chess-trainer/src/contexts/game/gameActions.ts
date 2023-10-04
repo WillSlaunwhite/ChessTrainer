@@ -44,6 +44,7 @@ interface InitGameAction {
         fen: string;
         currentFens: string[];
         moveHistories: string[][];
+        initialMoves: string[];
     };
 }
 

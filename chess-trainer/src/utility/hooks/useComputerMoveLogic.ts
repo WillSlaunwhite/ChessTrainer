@@ -21,7 +21,7 @@ export function useComputerMoveLogic() {
             const computerMove = extractMoveDetails(nextMovePair.move)[1];
             dispatch({ type: SET_NEXT_MOVE, payload: { nextMove: computerMove, lineIndex: lineIndex } });
         }
-    }, [nextMoves]);
+    }, []);
 
     // useEffect(() => {
     const makeComputerMove = () => {

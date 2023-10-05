@@ -7,55 +7,65 @@ import { INIT_GAME } from "../../contexts/game/gameActions";
 import { convertToFullMoves, determineFirstComputerMove } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
-	const [, dispatch] = useGameState();
+	const [gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 
-	const openGame = (openingName: string) => {
+	const openGame = async (openingName: string) => {
 		const tempGame = new Chess();
-		fetch(`http://localhost:8085/api/openings/${openingName}/start`)
-			.then((res) => res.json())
-			.then(async (opening: OpeningDTO) => {
-				const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
-				const fens: string[] = []
-				const firstMoves: string[] = [];
+		try {
+			const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`)
+			const opening: OpeningDTO = await response.json();
 
-				const fullMoveSequences = opening.variations.map(variation => {
-					if (variation.movesSequence[0]) {
-						return baseSequence.concat(variation.movesSequence);
-					} else { return baseSequence; }
-				});
+			const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
+			const fens: string[] = []
+			const firstMoves: string[] = [];
 
-				for (let i = 0; i < fullMoveSequences.length; i++) {
-					const baseSequence = fullMoveSequences[i];
-					const fullSequence = convertToFullMoves(baseSequence);
+			const fullMoveSequences = opening.variations.map(variation => {
+				if (variation.movesSequence[0]) {
+					return baseSequence.concat(variation.movesSequence);
+				} else { return baseSequence; }
+			});
 
-					const firstComputerMove = await determineFirstComputerMove(fullSequence);
-					if (firstComputerMove) {
-						firstMoves[i] = firstComputerMove;
-					}
+			for (let i = 0; i < fullMoveSequences.length; i++) {
+				let sequence = fullMoveSequences[i];
+				sequence = convertToFullMoves(sequence);
 
-					baseSequence.forEach(move => {
-						if (move != "") { tempGame.move(move); }
-					});
-					fens.push(tempGame.fen());
-					tempGame.reset();
+				const firstComputerMove = await determineFirstComputerMove(sequence);
+				if (firstComputerMove) {
+					firstMoves[i] = firstComputerMove;
 				}
 
-				console.log("Fetched opening: ", opening);
-				console.log("FULL MOVE SEQUENCES: ", fullMoveSequences);
-				dispatch({
-					type: INIT_GAME, payload: {
-						fen: fens[0],
-						moveHistories: fullMoveSequences,
-						currentFens: fens,
-						initialMoves: firstMoves
+				sequence.forEach(move => {
+					console.log("MOVE: ", move);
+					if (move !== "" && gameState.colorOfPiece === 'black') {
+						tempGame.move(move.split(' ')[1]);
+					} else {
+						tempGame.move(move.split(' ')[0]);
 					}
 				});
-				navigate('/game');
-			})
-			.catch((error) => console.error('Failed to fetch variations: ', error));
+				if (!fens.includes(tempGame.fen())) {
+					fens.push(tempGame.fen());
+				}
+				tempGame.reset();
+			}
 
+			console.log("Fetched opening: ", opening);
+			console.log("FULL MOVE SEQUENCES: ", fullMoveSequences);
+			dispatch({
+				type: INIT_GAME, payload: {
+					fen: fens[0],
+					moveHistories: fullMoveSequences,
+					currentFens: fens,
+					initialMoves: firstMoves
+				}
+			});
+			navigate('/game');
+
+		}
+		catch (error) {
+			console.error('Failed to fetch variations: ', error);
+		};
 	}
 
 

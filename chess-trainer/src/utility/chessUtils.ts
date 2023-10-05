@@ -59,7 +59,6 @@ function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
         const probableMoves = Object.entries(data[0]);
         probableMoves.sort((a, b) => b[1] - a[1]);
         console.log("PROBABLE MOVES: ", probableMoves);
-        return "";
-        // return probableMoves[0][0].split(' ')[2];
+        return probableMoves[0][0].split(' ')[2];
     });
 }

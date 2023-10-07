@@ -34,31 +34,42 @@ export function extractMoveDetails(movesString: string): [source: string, destin
     return [moves[0], moves[1]];
 }
 
-export function determineFirstComputerMove(baseSequence: string[]): Promise<string> {
-    const lastMove = baseSequence[baseSequence.length - 1];
+export function determineNextComputerMove(baseSequence: string[]): Promise<string> {
+    const nextMove = baseSequence[baseSequence.length - 1];
+    console.log("NEXT MOVE: ", nextMove);
+    
 
-    if (baseSequence.length % 2 !== 0) {
+    if (isComputersTurn(baseSequence)) {
         return fetchNextMoveForSequence(baseSequence);
     }
 
-    return Promise.resolve(lastMove);
+    return Promise.resolve(nextMove);
 }
 
-function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
+
+
+function isComputersTurn(moveSequence: string[]): boolean {
+    return moveSequence.length % 2 !== 0;
+}
+
+async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
     console.log("SEQUENCE: ", sequence);
-    
-    return fetch('http://localhost:8085/api/chess/next-moves', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify([sequence])
-    })
-    .then(res => res.json())
-    .then(data => {
-        const probableMoves = Object.entries(data[0]);
-        probableMoves.sort((a, b) => b[1] - a[1]);
-        console.log("PROBABLE MOVES: ", probableMoves);
-        return probableMoves[0][0].split(' ')[2];
-    });
+    try {
+        return fetch('http://localhost:8085/api/chess/next-moves', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([sequence])
+        })
+            .then(res => res.json())
+            .then(data => {
+                const probableMoves = Object.entries(data[0]);
+                probableMoves.sort((a, b) => b[1] - a[1]);
+                return probableMoves[0][0].split(' ')[1];
+            });
+    } catch (error) {
+        console.warn('Failed to fetch the next move from the database. Using Stockfish to determine move...');
+        return 
+    }
 }

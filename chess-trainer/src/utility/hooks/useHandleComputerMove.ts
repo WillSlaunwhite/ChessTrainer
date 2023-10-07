@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import { getMostProbableMove } from "../chessUtils";
 import { useFetchNextMoves } from "./useFetchNextMoves";

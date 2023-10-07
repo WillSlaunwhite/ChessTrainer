@@ -4,6 +4,7 @@ export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
 export const INIT_GAME = "INIT_GAME";
 export const INCREMENT_LINE = 'INCREMENT_LINE';
 export const MAKE_MOVE = "MAKE_MOVE";
+export const MAKE_MOVE_ALT_FORMAT = "MAKE_MOVE_ALT_FORMAT";
 export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
 export const SELECT_SQUARE = "SELECT_SQUARE";
 export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
@@ -60,6 +61,13 @@ interface MakeMoveAction {
     };
 }
 
+interface MakeMoveAltFormatAction {
+    type: typeof MAKE_MOVE_ALT_FORMAT;
+    payload: {
+        move: string;
+    }
+}
+
 interface MakeMoveWithPromotionAction {
     type: typeof MAKE_MOVE_WITH_PROMOTION;
     payload: {
@@ -80,25 +88,24 @@ interface SetBoardFromHistoryAction {
     payload: {
         moveHistory: string[];
         lineIndex: number;
-    }
+    };
 }
 
 interface SetCurrentLineNumberAction {
     type: typeof SET_CURRENT_LINE_NUMBER;
-    payload: { lineNumber: number; }
+    payload: { lineNumber: number; };
 }
 
 interface SetIsComputerTurnAction {
     type: typeof SET_IS_COMPUTER_TURN;
-    payload: { isComputerTurn: boolean; }
+    payload: { isComputerTurn: boolean; };
 }
 
 interface SetNextMoveAction {
     type: typeof SET_NEXT_MOVE;
     payload: {
         nextMove: string;
-        lineIndex: number;
-    }
+    };
 }
 
 interface SetVariationsAction {
@@ -123,4 +130,4 @@ interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction |  SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction |  SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;

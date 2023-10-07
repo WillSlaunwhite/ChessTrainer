@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -28,6 +28,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     };
                 } else {
                     const newMove = game.move({ from: source, to: destination });
+                    console.log("***************** NEW MOVE: ", newMove);
+                    
                     // added this for troubleshooting purposes
                     const newSan = newMove.san
                     return {
@@ -77,7 +79,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case INIT_GAME:
             game.load(action.payload.fen);
-            
+
             console.log("New state after INIT_GAME:", {
                 ...state,
                 fen: action.payload.fen,
@@ -105,6 +107,27 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: game.fen(),
                 selectedSquare: null,
                 lastMoveValid: wasMoveValid,
+            };
+        }
+
+        case MAKE_MOVE_ALT_FORMAT: {
+            const move = action.payload.move;
+            game.load(state.fen);
+            console.log("MOVE: ", move);
+
+
+            const moveResult = game.move(move);
+            const wasMoveValid = !!moveResult;
+
+            console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
+
+
+            return {
+                ...state,
+                reformattedMove: `${moveResult.from} ${moveResult.to}`,
+                fen: game.fen(),
+                lastMoveValid: wasMoveValid,
+                san: moveResult.san
             };
         }
 
@@ -157,16 +180,16 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case SET_IS_COMPUTER_TURN:
             return { ...state, isComputerTurn: action.payload.isComputerTurn }
-            
+
         case SET_NEXT_MOVE:
-            const currentLineIndex = action.payload.lineIndex;
+            const currentLineIndex = state.currentLineIndex;
             const nextMove = action.payload.nextMove;
+            const updatedNextMoves = [...state.nextMoves];
+            updatedNextMoves[currentLineIndex] = nextMove;
+
             return {
                 ...state,
-                nextMoves: {
-                    ...state.nextMoves,
-                    [currentLineIndex]: nextMove
-                }
+                nextMoves: updatedNextMoves
             }
 
         case SET_VARIATIONS:

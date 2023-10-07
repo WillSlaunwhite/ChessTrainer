@@ -3,8 +3,8 @@ import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../contexts/game/game-context";
-import { INIT_GAME } from "../../contexts/game/gameActions";
-import { convertToFullMoves, determineFirstComputerMove } from "../../utility/chessUtils";
+import { INIT_GAME, MAKE_MOVE_ALT_FORMAT, SET_NEXT_MOVE } from "../../contexts/game/gameActions";
+import { convertToFullMoves, determineNextComputerMove } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
 	const [gameState, dispatch] = useGameState();
@@ -31,27 +31,31 @@ const OpeningsMenu: React.FC = () => {
 				let sequence = fullMoveSequences[i];
 				sequence = convertToFullMoves(sequence);
 
-				const firstComputerMove = await determineFirstComputerMove(sequence);
+				const firstComputerMove = await determineNextComputerMove(sequence);
+				
 				if (firstComputerMove) {
 					firstMoves[i] = firstComputerMove;
 				}
 
-				sequence.forEach(move => {
-					console.log("MOVE: ", move);
-					if (move !== "" && gameState.colorOfPiece === 'black') {
-						tempGame.move(move.split(' ')[1]);
-					} else {
-						tempGame.move(move.split(' ')[0]);
+				fullMoveSequences.forEach(sequence => {
+					sequence.forEach(move => {
+						if (move != "" && gameState.colorOfPiece === 'black') {
+							tempGame.move(move.split(' ')[1]);
+						} else {
+							tempGame.move(move.split(' ')[0]);
+						}
+					});
+					if (!fens.includes(tempGame.fen())) {
+						fens.push(tempGame.fen());
 					}
+					tempGame.reset();
 				});
-				if (!fens.includes(tempGame.fen())) {
-					fens.push(tempGame.fen());
-				}
-				tempGame.reset();
 			}
 
-			console.log("Fetched opening: ", opening);
-			console.log("FULL MOVE SEQUENCES: ", fullMoveSequences);
+			dispatch({ type: SET_NEXT_MOVE, payload: {
+				nextMove: firstMoves[gameState.currentLineIndex],
+			}});
+
 			dispatch({
 				type: INIT_GAME, payload: {
 					fen: fens[0],
@@ -76,7 +80,6 @@ const OpeningsMenu: React.FC = () => {
 				setOpenings(openings);
 			})
 			.catch((error) => console.error('Failed to fetch openings: ', error));
-		console.log("Fetched opening: ")
 	}, []);
 
 

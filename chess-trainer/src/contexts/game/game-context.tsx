@@ -20,6 +20,7 @@ export interface GameState {
     pieceAtSquare: string;
     promotionDestination: string;
     promotionSource: string;
+    reformattedMove: string;
     san: string;
     selectedSquare: string | null;
     variations: VariationDTO[];
@@ -56,6 +57,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         pieceAtSquare: "",
         promotionDestination: "",
         promotionSource: "",
+        reformattedMove: "",
         san: "",
         selectedSquare: null,
         variations: [],

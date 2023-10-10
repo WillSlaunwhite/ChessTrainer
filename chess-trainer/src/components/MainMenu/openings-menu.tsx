@@ -3,7 +3,7 @@ import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../contexts/game/game-context";
-import { INIT_GAME, MAKE_MOVE_ALT_FORMAT, SET_NEXT_MOVE } from "../../contexts/game/gameActions";
+import { INIT_GAME, MAKE_MOVE_ALT_FORMAT, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../contexts/game/gameActions";
 import { convertToFullMoves, determineNextComputerMove } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
@@ -49,6 +49,7 @@ const OpeningsMenu: React.FC = () => {
 				}
 				tempGame.reset();
 			}));
+			// dispatch({type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: true }})
 
 			dispatch({
 				type: INIT_GAME, payload: {

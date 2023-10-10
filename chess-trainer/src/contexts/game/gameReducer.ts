@@ -31,10 +31,10 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     const newSan = newMove.san
                     console.log("***************** NEW MOVE: ", newMove);
 
-                    const newMoveHistories = {
+                    const newMoveHistories = [
                         ...state.moveHistories,
                         newSan
-                    }
+                    ]
 
 
                     // added this for troubleshooting purposes
@@ -92,7 +92,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: action.payload.fen,
                 moveHistories: action.payload.moveHistories,
                 currentFens: action.payload.currentFens,
+                initialMoves: action.payload.initialMoves,
                 nextMoves: action.payload.nextMoves,
+                // isComputerTurn: true
             });
 
             return {
@@ -102,23 +104,24 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 currentFens: action.payload.currentFens,
                 initialMoves: action.payload.initialMoves,
                 nextMoves: action.payload.nextMoves,
+                isComputerTurn: true
             };
 
-        case MAKE_MOVE: {
-            const { source, destination } = action.payload;
-            game.load(state.fen);
+        // case MAKE_MOVE: {
+        //     const { source, destination } = action.payload;
+        //     game.load(state.fen);
 
-            const moveResult = game.move({ from: source, to: destination });
-            const wasMoveValid = !!moveResult;
+        //     const moveResult = game.move({ from: source, to: destination });
+        //     const wasMoveValid = !!moveResult;
 
-            return {
-                ...state,
-                fen: game.fen(),
-                selectedSquare: null,
-                lastMoveValid: wasMoveValid,
-                san: moveResult.san,
-            };
-        }
+        //     return {
+        //         ...state,
+        //         fen: game.fen(),
+        //         selectedSquare: null,
+        //         lastMoveValid: wasMoveValid,
+        //         san: moveResult.san,
+        //     };
+        // }
 
         case MAKE_MOVE_ALT_FORMAT: {
             // game.load(state.fen);
@@ -126,7 +129,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const newMoveHistory = state.moveHistories[state.currentLineIndex]
             console.log("MOVE ALT: ", move);
 
-            if (!newMoveHistory.includes(move)) {
+            if (!newMoveHistory.includes(move) && move !== "") {
                 const moveResult = game.move(move);
                 const wasMoveValid = !!moveResult;
 
@@ -135,22 +138,24 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     return state
                 } else {
                     console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
+                    console.log("IS COMPUTER TURN: ", state.isComputerTurn);
+
                     newMoveHistory.push(move);
-                    const newMoveHistories = {
-                        ...state.moveHistories,
-                        [state.currentLineIndex]: newMoveHistory
-                    }
+                    const newMoveHistories = state.moveHistories;
+                    newMoveHistories[state.currentLineIndex] = newMoveHistory;
+                    
                     return {
                         ...state,
                         reformattedMove: `${moveResult.from} ${moveResult.to}`,
                         fen: game.fen(),
                         lastMoveValid: wasMoveValid,
                         san: moveResult.san,
-                        moveHistories: newMoveHistories
+                        moveHistories: newMoveHistories,
+                        isComputerTurn: false,
                     };
                 }
             }
-            
+
             return state;
         }
 

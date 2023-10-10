@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useGameState } from "../../contexts/game/game-context";
-import { CHECK_MOVE_LEGALITY, MAKE_MOVE_ALT_FORMAT, SET_BOARD_FROM_HISTORY } from "../../contexts/game/gameActions";
+import { MAKE_MOVE_ALT_FORMAT, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_TURN } from "../../contexts/game/gameActions";
 import { useHandleMoveUpdate } from "../../utility/hooks/useHandleMoveUpdate";
 import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 import ChessboardPresentation from "./chessboard-presentation";
@@ -15,7 +15,6 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleUserMov
 	const handleMoveUpdate = useHandleMoveUpdate(gameState, dispatch);
 	const lineIndex = gameState.currentLineIndex;
 	const currentFens = gameState.currentFens;
-	const nextMove = gameState.reformattedMove.split(" ");
 
 	// useEffect(() => {
 	// 	if (nextMove.length > 0) {
@@ -24,20 +23,21 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleUserMov
 	// 	}
 	// }, [nextMove]);
 
-	useEffect(() => {
-		console.log("CHESSBOARD NEXT MOVES: ", gameState.nextMoves);
-		console.log("CHESSBOARD REFORMATTED MOVE: ", gameState.reformattedMove);
-		if (gameState.nextMoves[lineIndex] !== "") {
-			dispatch({
-				type: MAKE_MOVE_ALT_FORMAT, payload: {
-					move: gameState.nextMoves[lineIndex]
-				}
-			});
-			gameState.nextMoves[lineIndex] = "";
+	// useEffect(() => {
+	// 	console.log("CHESSBOARD NEXT MOVES: ", gameState.nextMoves);
+	// 	console.log("CHESSBOARD REFORMATTED MOVE: ", gameState.reformattedMove);
+	// 	if (nextMove !== "") {
+	// 		dispatch({
+	// 			type: MAKE_MOVE_ALT_FORMAT, payload: {
+	// 				move: gameState.nextMoves[lineIndex]
+	// 			}
+	// 		});
+	// 		gameState.nextMoves[lineIndex] = "";
 
-			dispatch({ type: SET_BOARD_FROM_HISTORY });
-		}
-	}, [gameState.nextMoves[lineIndex]]);
+	// 		dispatch({ type: SET_BOARD_FROM_HISTORY });
+	// 		dispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: false } });
+	// 	}
+	// }, [gameState.nextMoves[lineIndex]]);
 
 	return <ChessboardPresentation fen={currentFens[lineIndex]} onMove={handleMove.handleMove} />;
 };

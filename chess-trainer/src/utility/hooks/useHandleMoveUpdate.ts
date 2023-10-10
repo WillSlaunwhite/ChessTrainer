@@ -13,7 +13,7 @@ export function useHandleMoveUpdate(
         
         updatedMoveHistories[lineIndex].push(newMove);
         gameDispatch({ type: UPDATE_MOVE_HISTORIES, payload: { moveHistories: updatedMoveHistories } });
-        gameDispatch({ type: SET_BOARD_FROM_HISTORY, payload: { moveHistory: updatedMoveHistories[lineIndex], lineIndex: lineIndex } });
+        gameDispatch({ type: SET_BOARD_FROM_HISTORY });
 
         if (gameState.currentLineIndex < 2) {
             gameDispatch({ type: INCREMENT_LINE });

@@ -1,3 +1,4 @@
+import React from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import { SELECT_SQUARE } from "../../contexts/game/gameActions";
 import SquarePresentation from "./square-presentation";
@@ -28,4 +29,4 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove
 	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} selectedSquare={selectedSquare} />;
 };
 
-export default SquareContainer;
+export default React.memo(SquareContainer);

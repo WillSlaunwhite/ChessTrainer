@@ -65,7 +65,11 @@ async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
             .then(res => res.json())
             .then(data => {
                 const probableMoves = Object.entries(data[0]);
+                console.log("PROBABLE MOVES: ", probableMoves);
+                
                 probableMoves.sort((a, b) => b[1] - a[1]);
+                console.log("PROBABLE MOVE SPLIT: ", probableMoves[0][0].split(' ')[1]);
+
                 return probableMoves[0][0].split(' ')[1];
             });
     } catch (error) {

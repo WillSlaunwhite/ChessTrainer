@@ -1,18 +1,27 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/chessboard-container";
 import { useGameState } from "../../contexts/game/game-context";
 import { SET_CURRENT_LINE_NUMBER, SWITCH_LINES } from "../../contexts/game/gameActions";
 import { useQuiz } from "../../contexts/quiz/quiz-context";
 import { useHandleMoveUpdate } from "../../utility/hooks/useHandleMoveUpdate";
 import MoveContainer from "./move-container";
+import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 
 
 const GameView: React.FC = () => {
 	const [gameState, gameDispatch] = useGameState();
 	const [quizState] = useQuiz();
+	const nextMove = gameState.reformattedMove;
 	const handleMoveUpdate = useHandleMoveUpdate(gameState, gameDispatch);
+	const handleComputerMove = useComputerMoveLogic(nextMove);
 	console.log("GAME VIEW REFORMATTED MOVE: ", gameState.reformattedMove);
 
+	useEffect(() => {
+		if (nextMove !== "") {
+			handleComputerMove;
+			gameState.reformattedMove = "";
+		}
+	}, [nextMove]);
 
 	// * TODO IMPLEMENT THIS
 	const checkMoveCorrectness = (move: string) => {

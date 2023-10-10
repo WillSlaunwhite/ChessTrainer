@@ -33,4 +33,4 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
   );
 };
 
-export default MoveHistory;
+export default React.memo(MoveHistory);

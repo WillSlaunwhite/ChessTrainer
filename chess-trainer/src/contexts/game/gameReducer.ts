@@ -1,6 +1,6 @@
 import { Chess, ChessInstance, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source, verbose: true });
@@ -28,15 +28,22 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     };
                 } else {
                     const newMove = game.move({ from: source, to: destination });
-                    console.log("***************** NEW MOVE: ", newMove);
-                    
-                    // added this for troubleshooting purposes
                     const newSan = newMove.san
+                    console.log("***************** NEW MOVE: ", newMove);
+
+                    const newMoveHistories = {
+                        ...state.moveHistories,
+                        newSan
+                    }
+
+
+                    // added this for troubleshooting purposes
                     return {
                         ...state,
                         fen: game.fen(),
                         selectedSquare: null,
-                        san: newSan
+                        san: newSan,
+                        moveHistories: newMoveHistories
                     }
                 }
             } else {
@@ -85,6 +92,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: action.payload.fen,
                 moveHistories: action.payload.moveHistories,
                 currentFens: action.payload.currentFens,
+                nextMoves: action.payload.nextMoves,
             });
 
             return {
@@ -92,7 +100,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: action.payload.fen,
                 moveHistories: action.payload.moveHistories,
                 currentFens: action.payload.currentFens,
-                initialMoves: action.payload.initialMoves
+                initialMoves: action.payload.initialMoves,
+                nextMoves: action.payload.nextMoves,
             };
 
         case MAKE_MOVE: {
@@ -107,28 +116,42 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: game.fen(),
                 selectedSquare: null,
                 lastMoveValid: wasMoveValid,
+                san: moveResult.san,
             };
         }
 
         case MAKE_MOVE_ALT_FORMAT: {
+            // game.load(state.fen);
             const move = action.payload.move;
-            game.load(state.fen);
-            console.log("MOVE: ", move);
+            const newMoveHistory = state.moveHistories[state.currentLineIndex]
+            console.log("MOVE ALT: ", move);
 
+            if (!newMoveHistory.includes(move)) {
+                const moveResult = game.move(move);
+                const wasMoveValid = !!moveResult;
 
-            const moveResult = game.move(move);
-            const wasMoveValid = !!moveResult;
-
-            console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
-
-
-            return {
-                ...state,
-                reformattedMove: `${moveResult.from} ${moveResult.to}`,
-                fen: game.fen(),
-                lastMoveValid: wasMoveValid,
-                san: moveResult.san
-            };
+                if (!moveResult) {
+                    console.log("NO MOVE RESULT: ", moveResult)
+                    return state
+                } else {
+                    console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
+                    newMoveHistory.push(move);
+                    const newMoveHistories = {
+                        ...state.moveHistories,
+                        [state.currentLineIndex]: newMoveHistory
+                    }
+                    return {
+                        ...state,
+                        reformattedMove: `${moveResult.from} ${moveResult.to}`,
+                        fen: game.fen(),
+                        lastMoveValid: wasMoveValid,
+                        san: moveResult.san,
+                        moveHistories: newMoveHistories
+                    };
+                }
+            }
+            
+            return state;
         }
 
         case MAKE_MOVE_WITH_PROMOTION: {
@@ -156,7 +179,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
 
         case SET_BOARD_FROM_HISTORY:
-            const lineIndex = action.payload.lineIndex;
+            const lineIndex = state.currentLineIndex;
             const moves = state.moveHistories[lineIndex].filter(move => move !== "");
 
             game.reset();
@@ -185,11 +208,18 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const currentLineIndex = state.currentLineIndex;
             const nextMove = action.payload.nextMove;
             const updatedNextMoves = [...state.nextMoves];
+
             updatedNextMoves[currentLineIndex] = nextMove;
 
             return {
                 ...state,
                 nextMoves: updatedNextMoves
+            }
+
+        case SET_NEXT_MOVES_ARRAY:
+            return {
+                ...state,
+                nextMoves: action.payload.nextMoves
             }
 
         case SET_VARIATIONS:

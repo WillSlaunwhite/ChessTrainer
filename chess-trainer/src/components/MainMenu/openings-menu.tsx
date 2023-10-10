@@ -27,45 +27,40 @@ const OpeningsMenu: React.FC = () => {
 				} else { return baseSequence; }
 			});
 
-			for (let i = 0; i < fullMoveSequences.length; i++) {
-				let sequence = fullMoveSequences[i];
-				sequence = convertToFullMoves(sequence);
+			await Promise.all(fullMoveSequences.map(async (sequence: string[], i: number) => {
+				const fullMoves = convertToFullMoves(sequence);
+				const firstComputerMove = await determineNextComputerMove(fullMoves);
 
-				const firstComputerMove = await determineNextComputerMove(sequence);
-				
-				if (firstComputerMove) {
-					firstMoves[i] = firstComputerMove;
-				}
+				if (firstComputerMove) { firstMoves[i] = firstComputerMove; }
 
-				fullMoveSequences.forEach(sequence => {
-					sequence.forEach(move => {
-						if (move != "" && gameState.colorOfPiece === 'black') {
-							tempGame.move(move.split(' ')[1]);
-						} else {
-							tempGame.move(move.split(' ')[0]);
-						}
-					});
-					if (!fens.includes(tempGame.fen())) {
-						fens.push(tempGame.fen());
+				fullMoves.map(movePair => {
+					if (movePair !== "") {
+						const moves: string[] = movePair.split(" ");
+						moves.map(move => {
+							if (move !== "") {
+								tempGame.move(move);
+							};
+						});
+
 					}
-					tempGame.reset();
 				});
-			}
-
-			dispatch({ type: SET_NEXT_MOVE, payload: {
-				nextMove: firstMoves[gameState.currentLineIndex],
-			}});
+				if (!fens.includes(tempGame.fen())) {
+					fens.push(tempGame.fen());
+				}
+				tempGame.reset();
+			}));
 
 			dispatch({
 				type: INIT_GAME, payload: {
 					fen: fens[0],
 					moveHistories: fullMoveSequences,
 					currentFens: fens,
-					initialMoves: firstMoves
+					initialMoves: firstMoves,
+					nextMoves: firstMoves,
 				}
 			});
-			navigate('/game');
 
+			navigate('/game');
 		}
 		catch (error) {
 			console.error('Failed to fetch variations: ', error);

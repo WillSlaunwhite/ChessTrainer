@@ -1,14 +1,11 @@
-import { useEffect } from "react";
 import { useGameState } from "../../contexts/game/game-context";
-import { useHandleComputerMove } from "./useHandleComputerMove";
+import { CHECK_MOVE_LEGALITY, MAKE_MOVE_ALT_FORMAT, SET_BOARD_FROM_HISTORY } from "../../contexts/game/gameActions";
 import { extractMoveDetails } from "../chessUtils";
-import { CHECK_MOVE_LEGALITY, SET_NEXT_MOVE } from "../../contexts/game/gameActions";
+import { useHandleComputerMove } from "./useHandleComputerMove";
 
-export function useComputerMoveLogic() {
+export function useComputerMoveLogic(nextMove: string) {
     const [gameState, dispatch] = useGameState();
     const compMoveFun = useHandleComputerMove();
-    const lineIndex = gameState.currentLineIndex;
-    const nextMoves = gameState.nextMoves;
 
     // useEffect(() => {
     //     console.log("moveHistories at start of useHandleComputerMove:", gameState.moveHistories);
@@ -24,10 +21,13 @@ export function useComputerMoveLogic() {
     // }, []);
 
     const makeComputerMove = () => {
-        const move = nextMoves[lineIndex];
-        if (move) {
-            const [source, destination] = extractMoveDetails(move);
+        if (nextMove) {
+            console.log("HOOOK MOVE: ", nextMove);
+
+            const [source, destination] = extractMoveDetails(nextMove);
             dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
+            dispatch({ type: SET_BOARD_FROM_HISTORY });
+            // dispatch({type: CHECK_MOVE_LEGALITY, payload: { source: nextMove[0], destination: nextMove[1] }})
         }
     };
     return {

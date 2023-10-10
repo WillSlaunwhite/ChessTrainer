@@ -11,6 +11,7 @@ export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
 export const SET_IS_COMPUTER_TURN = "SET_IS_COMPUTER_TURN";
 export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
 export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
+export const SET_NEXT_MOVES_ARRAY = "SET_NEXT_MOVE_ARRAY";
 export const SET_VARIATIONS = "SET_VARIATIONS";
 export const SWITCH_LINES = "SWITCH_LINES";
 export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
@@ -46,6 +47,7 @@ interface InitGameAction {
         currentFens: string[];
         moveHistories: string[][];
         initialMoves: string[];
+        nextMoves: string[];
     };
 }
 
@@ -85,10 +87,6 @@ interface SelectSquareAction {
 
 interface SetBoardFromHistoryAction {
     type: typeof SET_BOARD_FROM_HISTORY;
-    payload: {
-        moveHistory: string[];
-        lineIndex: number;
-    };
 }
 
 interface SetCurrentLineNumberAction {
@@ -105,6 +103,13 @@ interface SetNextMoveAction {
     type: typeof SET_NEXT_MOVE;
     payload: {
         nextMove: string;
+    };
+}
+
+interface SetNextMovesArrayAction {
+    type: typeof SET_NEXT_MOVES_ARRAY;
+    payload: {
+        nextMoves: string[];
     };
 }
 
@@ -130,4 +135,4 @@ interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction |  SetNextMoveAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;

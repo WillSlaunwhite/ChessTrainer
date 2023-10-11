@@ -26,7 +26,7 @@ export function useComputerMoveLogic(nextMove: string) {
 
             dispatch({
                 type: MAKE_MOVE_ALT_FORMAT, payload: {
-                    move: gameState.nextMoves[gameState.currentLineIndex]
+                    move: nextMove
                 }
             });
             dispatch({ type: SET_BOARD_FROM_HISTORY });

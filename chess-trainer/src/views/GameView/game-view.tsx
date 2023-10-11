@@ -13,6 +13,7 @@ const GameView: React.FC = () => {
 	const [quizState] = useQuiz();
 	const lineIndex = gameState.currentLineIndex;
 	const nextMove = gameState.nextMoves[lineIndex];
+	const moveHistories = gameState.moveHistories;
 	const handleMoveUpdate = useHandleMoveUpdate(gameState, gameDispatch);
 	const handleComputerMove = useComputerMoveLogic(nextMove);
 	console.log("GAME VIEW REFORMATTED MOVE: ", gameState.reformattedMove);
@@ -22,7 +23,7 @@ const GameView: React.FC = () => {
 		if (nextMove !== "" && gameState.isComputerTurn) {
 			console.log("GAME VIEW USE EFFECT: ", gameState.isComputerTurn);
 			handleComputerMove.makeComputerMove();
-			gameState.reformattedMove = "";
+			// gameState.reformattedMove = "";
 			// gameDispatch({
 			// 	type: MAKE_MOVE_ALT_FORMAT, payload: {
 			// 		move: gameState.nextMoves[lineIndex]
@@ -57,7 +58,7 @@ const GameView: React.FC = () => {
 
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
-			<MoveContainer moveHistories={gameState.moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={gameState.currentLineIndex} switchLines={switchLine} />
+			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={gameState.currentLineIndex} switchLines={switchLine} />
 			<ChessboardContainer handleUserMoveUpdate={handleMoveUpdate} />
 		</div>
 	);

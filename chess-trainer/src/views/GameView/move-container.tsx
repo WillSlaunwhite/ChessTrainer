@@ -30,4 +30,4 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 	);
 };
 
-export default React.memo(MoveContainer);
+export default MoveContainer;

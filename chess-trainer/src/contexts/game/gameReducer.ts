@@ -124,7 +124,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         // }
 
         case MAKE_MOVE_ALT_FORMAT: {
-            // game.load(state.fen);
+            game.load(state.fen);
             const move = action.payload.move;
             const newMoveHistory = state.moveHistories[state.currentLineIndex]
             console.log("MOVE ALT: ", move);
@@ -138,12 +138,11 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     return state
                 } else {
                     console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
-                    console.log("IS COMPUTER TURN: ", state.isComputerTurn);
 
                     newMoveHistory.push(move);
                     const newMoveHistories = state.moveHistories;
                     newMoveHistories[state.currentLineIndex] = newMoveHistory;
-                    
+
                     return {
                         ...state,
                         reformattedMove: `${moveResult.from} ${moveResult.to}`,
@@ -186,21 +185,22 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case SET_BOARD_FROM_HISTORY:
             const lineIndex = state.currentLineIndex;
             const moves = state.moveHistories[lineIndex].filter(move => move !== "");
+            const newFens = state.currentFens;
+            const newMoveHistories = state.moveHistories;
 
             game.reset();
             moves.forEach(move => { game.move(move); });
+            newFens[lineIndex] = game.fen();
+            newMoveHistories[lineIndex] = moves;
+            console.log("NEW MOVE HISTORIES: ", newMoveHistories);
+            console.log("GAME HISTORY: ", game.history());
 
             return {
                 ...state,
-                currentFens: {
-                    ...state.currentFens,
-                    [lineIndex]: game.fen()
-                },
-                moveHistories: {
-                    ...state.moveHistories,
-                    [lineIndex]: moves
-                },
+                currentFens: newFens,
+                moveHistories: newMoveHistories,
                 fen: game.fen(),
+                reformattedMove: "",
             }
 
         case SET_CURRENT_LINE_NUMBER:

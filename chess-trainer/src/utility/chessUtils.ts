@@ -1,3 +1,5 @@
+import { GameState } from "../contexts/game/game-context";
+
 interface PotentialMove {
     move: string,
     occurrences: number
@@ -48,8 +50,9 @@ export function determineNextComputerMove(baseSequence: string[]): Promise<strin
 
 
 
-function isComputersTurn(moveSequence: string[]): boolean {
-    return moveSequence.length % 2 !== 0;
+function isComputersTurn(computerColor: string, moveSequence: string[]): boolean {
+    
+    return gameState
 }
 
 async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
@@ -74,6 +77,6 @@ async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
             });
     } catch (error) {
         console.warn('Failed to fetch the next move from the database. Using Stockfish to determine move...');
-        return 
+        return
     }
 }

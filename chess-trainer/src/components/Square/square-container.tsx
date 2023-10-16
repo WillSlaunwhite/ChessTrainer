@@ -2,6 +2,8 @@ import React from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import { SELECT_SQUARE } from "../../contexts/game/gameActions";
 import SquarePresentation from "./square-presentation";
+import { useHandleMoveUpdate } from "../../utility/hooks/useHandleMoveUpdate";
+import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 
 interface SquareContainerProps {
 	square: string;
@@ -11,7 +13,9 @@ interface SquareContainerProps {
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
 	const [gameState, dispatch] = useGameState();
+
 	const selectedSquare = gameState.selectedSquare;
+	const isSelected = square === selectedSquare;
 
 	const handleClick = () => {
 		if (square === selectedSquare) {
@@ -24,7 +28,6 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } })
 		}
 	};
-	const isSelected = square === selectedSquare;
 
 	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} selectedSquare={selectedSquare} />;
 };

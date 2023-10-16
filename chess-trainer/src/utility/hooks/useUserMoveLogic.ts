@@ -7,6 +7,8 @@ export function useUserMoveLogic(handleUserMoveUpdate: (newMove: string, moveHis
     
 
     const handleMove = (source: string, destination: string) => {
+        console.log("IN USE USER MOVE LOGIC");
+        
         dispatch({ type: CHECK_MOVE_LEGALITY, payload: { source, destination } });
         handleUserMoveUpdate(gameState.san, gameState.moveHistories);
     };

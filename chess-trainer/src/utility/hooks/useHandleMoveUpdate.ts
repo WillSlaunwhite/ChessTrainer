@@ -1,26 +1,25 @@
-import { Dispatch } from "react";
-import { GameState } from "../../contexts/game/game-context";
-import { GameActionTypes, INCREMENT_LINE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "../../contexts/game/gameActions";
+import { useGameState } from "../../contexts/game/game-context";
+import { INCREMENT_LINE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "../../contexts/game/gameActions";
 
-export function useHandleMoveUpdate(
-    gameState: GameState,
-    gameDispatch: Dispatch<GameActionTypes>,
-) {
+export function useHandleMoveUpdate() {
     return (newMove: string, moveHistories: string[][]) => {
-        const updatedMoveHistories = Object.values(moveHistories);
+        const [gameState, dispatch] = useGameState();
         const lineIndex = gameState.currentLineIndex;
         const fens = gameState.currentFens;
-        
-        updatedMoveHistories[lineIndex].push(newMove);
-        gameDispatch({ type: UPDATE_MOVE_HISTORIES, payload: { moveHistories: updatedMoveHistories } });
-        gameDispatch({ type: SET_BOARD_FROM_HISTORY });
+
+        moveHistories[lineIndex].push(newMove);
+        dispatch({ type: UPDATE_MOVE_HISTORIES, payload: { moveHistories: moveHistories } });
+        dispatch({ type: SET_BOARD_FROM_HISTORY });
+
+        fens[lineIndex] = gameState.fen;
+        dispatch({ type: UPDATE_CURRENT_FENS, payload: { currentFens: fens } });
 
         if (gameState.currentLineIndex < 2) {
-            gameDispatch({ type: INCREMENT_LINE });
-            gameDispatch({ type: SWITCH_LINES, payload: { fen: fens[lineIndex] } });
+            dispatch({ type: INCREMENT_LINE });
+            dispatch({ type: SWITCH_LINES, payload: { fen: fens[lineIndex] } });
         } else {
-            gameDispatch({ type: SET_CURRENT_LINE_NUMBER, payload: { lineNumber: 0 } })
-            gameDispatch({ type: SWITCH_LINES, payload: { fen: fens[0] } });
+            dispatch({ type: SET_CURRENT_LINE_NUMBER, payload: { lineNumber: 0 } })
+            dispatch({ type: SWITCH_LINES, payload: { fen: fens[0] } });
         }
     }
 }

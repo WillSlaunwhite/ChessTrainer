@@ -1,14 +1,14 @@
-import { Chess, ChessInstance, Square } from "chess.js";
+import { Chess, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
-export const isValidMove = (game: ChessInstance, source: string, destination: string): boolean => {
-    const validMoves = game.moves({ square: source, verbose: true });
+export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
+    const validMoves = game.moves({ square: source as Square, verbose: true });
     return validMoves.some(move => move.to === destination);
 };
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
-    let game: ChessInstance;
+    let game: Chess;
     if (state.fen) game = new Chess(state.fen); else game = new Chess();
 
     switch (action.type) {
@@ -16,7 +16,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const { source, destination } = action.payload;
             const isValid: boolean = isValidMove(game, source, destination);
             if (isValid) {
-                const pieceAtSource = game.get(source);
+                const pieceAtSource = game.get(source as Square);
                 if (pieceAtSource?.type === 'p' &&
                     ((pieceAtSource.color === 'w' && destination[1] === '8') ||
                         (pieceAtSource.color === 'b' && destination[1] === '1'))) {
@@ -28,22 +28,24 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     };
                 } else {
                     const newMove = game.move({ from: source, to: destination });
-                    const newSan = newMove.san
+                    const newSan = newMove.san;
+                    const newFens = state.currentFens;
+                    const newMoveHistories = state.moveHistories
                     console.log("***************** NEW MOVE: ", newMove);
 
-                    const newMoveHistories = [
-                        ...state.moveHistories,
-                        newSan
-                    ]
+                    newMoveHistories[state.currentLineIndex].push(newSan);
+                    newFens[state.currentLineIndex] = game.fen();
 
 
                     // added this for troubleshooting purposes
                     return {
                         ...state,
                         fen: game.fen(),
+                        currentFens: newFens,
                         selectedSquare: null,
                         san: newSan,
-                        moveHistories: newMoveHistories
+                        moveHistories: newMoveHistories,
+                        lastMoveValid: isValid,
                     }
                 }
             } else {
@@ -54,7 +56,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
         }
 
-        case EXECUTE_PAWN_PROMOTION: {
+        case EXECUTE_PAWN_PROMOTION:
             const { source, destination, promotion } = action.payload;
             const newMove = game.move({ from: source, to: destination, promotion: promotion });
             const newSan = newMove.san;
@@ -66,17 +68,22 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 isPawnPromotion: false,
                 san: newSan
             };
-        }
 
         case GET_PIECE_AT_SQUARE:
             const { square } = action.payload;
-            const color = game.get(square as Square)?.color;
-            const piece = game.get(square as Square)?.type;
-            return {
-                ...state,
-                pieceAtSquare: piece,
-                colorOfPiece: color
-            };
+            const squareInstance = game.get(square as Square);
+
+            if (squareInstance) {
+                return {
+                    ...state,
+                    pieceAtSquare: squareInstance.type,
+                    colorOfPiece: squareInstance.color
+                };
+            } else {
+                return {
+                    ...state
+                };
+            }
 
         case INCREMENT_LINE:
             return {
@@ -126,7 +133,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case MAKE_MOVE_ALT_FORMAT: {
             game.load(state.fen);
             const move = action.payload.move;
-            const newMoveHistory = state.moveHistories[state.currentLineIndex]
+            const newMoveHistory = state.moveHistories[state.currentLineIndex];
             console.log("MOVE ALT: ", move);
 
             if (!newMoveHistory.includes(move) && move !== "") {
@@ -134,8 +141,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 const wasMoveValid = !!moveResult;
 
                 if (!moveResult) {
-                    console.log("NO MOVE RESULT: ", moveResult)
-                    return state
+                    console.log("NO MOVE RESULT: ", moveResult);
+                    return state;
                 } else {
                     console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
 
@@ -143,14 +150,17 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     const newMoveHistories = state.moveHistories;
                     newMoveHistories[state.currentLineIndex] = newMoveHistory;
 
+                    const newNextMoves = state.nextMoves;
+                    newNextMoves[state.currentLineIndex] = "";
+
                     return {
                         ...state,
-                        reformattedMove: `${moveResult.from} ${moveResult.to}`,
                         fen: game.fen(),
                         lastMoveValid: wasMoveValid,
                         san: moveResult.san,
                         moveHistories: newMoveHistories,
                         isComputerTurn: false,
+                        nextMoves: newNextMoves,
                     };
                 }
             }
@@ -172,7 +182,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             return {
                 ...state,
                 fen: game.fen(),
-                selectedSquare: null
+                selectedSquare: null,
             };
         }
 
@@ -200,7 +210,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 currentFens: newFens,
                 moveHistories: newMoveHistories,
                 fen: game.fen(),
-                reformattedMove: "",
             }
 
         case SET_CURRENT_LINE_NUMBER:
@@ -246,6 +255,12 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             return {
                 ...state,
                 moveHistories: filteredMoveHistories
+            }
+
+        case UPDATE_CURRENT_FENS:
+            return {
+                ...state,
+                currentFens: action.payload.currentFens
             }
 
         default:

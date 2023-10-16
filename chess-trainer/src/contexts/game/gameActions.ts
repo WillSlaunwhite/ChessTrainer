@@ -15,6 +15,7 @@ export const SET_NEXT_MOVES_ARRAY = "SET_NEXT_MOVE_ARRAY";
 export const SET_VARIATIONS = "SET_VARIATIONS";
 export const SWITCH_LINES = "SWITCH_LINES";
 export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
+export const UPDATE_CURRENT_FENS = "UPDATE_CURRENT_FENS";
 
 interface CheckMoveLegalityAction {
     type: typeof CHECK_MOVE_LEGALITY;
@@ -127,7 +128,14 @@ interface SwitchLinesAction {
     };
 }
 
-interface UpdateMoveHistories {
+interface UpdateCurrentFensAction {
+    type: typeof UPDATE_CURRENT_FENS;
+    payload: {
+        currentFens: string[];
+    };
+}
+
+interface UpdateMoveHistoriesAction {
     type: typeof UPDATE_MOVE_HISTORIES;
     payload: {
         moveHistories: string[][];
@@ -135,4 +143,4 @@ interface UpdateMoveHistories {
 }
 
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateMoveHistories;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateCurrentFensAction | UpdateMoveHistoriesAction;

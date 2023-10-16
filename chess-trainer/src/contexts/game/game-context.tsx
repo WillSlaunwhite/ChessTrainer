@@ -13,6 +13,7 @@ export interface GameState {
     fen: string;
     initialMoves: string[];
     isComputerTurn: boolean,
+    isComputerReadyToMove: boolean,
     isPawnPromotion: boolean;
     lastMoveValid: boolean;
     moveHistories: string[][];
@@ -20,7 +21,6 @@ export interface GameState {
     pieceAtSquare: string;
     promotionDestination: string;
     promotionSource: string;
-    reformattedMove: string;
     san: string;
     selectedSquare: string | null;
     variations: VariationDTO[];
@@ -50,6 +50,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         fen: "",
         initialMoves: [],
         isComputerTurn: false,
+        isComputerReadyToMove: false,
         isPawnPromotion: false,
         lastMoveValid: false,
         moveHistories: [[], [], []],
@@ -57,7 +58,6 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         pieceAtSquare: "",
         promotionDestination: "",
         promotionSource: "",
-        reformattedMove: "",
         san: "",
         selectedSquare: null,
         variations: [],

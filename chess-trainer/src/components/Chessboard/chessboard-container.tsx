@@ -6,13 +6,12 @@ import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 import ChessboardPresentation from "./chessboard-presentation";
 
 interface ChessboardContainerProps {
-	handleUserMoveUpdate: (newMove: string, moveHistories: string[][]) => void;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleUserMoveUpdate }) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
 	const [gameState, dispatch] = useGameState();
-	const handleMove = useUserMoveLogic(handleUserMoveUpdate);
-	const handleMoveUpdate = useHandleMoveUpdate(gameState, dispatch);
+
+	
 	const lineIndex = gameState.currentLineIndex;
 	const currentFens = gameState.currentFens;
 
@@ -39,7 +38,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ handleUserMov
 	// 	}
 	// }, [gameState.nextMoves[lineIndex]]);
 
-	return <ChessboardPresentation fen={currentFens[lineIndex]} onMove={handleMove.handleMove} />;
+	return <ChessboardPresentation fen={currentFens[lineIndex]} />;
 };
 
 

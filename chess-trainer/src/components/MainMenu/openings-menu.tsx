@@ -7,7 +7,7 @@ import { INIT_GAME, MAKE_MOVE_ALT_FORMAT, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } 
 import { convertToFullMoves, determineNextComputerMove } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
-	const [gameState, dispatch] = useGameState();
+	const [, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 

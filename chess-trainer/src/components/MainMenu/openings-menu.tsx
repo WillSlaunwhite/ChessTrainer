@@ -1,10 +1,9 @@
 import { Card, List, ListItem } from "@material-tailwind/react";
-import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../contexts/game/game-context";
-import { INIT_GAME, MAKE_MOVE_ALT_FORMAT, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../contexts/game/gameActions";
-import { convertToFullMoves, determineNextComputerMove } from "../../utility/chessUtils";
+import { INIT_GAME } from "../../contexts/game/gameActions";
+import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
 	const [, dispatch] = useGameState();
@@ -12,53 +11,13 @@ const OpeningsMenu: React.FC = () => {
 	const navigate = useNavigate();
 
 	const openGame = async (openingName: string) => {
-		const tempGame = new Chess();
 		try {
-			const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`)
-			const opening: OpeningDTO = await response.json();
-
-			const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
-			const fens: string[] = []
-			const firstMoves: string[] = [];
-
-			const fullMoveSequences = opening.variations.map(variation => {
-				if (variation.movesSequence[0]) {
-					return baseSequence.concat(variation.movesSequence);
-				} else { return baseSequence; }
-			});
-
-			await Promise.all(fullMoveSequences.map(async (sequence: string[], i: number) => {
-				const fullMoves = convertToFullMoves(sequence);
-				const firstComputerMove = await determineNextComputerMove(fullMoves);
-
-				if (firstComputerMove) { firstMoves[i] = firstComputerMove; }
-
-				fullMoves.map(movePair => {
-					if (movePair !== "") {
-						const moves: string[] = movePair.split(" ");
-						moves.map(move => {
-							if (move !== "") {
-								tempGame.move(move);
-							};
-						});
-
-					}
-				});
-				if (!fens.includes(tempGame.fen())) {
-					fens.push(tempGame.fen());
-				}
-				tempGame.reset();
-			}));
-			// dispatch({type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: true }})
+			const opening: OpeningDTO = await fetchOpening(openingName);
+			const gameData = await processOpeningData(opening);
 
 			dispatch({
-				type: INIT_GAME, payload: {
-					fen: fens[0],
-					moveHistories: fullMoveSequences,
-					currentFens: fens,
-					initialMoves: firstMoves,
-					nextMoves: firstMoves,
-				}
+				type: INIT_GAME,
+				payload: gameData
 			});
 
 			navigate('/game');
@@ -77,7 +36,6 @@ const OpeningsMenu: React.FC = () => {
 			})
 			.catch((error) => console.error('Failed to fetch openings: ', error));
 	}, []);
-
 
 	return (
 		<div className="menu-container w-full flex items-center justify-center flex-col gap-1 mt-1">

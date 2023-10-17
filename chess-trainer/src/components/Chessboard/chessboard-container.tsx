@@ -11,6 +11,8 @@ interface ChessboardContainerProps {
 const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
 	const [gameState, dispatch] = useGameState();
 
+	const handleMoveUpdate = useHandleMoveUpdate();
+	const handleMove = useUserMoveLogic(handleMoveUpdate);
 	
 	const lineIndex = gameState.currentLineIndex;
 	const currentFens = gameState.currentFens;
@@ -38,7 +40,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
 	// 	}
 	// }, [gameState.nextMoves[lineIndex]]);
 
-	return <ChessboardPresentation fen={currentFens[lineIndex]} />;
+	return <ChessboardPresentation fen={currentFens[lineIndex]} onMove={handleMove.handleMove} />;
 };
 
 

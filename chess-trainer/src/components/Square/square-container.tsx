@@ -2,8 +2,6 @@ import React from "react";
 import { useGameState } from "../../contexts/game/game-context";
 import { SELECT_SQUARE } from "../../contexts/game/gameActions";
 import SquarePresentation from "./square-presentation";
-import { useHandleMoveUpdate } from "../../utility/hooks/useHandleMoveUpdate";
-import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 
 interface SquareContainerProps {
 	square: string;

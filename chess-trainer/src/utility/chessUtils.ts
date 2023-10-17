@@ -1,3 +1,4 @@
+import { Chess } from "chess.js";
 import { GameState } from "../contexts/game/game-context";
 
 interface PotentialMove {
@@ -39,9 +40,10 @@ export function extractMoveDetails(movesString: string): [source: string, destin
 export function determineNextComputerMove(baseSequence: string[]): Promise<string> {
     const nextMove = baseSequence[baseSequence.length - 1];
     console.log("NEXT MOVE: ", nextMove);
-    
 
-    if (isComputersTurn(baseSequence)) {
+
+    // TODO HARDCODED, NEED TO FIX!
+    if (!isComputersTurn("black", baseSequence)) {
         return fetchNextMoveForSequence(baseSequence);
     }
 
@@ -51,8 +53,67 @@ export function determineNextComputerMove(baseSequence: string[]): Promise<strin
 
 
 function isComputersTurn(computerColor: string, moveSequence: string[]): boolean {
-    
-    return gameState
+    if ((computerColor === "w" || computerColor === "white") && moveSequence.length % 2 === 1) {
+        return true;
+    } else if((computerColor === "b" || computerColor === "black") && moveSequence.length % 2 === 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
+    const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`);
+    return response.json();
+}
+
+export async function processOpeningData(opening: OpeningDTO): Promise<{fen: string, moveHistories: string[][], currentFens: string[], initialMoves: string[], nextMoves: string[]}> { 
+    const tempGame = new Chess();
+    const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
+    const fens: string[] = [];
+    const firstMoves: string[] = [];
+    const fullMoveSequences = opening.variations.map(variation => {
+        if(variation.movesSequence[0]) {
+            return baseSequence.concat(variation.movesSequence);
+        } else {
+            return baseSequence;
+        }
+    });
+
+    await Promise.all(fullMoveSequences.map(async (sequence: string[], i: number) => {
+        const fullMoves = convertToFullMoves(sequence);
+        const firstComputerMove = await determineNextComputerMove(fullMoves);
+
+        if (firstComputerMove) { 
+            console.log("FIRST COMPUTER MOVE: ", firstComputerMove);
+            
+            firstMoves[i] = firstComputerMove; 
+        }
+
+        fullMoves.map(movePair => {
+            if (movePair !== "") {
+                const moves: string[] = movePair.split(" ");
+                moves.map(move => {
+                    if(move !== ""){
+                        tempGame.move(move);
+                    }
+                });
+            }
+        });
+
+        if(!fens.includes(tempGame.fen())) {
+            fens.push(tempGame.fen());
+        }
+        tempGame.reset();
+    }));
+
+    return {
+        fen: fens[0],
+        moveHistories: fullMoveSequences,
+        currentFens: fens,
+        initialMoves: firstMoves,
+        nextMoves: firstMoves,
+    };
 }
 
 async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
@@ -69,7 +130,7 @@ async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
             .then(data => {
                 const probableMoves = Object.entries(data[0]);
                 console.log("PROBABLE MOVES: ", probableMoves);
-                
+
                 probableMoves.sort((a, b) => b[1] - a[1]);
                 console.log("PROBABLE MOVE SPLIT: ", probableMoves[0][0].split(' ')[1]);
 

@@ -1,6 +1,6 @@
 import { Chess, Square } from "chess.js";
 import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./gameActions";
 
 export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source as Square, verbose: true });
@@ -217,6 +217,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case SET_IS_COMPUTER_TURN:
             return { ...state, isComputerTurn: action.payload.isComputerTurn }
+
+        case SET_IS_COMPUTER_READY_TO_MOVE:
+            return { ...state, isComputerTurn: action.payload.isComputerReadyToMove }
 
         case SET_NEXT_MOVE:
             const currentLineIndex = state.currentLineIndex;

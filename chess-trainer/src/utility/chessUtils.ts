@@ -1,10 +1,4 @@
 import { Chess } from "chess.js";
-import { GameState } from "../contexts/game/game-context";
-
-interface PotentialMove {
-    move: string,
-    occurrences: number
-};
 
 export const convertToFullMoves = (history: string[]): string[] => {
     const fullMoves = [];
@@ -131,13 +125,13 @@ async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
                 const probableMoves = Object.entries(data[0]);
                 console.log("PROBABLE MOVES: ", probableMoves);
 
-                probableMoves.sort((a, b) => b[1] - a[1]);
+                probableMoves.sort(((a: any, b: any) => b[1] - a[1]));
                 console.log("PROBABLE MOVE SPLIT: ", probableMoves[0][0].split(' ')[1]);
 
                 return probableMoves[0][0].split(' ')[1];
             });
     } catch (error) {
         console.warn('Failed to fetch the next move from the database. Using Stockfish to determine move...');
-        return
+        return "";
     }
 }

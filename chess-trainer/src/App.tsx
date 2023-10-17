@@ -7,14 +7,14 @@ import HomeView from "./views/home-view";
 function App() {
 	return (
 		<Router>
-			<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
-				<GameStateProvider>
+			<GameStateProvider>
+				<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
 					<Routes>
-						<Route path="/" element={<HomeView/>}/>
-						<Route path="/game" element={<GameView/>}/>
+						<Route path="/" element={<HomeView />} />
+						<Route path="/game" element={<GameView />} />
 					</Routes>
-				</GameStateProvider>
-			</div>
+				</div>
+			</GameStateProvider>
 		</Router>
 	);
 }

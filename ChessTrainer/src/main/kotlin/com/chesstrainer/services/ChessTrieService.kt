@@ -6,14 +6,9 @@ import com.chesstrainer.enums.MoveClassification
 import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.wrappers.Evaluation
 import com.chesstrainer.wrappers.StockfishWrapper
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.stereotype.Service
-import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
 
 @Service
 class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
@@ -32,7 +27,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
         const val PLAYABLE_MOVE_THRESHOLD = 1000  // If a move has been played more than this, it's playable
     }
-
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {

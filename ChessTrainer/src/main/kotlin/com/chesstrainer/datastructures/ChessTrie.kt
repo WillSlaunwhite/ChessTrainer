@@ -16,7 +16,7 @@ class ChessTrie {
         var current = root
 
         // Check if the last move is a half-move
-        val isLastMoveHalf = moves.lastOrNull()?.split(" ")?.size == 1
+        val isLastMoveHalf = """^[a-h][1-8]$|^[NBRQKP][a-h][1-8]$""".toRegex().matches(moves.last())
 
         // If the last move is a half-move, remove it from the sequence for now
         val processedMoves = if (isLastMoveHalf) moves.dropLast(1) else moves
@@ -44,6 +44,11 @@ class ChessTrie {
         return current.children.mapValues { it.value.frequency }
     }
 
+    class ChessTrieNode {
+        var frequency: Int = 0
+        var children: MutableMap<String, ChessTrieNode> = mutableMapOf()
+    }
+
     fun printTrie(node: ChessTrieNode, prefix: String = "") {
         println("$prefix${if (node.frequency > 0) "($node.frequency)" else ""}")
         for ((move, child) in node.children) {
@@ -51,9 +56,4 @@ class ChessTrie {
         }
     }
 
-}
-
-class ChessTrieNode {
-    var frequency: Int = 0
-    var children: MutableMap<String, ChessTrieNode> = mutableMapOf()
 }

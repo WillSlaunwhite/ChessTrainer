@@ -1,44 +1,32 @@
 import { Card, List, ListItem } from "@material-tailwind/react";
-import { Chess } from "chess.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../contexts/game/game-context";
 import { INIT_GAME } from "../../contexts/game/gameActions";
+import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
-	const [gameState, dispatch] = useGameState();
+	const [, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 
-	const openGame = (openingName: string) => {
-		const tempGame = new Chess();
-		fetch(`http://localhost:8085/api/openings/${openingName}/start`)
-			.then((res) => res.json())
-			.then((opening: OpeningDTO) => {
-				const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
-				const fens: string[] = []
+	const openGame = async (openingName: string) => {
+		try {
+			const opening: OpeningDTO = await fetchOpening(openingName);
+			const gameData = await processOpeningData(opening);
 
-				const fullMoveSequences = opening.variations.map(variation => {
-					if (variation.movesSequence[0]) {
-						return baseSequence.concat(variation.movesSequence)
-					} else { return baseSequence }
-				});
+			dispatch({
+				type: INIT_GAME,
+				payload: gameData
+			});
 
-				fullMoveSequences.forEach(sequence => {
-					sequence.forEach(move => {
-						console.log(move);
-						
-						tempGame.move(move);
-					});
-					fens.push(tempGame.fen());
-					tempGame.reset();
-				});
-
-				dispatch({ type: INIT_GAME, payload: { fen: fens[0], moveHistories: fullMoveSequences, currentFens: fens } });
-				navigate('/game');
-			})
-			.catch((error) => console.error('Failed to fetch variations: ', error));
+			navigate('/game');
+		}
+		catch (error) {
+			console.error('Failed to fetch variations: ', error);
+		};
 	}
+
 
 	useEffect(() => {
 		fetch('http://localhost:8085/api/openings/')
@@ -52,7 +40,7 @@ const OpeningsMenu: React.FC = () => {
 	return (
 		<div className="menu-container w-full flex items-center justify-center flex-col gap-1 mt-1">
 			<h2 className="menu-header">Select an Opening to Practice</h2>
-			<Card className="w-10/12">
+			<Card className="w-5/6">
 				<List className="mt-1">
 					{openings.map((opening) => (
 						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening.name)}>{opening.name}</ListItem>

@@ -1,55 +1,31 @@
-export const SELECT_SQUARE = "SELECT_SQUARE";
-export const MAKE_MOVE = "MAKE_MOVE";
-export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
-export const INIT_GAME = "INIT_GAME";
-export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
 export const CHECK_MOVE_LEGALITY = "CHECK_MOVE_LEGALITY";
 export const EXECUTE_PAWN_PROMOTION = "EXECUTE_PAWN_PROMOTION";
+export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
+export const INIT_GAME = "INIT_GAME";
+export const INCREMENT_LINE = 'INCREMENT_LINE';
+export const MAKE_MOVE = "MAKE_MOVE";
+export const MAKE_MOVE_ALT_FORMAT = "MAKE_MOVE_ALT_FORMAT";
+export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
+export const SELECT_SQUARE = "SELECT_SQUARE";
+export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
+export const SET_IS_COMPUTER_TURN = "SET_IS_COMPUTER_TURN";
+export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
+export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
+export const SET_NEXT_MOVES_ARRAY = "SET_NEXT_MOVE_ARRAY";
 export const SET_VARIATIONS = "SET_VARIATIONS";
-export const SET_MOVE_HISTORIES = "SET_MOVE_HISTORIES";
 export const SWITCH_LINES = "SWITCH_LINES";
+export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
+export const UPDATE_CURRENT_FENS = "UPDATE_CURRENT_FENS";
 
-export interface SelectSquareAction {
-    type: typeof SELECT_SQUARE;
-    payload: {
-        square: string | null;
-    };
-}
-
-export interface MakeMoveAction {
-    type: typeof MAKE_MOVE;
+interface CheckMoveLegalityAction {
+    type: typeof CHECK_MOVE_LEGALITY;
     payload: {
         source: string;
         destination: string;
     };
 }
 
-export interface MakeMoveWithPromotionAction {
-    type: typeof MAKE_MOVE_WITH_PROMOTION;
-    payload: {
-        source: string;
-        destination: string;
-        promotionPiece: string;
-    };
-}
-
-export interface InitGameAction {
-    type: typeof INIT_GAME;
-    payload: {
-        fen: string;
-        currentFens: string[];
-        moveHistories: string[][];
-    };
-}
-
-export interface GetPieceAtSquareAction {
-    type: typeof GET_PIECE_AT_SQUARE;
-    payload: {
-        square: string;
-    };
-}
-
-export interface ExecutePawnPromotionAction {
+interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
     payload: {
         source: string;
@@ -58,33 +34,113 @@ export interface ExecutePawnPromotionAction {
     };
 }
 
-export interface CheckMoveLegalityAction {
-    type: typeof CHECK_MOVE_LEGALITY;
+interface GetPieceAtSquareAction {
+    type: typeof GET_PIECE_AT_SQUARE;
+    payload: {
+        square: string;
+    };
+}
+
+interface InitGameAction {
+    type: typeof INIT_GAME;
+    payload: {
+        fen: string;
+        currentFens: string[];
+        moveHistories: string[][];
+        initialMoves: string[];
+        nextMoves: string[];
+    };
+}
+
+interface IncrementLineAction {
+    type: typeof INCREMENT_LINE;
+}
+
+interface MakeMoveAction {
+    type: typeof MAKE_MOVE;
     payload: {
         source: string;
         destination: string;
     };
 }
 
-export interface SetMoveHistories {
-    type: typeof SET_MOVE_HISTORIES;
+interface MakeMoveAltFormatAction {
+    type: typeof MAKE_MOVE_ALT_FORMAT;
     payload: {
-        histories: [[]];
+        move: string;
+    }
+}
+
+interface MakeMoveWithPromotionAction {
+    type: typeof MAKE_MOVE_WITH_PROMOTION;
+    payload: {
+        source: string;
+        destination: string;
+        promotionPiece: string;
+    };
+}
+interface SelectSquareAction {
+    type: typeof SELECT_SQUARE;
+    payload: {
+        square: string | null;
     };
 }
 
-export interface SetVariationsAction {
+interface SetBoardFromHistoryAction {
+    type: typeof SET_BOARD_FROM_HISTORY;
+}
+
+interface SetCurrentLineNumberAction {
+    type: typeof SET_CURRENT_LINE_NUMBER;
+    payload: { lineNumber: number; };
+}
+
+interface SetIsComputerTurnAction {
+    type: typeof SET_IS_COMPUTER_TURN;
+    payload: { isComputerTurn: boolean; };
+}
+
+interface SetNextMoveAction {
+    type: typeof SET_NEXT_MOVE;
+    payload: {
+        nextMove: string;
+    };
+}
+
+interface SetNextMovesArrayAction {
+    type: typeof SET_NEXT_MOVES_ARRAY;
+    payload: {
+        nextMoves: string[];
+    };
+}
+
+interface SetVariationsAction {
     type: typeof SET_VARIATIONS;
     payload: {
         variations: VariationDTO[];
     };
 }
 
-export interface SwitchLinesAction {
+interface SwitchLinesAction {
     type: typeof SWITCH_LINES;
     payload: {
         fen: string;
     };
 }
 
-export type GameActionTypes = SelectSquareAction | MakeMoveAction | InitGameAction | GetPieceAtSquareAction | MakeMoveWithPromotionAction | CheckMoveLegalityAction | ExecutePawnPromotionAction | SetVariationsAction | SetMoveHistories | SwitchLinesAction;
+interface UpdateCurrentFensAction {
+    type: typeof UPDATE_CURRENT_FENS;
+    payload: {
+        currentFens: string[];
+    };
+}
+
+interface UpdateMoveHistoriesAction {
+    type: typeof UPDATE_MOVE_HISTORIES;
+    payload: {
+        moveHistories: string[][];
+    };
+}
+
+
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateCurrentFensAction | UpdateMoveHistoriesAction;

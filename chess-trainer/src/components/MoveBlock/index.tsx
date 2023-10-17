@@ -1,56 +1,24 @@
-import { useEffect } from "react";
+import React from "react";
+import { getBorderColor } from "../../utility/uiUtils";
 import MoveHistory from "./move-history";
 
 interface MoveProps {
 	isCorrect: boolean | null;
 	moveHistory: string[];
 	isCurrent: boolean;
+	currentIndex: number;
+    onClick: (event: React.MouseEvent<HTMLDivElement>, index: number) => void;
+	blockNumber: number;
 }
 
-const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent }) => {
-
-	const getBorderColor = () => {
-		if (isCorrect === null && isCurrent) {
-			return "border-blue-500";
-		} else if (isCorrect === false) {
-			return "border-red-500";
-		} else if (isCorrect === true) {
-			return "border-green-500";
-		} else {
-			return "border-gray-900";
-		}
-	};
-
-
-	useEffect(() => {
-		const fetchNextMoves = async () => {
-			console.log("MOVE HISTORY: ", moveHistory);
-			
-			const response = await fetch('http://localhost:8085/api/chess/next-moves', {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify([moveHistory])
-			});
-
-			// if (response.ok) {
-				const data = await response.json();
-				console.log("DATA: ", data);
-			// }
-		};
-
-		fetchNextMoves()
-	}, [moveHistory]);
+const MoveBlock: React.FC<MoveProps> = ({ isCorrect, moveHistory, isCurrent, onClick, blockNumber }) => {
 
 	return (
-		<div className={`block-border font-sans text-xl text-gray-600 w-[7rem] overflow-scroll h-24 mx-1 border-4 ${getBorderColor()}`}>
+		<div onClick={(event) => onClick(event, blockNumber)} className={`block-border font-sans text-xl shadow-2xl text-gray-600 w-full m-0 overflow-scroll h-[7.5rem] border-x-2 border-b-4 ${getBorderColor(isCurrent, isCorrect!!)}`}>
 			<div className="move-history tracking-wide text-center">
 				<MoveHistory moveHistory={moveHistory} />
 			</div>
 		</div>
-		// move numbers and the move next to it
-		// border turns green on success, red on failure
 	);
 };
 

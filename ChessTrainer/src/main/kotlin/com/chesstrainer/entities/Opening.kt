@@ -12,7 +12,7 @@ data class Opening(
     val name: String,
     val description: String? = null,
     @Convert(converter = StringListConverter::class)
-    @Column(name = "base_moves_sequence")
+    @Column(name = "moves_sequence")
     val baseMoveSequence: List<String> = listOf(),
     @OneToMany(mappedBy = "opening")
     @JsonManagedReference

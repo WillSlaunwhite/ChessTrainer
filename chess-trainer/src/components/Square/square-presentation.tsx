@@ -59,5 +59,4 @@ const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, 
 	);
 };
 
-const SquarePresentationMemo = React.memo(SquarePresentation);
-export default SquarePresentationMemo;
+export default React.memo(SquarePresentation);

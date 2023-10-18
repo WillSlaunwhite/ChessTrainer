@@ -1,10 +1,8 @@
 import { useGameState } from "../../contexts/game/game-context";
-import { CHECK_MOVE_LEGALITY, MAKE_MOVE_ALT_FORMAT, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_TURN } from "../../contexts/game/gameActions";
-import { extractMoveDetails } from "../chessUtils";
-import { useHandleComputerMove } from "./useHandleComputerMove";
+import { MAKE_MOVE_ALT_FORMAT } from "../../contexts/game/gameActions";
 
 export function useComputerMoveLogic(nextMove: string) {
-    const [gameState, dispatch] = useGameState();
+    const [_gameState, dispatch] = useGameState();
     // const compMoveFun = useHandleComputerMove();
 
     // useEffect(() => {
@@ -22,15 +20,16 @@ export function useComputerMoveLogic(nextMove: string) {
 
     const makeComputerMove = () => {
         if (nextMove) {
-            console.log("HOOOK MOVE: ", nextMove);
+            console.log("makeComputerMove: ", nextMove);
 
             dispatch({
                 type: MAKE_MOVE_ALT_FORMAT, payload: {
                     move: nextMove
                 }
             });
-            dispatch({ type: SET_BOARD_FROM_HISTORY });
-            dispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: false } });
+            // dispatch({ type: SET_BOARD_FROM_HISTORY });
+            // dispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: false } });
+            // dispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: false } });
         }
     };
     return {

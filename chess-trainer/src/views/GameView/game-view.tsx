@@ -5,8 +5,6 @@ import { SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINES } 
 import { useQuiz } from "../../contexts/quiz/quiz-context";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import MoveContainer from "./move-container";
-import { useHandleMoveUpdate } from "../../utility/hooks/useHandleMoveUpdate";
-import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 
 
 const GameView: React.FC = () => {
@@ -22,13 +20,10 @@ const GameView: React.FC = () => {
 
 	// hooks
 	const handleComputerMove = useComputerMoveLogic(nextMove);
-	const handleMoveUpdate = useHandleMoveUpdate();
-	const handleMove = useUserMoveLogic(handleMoveUpdate);
 
 	useEffect(() => {
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true } });
 	}, [nextMove !== ""]);
-
 
 	useEffect(() => {
 		handleComputerMove.makeComputerMove();
@@ -42,7 +37,7 @@ const GameView: React.FC = () => {
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={gameState.currentLineIndex} switchLines={switchLine} />
-			<ChessboardContainer handleMove={handleMove.handleMove} />
+			<ChessboardContainer />
 		</div>
 	);
 };

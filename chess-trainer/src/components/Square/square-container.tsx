@@ -11,7 +11,6 @@ interface SquareContainerProps {
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
 	const [gameState, dispatch] = useGameState();
-
 	const selectedSquare = gameState.selectedSquare;
 	const isSelected = square === selectedSquare;
 

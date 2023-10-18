@@ -119,25 +119,37 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const { source, destination } = action.payload;
             const newMoveHistories = state.moveHistories;
             const fens = state.currentFens;
-            
-
-            const moveResult = game.move({ from: source, to: destination });
-            const wasMoveValid = !!moveResult;
 
 
-            fens[state.currentLineIndex] = moveResult.after;
-            newMoveHistories[state.currentLineIndex].push(moveResult.san);
+            try {
+                const moveResult = game.move({ from: source, to: destination });
 
-            return {
-                ...state,
-                fen: moveResult.after,
-                currentFens: fens,
-                selectedSquare: null,
-                lastMoveValid: wasMoveValid,
-                moveHistories: newMoveHistories,
-                san: moveResult.san,
-                isComputerTurn: true,
-            };
+                const wasMoveValid = !!moveResult;
+
+
+                fens[state.currentLineIndex] = moveResult.after;
+                newMoveHistories[state.currentLineIndex].push(moveResult.san);
+
+                return {
+                    ...state,
+                    fen: moveResult.after,
+                    currentFens: fens,
+                    selectedSquare: null,
+                    lastMoveValid: wasMoveValid,
+                    moveHistories: newMoveHistories,
+                    san: moveResult.san,
+                    isComputerTurn: true,
+                };
+            } catch (error) {
+                // * Invalid move
+                console.error(error);
+
+                return {
+                    ...state,
+                    selectedSquare: null,
+                    lastMoveValid: false,
+                };
+            }
         }
 
         case MAKE_MOVE_ALT_FORMAT: {

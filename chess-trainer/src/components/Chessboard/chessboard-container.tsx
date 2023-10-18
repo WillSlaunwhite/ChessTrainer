@@ -14,6 +14,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
 	const currentFens = gameState.currentFens;
 	const readyToMove = gameState.isComputerReadyToMove;
 	const nextMove = gameState.nextMoves[lineIndex];
+	const isComputerTurn = gameState.isComputerTurn;
 
 	// hooks
 	const handleComputerMove = useComputerMoveLogic();
@@ -21,10 +22,12 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
 
 
 	useEffect(() => {
-		if (readyToMove === true && nextMove !== "") {
+		if (readyToMove === true && nextMove !== "" && isComputerTurn === true) {
+			console.log("READY TO MOVE: ", readyToMove, "\nNEXT MOVE: ", nextMove, "\nIS COMPUTER TURN: ", isComputerTurn);
+			
 			handleComputerMove.makeComputerMove(nextMove);
 		}
-	}, [nextMove, readyToMove]);
+	}, [nextMove, readyToMove, isComputerTurn]);
 
 
 	return <ChessboardPresentation fen={currentFens[lineIndex]} onMove={handleUserMove.handleMove} />;

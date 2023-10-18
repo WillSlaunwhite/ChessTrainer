@@ -6,14 +6,18 @@ import { INIT_GAME } from "../../contexts/game/gameActions";
 import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {
-	const [, dispatch] = useGameState();
+	const [_gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 
 	const openGame = async (openingName: string) => {
 		try {
 			const opening: OpeningDTO = await fetchOpening(openingName);
+			console.log("OPENING: ", opening);
+
 			const gameData = await processOpeningData(opening);
+			console.log("GAME DATA: ", gameData);
+
 
 			dispatch({
 				type: INIT_GAME,
@@ -26,7 +30,6 @@ const OpeningsMenu: React.FC = () => {
 			console.error('Failed to fetch variations: ', error);
 		};
 	}
-
 
 	useEffect(() => {
 		fetch('http://localhost:8085/api/openings/')

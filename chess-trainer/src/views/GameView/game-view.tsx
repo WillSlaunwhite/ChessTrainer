@@ -3,7 +3,6 @@ import ChessboardContainer from "../../components/Chessboard/chessboard-containe
 import { useGameState } from "../../contexts/game/game-context";
 import { SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINES } from "../../contexts/game/gameActions";
 import { useQuiz } from "../../contexts/quiz/quiz-context";
-import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import MoveContainer from "./move-container";
 
 
@@ -15,19 +14,11 @@ const GameView: React.FC = () => {
 	// variables
 	const lineIndex = gameState.currentLineIndex;
 	const nextMove = gameState.nextMoves[lineIndex];
-	const readyToMove = gameState.isComputerReadyToMove;
 	const moveHistories = gameState.moveHistories;
-
-	// hooks
-	const handleComputerMove = useComputerMoveLogic(nextMove);
 
 	useEffect(() => {
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true } });
 	}, [nextMove !== ""]);
-
-	useEffect(() => {
-		handleComputerMove.makeComputerMove();
-	}, [readyToMove === true]);
 
 	const switchLine = useCallback((_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
 		gameDispatch({ type: SET_CURRENT_LINE_NUMBER, payload: { lineNumber: lineNumber } });

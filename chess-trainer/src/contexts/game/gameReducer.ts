@@ -120,12 +120,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const newMoveHistories = state.moveHistories;
             const fens = state.currentFens;
 
-
             try {
                 const moveResult = game.move({ from: source, to: destination });
-
                 const wasMoveValid = !!moveResult;
-
 
                 fens[state.currentLineIndex] = moveResult.after;
                 newMoveHistories[state.currentLineIndex].push(moveResult.san);
@@ -149,49 +146,39 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     selectedSquare: null,
                     lastMoveValid: false,
                 };
-            }
+            };
         }
 
         case MAKE_MOVE_ALT_FORMAT: {
             game.load(state.fen);
             const move = action.payload.move;
-            const newMoveHistory = state.moveHistories[state.currentLineIndex];
-            console.log("MOVE ALT: ", move);
+            const newMoveHistories = state.moveHistories;
+            const fens = state.currentFens;
 
-            if (!newMoveHistory.includes(move) && move !== "") {
+            try {
                 const moveResult = game.move(move);
                 const wasMoveValid = !!moveResult;
 
-                if (!moveResult) {
-                    console.log("NO MOVE RESULT: ", moveResult);
-                    return state;
-                } else {
-                    console.log("MOVE RESULT: ", moveResult, "\tWAS MOVE VALID: ", wasMoveValid);
+                fens[state.currentLineIndex] = moveResult.after;
+                newMoveHistories[state.currentLineIndex].push(moveResult.san);
 
-                    newMoveHistory.push(move);
-                    const newMoveHistories = state.moveHistories;
-                    const fens = state.currentFens;
-                    newMoveHistories[state.currentLineIndex] = newMoveHistory;
-                    fens[state.currentLineIndex] = moveResult.after;
-
-                    const newNextMoves = state.nextMoves;
-                    newNextMoves[state.currentLineIndex] = "";
-
-                    return {
-                        ...state,
-                        fen: moveResult.after,
-                        lastMoveValid: wasMoveValid,
-                        san: moveResult.san,
-                        moveHistories: newMoveHistories,
-                        isComputerTurn: false,
-                        isComputerReadyToMove: false,
-                        nextMoves: newNextMoves,
-                        currentFens: fens,
-                    };
+                return {
+                    ...state,
+                    fen: moveResult.after,
+                    currentFens: fens,
+                    selectedSquare: null,
+                    lastMoveValid: wasMoveValid,
+                    moveHistories: newMoveHistories,
+                    san: moveResult.san,
+                    isComputerTurn: false,
+                };
+            } catch (error) {
+                console.error(error);
+                return {
+                    ...state,
+                    lastMoveValid: false,
                 }
             }
-
-            return state;
         }
 
         case MAKE_MOVE_WITH_PROMOTION: {

@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/chessboard-container";
 import { useGameState } from "../../contexts/game/game-context";
-import { SET_CURRENT_LINE_NUMBER, SWITCH_LINES } from "../../contexts/game/gameActions";
+import { SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINES } from "../../contexts/game/gameActions";
 import { useQuiz } from "../../contexts/quiz/quiz-context";
-import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import MoveContainer from "./move-container";
 
 
@@ -17,32 +16,11 @@ const GameView: React.FC = () => {
 	const nextMove = gameState.nextMoves[lineIndex];
 	const moveHistories = gameState.moveHistories;
 
-	// hooks
-	const handleComputerMove = useComputerMoveLogic(nextMove);
-
 	useEffect(() => {
-		if (nextMove !== "" && gameState.isComputerTurn) {
-			console.log("GAME VIEW USE EFFECT: ", gameState.isComputerTurn);
-			handleComputerMove.makeComputerMove();
-		}
-	}, []);
+		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true } });
+	}, [nextMove !== ""]);
 
-
-	useEffect(() => {
-		// if (nextMove !== "") {
-		// 	gameState.nextMoves[lineIndex] = "";
-
-		// }
-	}, [gameState.nextMoves[lineIndex]]);
-
-
-
-	// * TODO IMPLEMENT THIS
-	const checkMoveCorrectness = (move: string) => {
-		return true;
-	}
-
-	const switchLine = useCallback((event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
+	const switchLine = useCallback((_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
 		gameDispatch({ type: SET_CURRENT_LINE_NUMBER, payload: { lineNumber: lineNumber } });
 		gameDispatch({ type: SWITCH_LINES, payload: { fen: gameState.currentFens[lineNumber] } });
 	}, [gameDispatch, gameState.currentFens])
@@ -56,8 +34,3 @@ const GameView: React.FC = () => {
 };
 
 export default React.memo(GameView);
-
-function fetchProbableMoves() {
-	throw new Error("Function not implemented.");
-}
-

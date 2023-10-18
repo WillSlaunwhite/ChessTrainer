@@ -36,7 +36,7 @@ const pieceComponents: Record<string, React.FC> = {
 	k: BlackKing,
 };
 
-const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, selected, onClick, selectedSquare }) => {
+const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, selected, onClick }) => {
 	const PieceComponent = pieceComponents[piece];
 
 	const fileToNum = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 };

@@ -6,6 +6,6 @@ import "./index.scss";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<ThemeProvider>
-			<App />
-	</ThemeProvider>
+		<App />
+	</ThemeProvider>,
 );

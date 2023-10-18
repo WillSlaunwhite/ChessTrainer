@@ -111,7 +111,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 currentFens: action.payload.currentFens,
                 initialMoves: action.payload.initialMoves,
                 nextMoves: action.payload.nextMoves,
-                isComputerTurn: true
+                isComputerTurn: true,
+                currentLineIndex: 0,
             };
 
         case MAKE_MOVE: {
@@ -126,6 +127,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
                 fens[state.currentLineIndex] = moveResult.after;
                 newMoveHistories[state.currentLineIndex].push(moveResult.san);
+
+                console.log("STATE IN MAKE MOVE: ", state);
 
                 return {
                     ...state,
@@ -154,6 +157,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const move = action.payload.move;
             const newMoveHistories = state.moveHistories;
             const fens = state.currentFens;
+            const nextMoves = state.nextMoves;
+            console.log("STATE IN MAKE MOVE ALT FORMAT: ", state);
 
             try {
                 const moveResult = game.move(move);
@@ -161,6 +166,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
                 fens[state.currentLineIndex] = moveResult.after;
                 newMoveHistories[state.currentLineIndex].push(moveResult.san);
+                nextMoves[state.currentLineIndex] = "";
 
                 return {
                     ...state,
@@ -171,6 +177,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     moveHistories: newMoveHistories,
                     san: moveResult.san,
                     isComputerTurn: false,
+                    isComputerReadyToMove: false,
+                    nextMoves: nextMoves,
                 };
             } catch (error) {
                 console.error(error);

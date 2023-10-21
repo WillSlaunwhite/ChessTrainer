@@ -110,6 +110,7 @@ interface SetNextMoveAction {
     type: typeof SET_NEXT_MOVE;
     payload: {
         nextMove: string;
+        currentLineIndex: number;
     };
 }
 

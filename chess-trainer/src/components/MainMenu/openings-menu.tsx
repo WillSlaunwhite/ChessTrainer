@@ -13,17 +13,13 @@ const OpeningsMenu: React.FC = () => {
 	const openGame = async (openingName: string) => {
 		try {
 			const opening: OpeningDTO = await fetchOpening(openingName);
-			console.log("OPENING: ", opening);
-
 			const gameData = await processOpeningData(opening);
 			console.log("GAME DATA: ", gameData);
-
-
+			
 			dispatch({
 				type: INIT_GAME,
 				payload: gameData
 			});
-
 			navigate('/game');
 		}
 		catch (error) {

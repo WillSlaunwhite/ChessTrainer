@@ -1,6 +1,7 @@
 import { Chess, Square } from "chess.js";
 import { GameState } from "./game-context";
 import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./gameActions";
+import { isComputersTurn } from "../../utility/chessUtils";
 
 export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source as Square, verbose: true });
@@ -119,26 +120,29 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             game.load(state.fen);
             const { source, destination } = action.payload;
             const newMoveHistories = state.moveHistories;
+            const currentLineIndex = state.currentLineIndex;
             const fens = state.currentFens;
 
             try {
                 const moveResult = game.move({ from: source, to: destination });
                 const wasMoveValid = !!moveResult;
+                const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
 
-                fens[state.currentLineIndex] = moveResult.after;
-                newMoveHistories[state.currentLineIndex].push(moveResult.san);
+                fens[currentLineIndex] = moveResult.after;
+                newMoveHistories[currentLineIndex].push(moveResult.san);
 
-                console.log("STATE IN MAKE MOVE: ", state);
+                const isComputerTurn = isComputersTurn(newMoveHistories[nextLineIndex], state.computerColor);
 
                 return {
                     ...state,
-                    fen: moveResult.after,
                     currentFens: fens,
-                    selectedSquare: null,
+                    currentLineIndex: nextLineIndex,
+                    fen: state.currentFens[nextLineIndex],
+                    isComputerTurn: isComputerTurn,
                     lastMoveValid: wasMoveValid,
                     moveHistories: newMoveHistories,
                     san: moveResult.san,
-                    isComputerTurn: true,
+                    selectedSquare: null,
                 };
             } catch (error) {
                 // * Invalid move
@@ -146,39 +150,43 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
                 return {
                     ...state,
-                    selectedSquare: null,
                     lastMoveValid: false,
+                    selectedSquare: null,
                 };
             };
         }
 
         case MAKE_MOVE_ALT_FORMAT: {
+            console.log(state);
+
             game.load(state.fen);
-            const move = action.payload.move;
             const newMoveHistories = state.moveHistories;
             const fens = state.currentFens;
             const nextMoves = state.nextMoves;
-            console.log("STATE IN MAKE MOVE ALT FORMAT: ", state);
+            const currentLineIndex = state.currentLineIndex;
+            const move = action.payload.move !== "" ? action.payload.move : nextMoves[currentLineIndex];
+            const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
 
             try {
                 const moveResult = game.move(move);
                 const wasMoveValid = !!moveResult;
 
-                fens[state.currentLineIndex] = moveResult.after;
-                newMoveHistories[state.currentLineIndex].push(moveResult.san);
-                nextMoves[state.currentLineIndex] = "";
+                fens[currentLineIndex] = moveResult.after;
+                newMoveHistories[currentLineIndex].push(moveResult.san);
+                nextMoves[currentLineIndex] = "";
 
+                const isComputerTurn = isComputersTurn(newMoveHistories[nextLineIndex], state.computerColor);
                 return {
                     ...state,
-                    fen: moveResult.after,
                     currentFens: fens,
-                    selectedSquare: null,
+                    fen: fens[currentLineIndex],
+                    isComputerTurn: isComputerTurn,
+                    isComputerReadyToMove: false,
                     lastMoveValid: wasMoveValid,
                     moveHistories: newMoveHistories,
-                    san: moveResult.san,
-                    isComputerTurn: false,
-                    isComputerReadyToMove: false,
                     nextMoves: nextMoves,
+                    san: "",
+                    selectedSquare: null,
                 };
             } catch (error) {
                 console.error(error);
@@ -243,7 +251,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             return { ...state, isComputerReadyToMove: action.payload.isComputerReadyToMove }
 
         case SET_NEXT_MOVE:
-            const currentLineIndex = state.currentLineIndex;
+            const currentLineIndex = action.payload.currentLineIndex;
             const nextMove = action.payload.nextMove;
             const updatedNextMoves = [...state.nextMoves];
 
@@ -272,6 +280,12 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 fen: action.payload.fen,
             }
 
+        case UPDATE_CURRENT_FENS:
+            return {
+                ...state,
+                currentFens: action.payload.currentFens
+            }
+
         case UPDATE_MOVE_HISTORIES:
             const filteredMoveHistories = action.payload.moveHistories.map(subArray =>
                 subArray.filter(move => move !== "")
@@ -279,12 +293,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             return {
                 ...state,
                 moveHistories: filteredMoveHistories
-            }
-
-        case UPDATE_CURRENT_FENS:
-            return {
-                ...state,
-                currentFens: action.payload.currentFens
             }
 
         default:

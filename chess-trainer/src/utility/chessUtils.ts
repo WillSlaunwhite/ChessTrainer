@@ -1,15 +1,11 @@
 import { Chess } from "chess.js";
 
-function determineNextComputerMove(baseSequence: string[], index: number): Promise<string> {
-    const nextMove = baseSequence[baseSequence.length - 1];
-    console.log("NEXT MOVE: ", nextMove);
-    console.log("BASE SEQUENCE: ", baseSequence);
+// export function determineNextComputerMove(baseSequence: string[]): string {
+//     const nextMove = await fetchNextMoveForSequence(baseSequence);
+//     return nextMove;
+// }
 
-    // TODO HARDCODED, NEED TO FIX!
-    return fetchNextMoveForSequence(baseSequence);
-}
-
-function convertToFullMoves(history: string[]): string[] {
+export function convertToFullMoves(history: string[]): string[] {
     const fullMoves = [];
     for (let i = 0; i < history.length; i += 2) {
         if (history[i + 1]) {
@@ -21,7 +17,7 @@ function convertToFullMoves(history: string[]): string[] {
     return fullMoves;
 };
 
-function isComputersTurn(computerColor: string, moveSequence: string[]): boolean {
+export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
     if ((computerColor === "w" || computerColor === "white") && moveSequence.length % 2 === 1) {
         return true;
     } else if ((computerColor === "b" || computerColor === "black") && moveSequence.length % 2 === 0) {
@@ -65,13 +61,9 @@ export async function processOpeningData(opening: OpeningDTO): Promise<{ fen: st
         }
     });
 
-    console.log("FULL MOVE SEQUENCES: ", fullMoveSequences);
-
     for (let i = 0; i < fullMoveSequences.length; i++) {
         const sequence = convertToFullMoves(fullMoveSequences[i]);
-        const firstComputerMove = await determineNextComputerMove(sequence, i);
-
-        console.log("FIRST COMPUTER MOVE: ", firstComputerMove);
+        const firstComputerMove = await fetchNextMoveForSequence(sequence);
 
         if (firstComputerMove) {
             firstMoves[i] = firstComputerMove;
@@ -104,7 +96,7 @@ export async function processOpeningData(opening: OpeningDTO): Promise<{ fen: st
     };
 }
 
-async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
+export async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
     console.log("SEQUENCE: ", sequence);
     try {
         return fetch('http://localhost:8085/api/chess/next-moves', {

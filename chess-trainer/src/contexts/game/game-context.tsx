@@ -5,25 +5,32 @@ import { GameActionTypes } from "./gameActions";
 
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-export interface GameState {
+interface GlobalState {
+	currentLineIndex: number;
+    initialMoves: string[];
+    selectedSquare: string | null;
+    variations: VariationDTO[];
+}
+
+interface LineState {
     colorOfPiece: string;
     computerColor: 'white' | 'black';
-    currentFens: string[];
-	currentLineIndex: number;
     fen: string;
-    initialMoves: string[];
     isComputerTurn: boolean,
     isComputerReadyToMove: boolean,
     isPawnPromotion: boolean;
     lastMoveValid: boolean;
-    moveHistories: string[][];
-    nextMoves: string[],
+    moveHistory: string[];
+    nextMove: string;
     pieceAtSquare: string;
     promotionDestination: string;
     promotionSource: string;
     san: string;
-    selectedSquare: string | null;
-    variations: VariationDTO[];
+}
+
+type GameState = {
+    global: GlobalState;
+    lines: LineState[];
 }
 
 interface GameStateProviderProps {

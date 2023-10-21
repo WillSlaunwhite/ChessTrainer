@@ -10,4 +10,4 @@ const Move: React.FC<MoveProps> = ({ move, isRecent = false }) => {
 	return <span className={`${moveStyle} px-1 overflow-hidden mx-auto`}>{ move } </span>;
 };
 
-export default React.memo(Move);
+export default Move;

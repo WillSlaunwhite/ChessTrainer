@@ -1,36 +1,43 @@
 import React, { useEffect } from "react";
-import { useGameState } from "../../contexts/game/game-context";
-import ChessboardPresentation from "./chessboard-presentation";
-import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
+import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
+import ChessboardPresentation from "./chessboard-presentation";
 
-interface ChessboardContainerProps { }
+interface ChessboardContainerProps {
+	currentFens: string[];
+	currentLineIndex: number;
+	isComputerTurn: boolean;
+	nextMove: string;
+	readyToMove: boolean;
+}
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ }) => {
-	const [gameState, _dispatch] = useGameState();
-
-
-	const lineIndex = gameState.currentLineIndex;
-	const currentFens = gameState.currentFens;
-	const readyToMove = gameState.isComputerReadyToMove;
-	const nextMove = gameState.nextMoves[lineIndex];
-	const isComputerTurn = gameState.isComputerTurn;
-
-	// hooks
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ currentFens, currentLineIndex, isComputerTurn, nextMove, readyToMove }) => {
+	// * hooks
 	const handleComputerMove = useComputerMoveLogic();
 	const handleUserMove = useUserMoveLogic();
 
 
 	useEffect(() => {
 		if (readyToMove === true && nextMove !== "" && isComputerTurn === true) {
-			console.log("READY TO MOVE: ", readyToMove, "\nNEXT MOVE: ", nextMove, "\nIS COMPUTER TURN: ", isComputerTurn);
-			
 			handleComputerMove.makeComputerMove(nextMove);
 		}
 	}, [nextMove, readyToMove, isComputerTurn]);
 
+	// useEffect(() => {
+	// 	(async () => {
+	// 		const previousLineMoveHistory = gameState.moveHistories[currentLineIndex];
 
-	return <ChessboardPresentation fen={currentFens[lineIndex]} onMove={handleUserMove.handleMove} />;
+	// 		console.log("SECOND USE EFFECT: ", gameState);
+	// 		console.log("CURRENT LINE MOVE HISTORY: ", previousLineMoveHistory);
+	// 		const nextMoveForLine = await fetchNextMoveForComputer.fetchNextMove(previousLineMoveHistory, currentLineIndex);
+	// 		console.log("NEXT MOVE FOR LINE: ", nextMoveForLine);
+
+	// 		dispatch({ type: SET_NEXT_MOVE, payload: { currentLineIndex: currentLineIndex, nextMove: nextMoveForLine } });
+
+	// 		dispatch({ type: INCREMENT_LINE });
+	// 	})();
+	// }, [currentLineIndex, gameState.moveHistories[currentLineIndex]]);
+	return <ChessboardPresentation fen={currentFens[currentLineIndex]} onMove={handleUserMove.handleMove} />;
 };
 
 

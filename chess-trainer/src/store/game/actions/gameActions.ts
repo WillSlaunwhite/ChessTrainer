@@ -1,22 +1,4 @@
-export const CHECK_MOVE_LEGALITY = "CHECK_MOVE_LEGALITY";
-export const EXECUTE_PAWN_PROMOTION = "EXECUTE_PAWN_PROMOTION";
-export const GET_PIECE_AT_SQUARE = "GET_PIECE_AT_SQUARE";
-export const INIT_GAME = "INIT_GAME";
-export const INCREMENT_LINE = 'INCREMENT_LINE';
-export const MAKE_MOVE = "MAKE_MOVE";
-export const MAKE_MOVE_ALT_FORMAT = "MAKE_MOVE_ALT_FORMAT";
-export const MAKE_MOVE_WITH_PROMOTION = "MAKE_MOVE_WITH_PROMOTION";
-export const SELECT_SQUARE = "SELECT_SQUARE";
-export const SET_BOARD_FROM_HISTORY = "SET_BOARD_FROM_HISTORY";
-export const SET_IS_COMPUTER_TURN = "SET_IS_COMPUTER_TURN";
-export const SET_IS_COMPUTER_READY_TO_MOVE = "SET_IS_COMPUTER_READY_TO_MOVE";
-export const SET_CURRENT_LINE_NUMBER = 'SET_CURRENT_LINE_NUMBER';
-export const SET_NEXT_MOVE = "SET_NEXT_MOVE";
-export const SET_NEXT_MOVES_ARRAY = "SET_NEXT_MOVE_ARRAY";
-export const SET_VARIATIONS = "SET_VARIATIONS";
-export const SWITCH_LINES = "SWITCH_LINES";
-export const UPDATE_MOVE_HISTORIES = "UPDATE_MOVE_HISTORIES";
-export const UPDATE_CURRENT_FENS = "UPDATE_CURRENT_FENS";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INIT_GAME, INCREMENT_LINE, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_IS_COMPUTER_READY_TO_MOVE, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./actionTypes";
 
 interface CheckMoveLegalityAction {
     type: typeof CHECK_MOVE_LEGALITY;
@@ -60,8 +42,9 @@ interface IncrementLineAction {
 interface MakeMoveAction {
     type: typeof MAKE_MOVE;
     payload: {
-        source: string;
-        destination: string;
+        fen: string,
+        san: string,
+        isPromotion: boolean
     };
 }
 
@@ -148,6 +131,5 @@ interface UpdateMoveHistoriesAction {
         moveHistories: string[][];
     };
 }
-
 
 export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateCurrentFensAction | UpdateMoveHistoriesAction;

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/chessboard-container";
-import { useGameState } from "../../contexts/game/game-context";
-import { MAKE_MOVE_ALT_FORMAT, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINES } from "../../contexts/game/gameActions";
-import { useQuiz } from "../../contexts/quiz/quiz-context";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { MAKE_MOVE_ALT_FORMAT, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINES } from "../../store/game/actions/gameActions";
+import { useQuiz } from "../../store/quiz/quiz-context";
 import MoveContainer from "./move-container";
 
 const GameView: React.FC = () => {

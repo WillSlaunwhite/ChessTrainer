@@ -1,12 +1,12 @@
-import { createContext, useContext, useReducer } from "react";
-import { gameReducer } from "./gameReducer";
-import { GameActionTypes } from "./gameActions";
+import React, { createContext, useContext, useReducer } from "react";
+import { gameReducer } from "../reducers/gameReducer";
+import { GameActionTypes } from "../actions/gameActions";
 
 
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 interface GlobalState {
-	currentLineIndex: number;
+    currentLineIndex: number;
     initialMoves: string[];
     selectedSquare: string | null;
     variations: VariationDTO[];
@@ -28,7 +28,7 @@ interface LineState {
     san: string;
 }
 
-type GameState = {
+export type GameState = {
     global: GlobalState;
     lines: LineState[];
 }
@@ -50,26 +50,30 @@ export const useGameState = () => {
 
 export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, {
-        colorOfPiece: "",
-        computerColor: "black",
-		currentLineIndex: 0,
-        currentFens: [startingFen, startingFen, startingFen],
-        fen: "",
-        initialMoves: [],
-        isComputerTurn: false,
-        isComputerReadyToMove: false,
-        isPawnPromotion: false,
-        lastMoveValid: false,
-        moveHistories: [[], [], []],
-        nextMoves: [],
-        pieceAtSquare: "",
-        promotionDestination: "",
-        promotionSource: "",
-        san: "",
-        selectedSquare: null,
-        variations: [],
+        global: {
+            currentLineIndex: 0,
+            initialMoves: [],
+            selectedSquare: null,
+            variations: []
+        },
+        lines: [
+            {
+                colorOfPiece: "",
+                computerColor: "black",
+                fen: startingFen,
+                isComputerTurn: false,
+                isComputerReadyToMove: false,
+                isPawnPromotion: false,
+                lastMoveValid: false,
+                moveHistory: [],
+                nextMove: "",
+                pieceAtSquare: "",
+                promotionDestination: "",
+                promotionSource: "",
+                san: "",
+            }
+        ]
     });
 
     return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;
-    
 };

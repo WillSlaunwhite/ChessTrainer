@@ -1,6 +1,6 @@
 import React from "react";
-import { useGameState } from "../../contexts/game/game-context";
-import { SELECT_SQUARE } from "../../contexts/game/gameActions";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { SELECT_SQUARE } from "../../store/game/actions/gameActions";
 import SquarePresentation from "./square-presentation";
 
 interface SquareContainerProps {

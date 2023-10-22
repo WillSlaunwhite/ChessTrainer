@@ -1,5 +1,5 @@
-import { useGameState } from "../../contexts/game/game-context";
-import { MAKE_MOVE_ALT_FORMAT } from "../../contexts/game/gameActions";
+import { MAKE_MOVE_ALT_FORMAT } from "../../store/game/actions/actionTypes";
+import { useGameState } from "../../store/game/contexts/GameContext";
 
 export function useComputerMoveLogic() {
     const [_gameState, dispatch] = useGameState();

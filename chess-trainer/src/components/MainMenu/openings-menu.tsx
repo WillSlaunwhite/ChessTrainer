@@ -1,8 +1,8 @@
 import { Card, List, ListItem } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { useGameState } from "../../contexts/game/game-context";
-import { INIT_GAME } from "../../contexts/game/gameActions";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { INIT_GAME } from "../../store/game/actions/gameActions";
 import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
 
 const OpeningsMenu: React.FC = () => {

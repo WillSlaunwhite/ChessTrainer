@@ -1,7 +1,8 @@
 import { Chess, Square } from "chess.js";
-import { GameState } from "./game-context";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, GameActionTypes, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./gameActions";
-import { isComputersTurn } from "../../utility/chessUtils";
+import { GameState } from "../contexts/GameContext";
+import { isComputersTurn } from "../../../utility/chessUtils";
+import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_IS_COMPUTER_READY_TO_MOVE, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "../actions/actionTypes";
+import { GameActionTypes } from "../actions/gameActions";
 
 export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source as Square, verbose: true });
@@ -9,54 +10,7 @@ export const isValidMove = (game: Chess, source: string, destination: string): b
 };
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
-    let game: Chess;
-    if (state.fen) game = new Chess(state.fen); else game = new Chess();
-
     switch (action.type) {
-        case CHECK_MOVE_LEGALITY: {
-            const { source, destination } = action.payload;
-            const isValid: boolean = isValidMove(game, source, destination);
-            if (isValid) {
-                const pieceAtSource = game.get(source as Square);
-                if (pieceAtSource?.type === 'p' &&
-                    ((pieceAtSource.color === 'w' && destination[1] === '8') ||
-                        (pieceAtSource.color === 'b' && destination[1] === '1'))) {
-                    return {
-                        ...state,
-                        isPawnPromotion: true,
-                        promotionSource: source,
-                        promotionDestination: destination
-                    };
-                } else {
-                    const newMove = game.move({ from: source, to: destination });
-                    const newSan = newMove.san;
-                    const newFens = state.currentFens;
-                    const newMoveHistories = state.moveHistories
-                    console.log("***************** NEW MOVE: ", newMove);
-
-                    newMoveHistories[state.currentLineIndex].push(newSan);
-                    newFens[state.currentLineIndex] = game.fen();
-
-
-                    // added this for troubleshooting purposes
-                    return {
-                        ...state,
-                        fen: game.fen(),
-                        currentFens: newFens,
-                        selectedSquare: null,
-                        san: newSan,
-                        moveHistories: newMoveHistories,
-                        lastMoveValid: isValid,
-                    }
-                }
-            } else {
-                return {
-                    ...state,
-                    selectedSquare: null
-                }
-            };
-        }
-
         case EXECUTE_PAWN_PROMOTION:
             const { source, destination, promotion } = action.payload;
             const newMove = game.move({ from: source, to: destination, promotion: promotion });
@@ -89,7 +43,10 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case INCREMENT_LINE:
             return {
                 ...state,
-                currentLineIndex: state.currentLineIndex + 1
+                global: {
+                    ...state.global,
+                    currentLineIndex: state.global.currentLineIndex + 1,
+                }
             };
 
         case INIT_GAME:
@@ -117,16 +74,21 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
 
         case MAKE_MOVE: {
-            game.load(state.fen);
-            const { source, destination } = action.payload;
-            const newMoveHistories = state.moveHistories;
-            const currentLineIndex = state.currentLineIndex;
-            const fens = state.currentFens;
+            const { fen, san, isPromotion } = action.payload;
+            const currentLineIndex = state.global.currentLineIndex;
+            const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
+            const updatedLines = [...state.lines];
+
+            updatedLines[currentLineIndex] = {
+                ...updatedLines[currentLineIndex],
+                fen,
+                moveHistory: [...updatedLines[currentLineIndex].moveHistory, san],
+                isPawnPromotion: isPromotion
+            }
 
             try {
                 const moveResult = game.move({ from: source, to: destination });
                 const wasMoveValid = !!moveResult;
-                const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
 
                 fens[currentLineIndex] = moveResult.after;
                 newMoveHistories[currentLineIndex].push(moveResult.san);

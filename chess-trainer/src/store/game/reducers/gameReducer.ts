@@ -1,8 +1,8 @@
 import { Chess, Square } from "chess.js";
-import { GameState } from "../contexts/GameContext";
 import { isComputersTurn } from "../../../utility/chessUtils";
-import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_IS_COMPUTER_READY_TO_MOVE, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "../actions/actionTypes";
+import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINE, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "../actions/actionTypes";
 import { GameActionTypes } from "../actions/gameActions";
+import { GameState } from "../contexts/GameContext";
 
 export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
     const validMoves = game.moves({ square: source as Square, verbose: true });
@@ -13,15 +13,14 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
     switch (action.type) {
         case EXECUTE_PAWN_PROMOTION:
             const { source, destination, promotion } = action.payload;
-            const newMove = game.move({ from: source, to: destination, promotion: promotion });
-            const newSan = newMove.san;
-
+            const updated
             return {
                 ...state,
+                lines: 
                 fen: game.fen(),
                 selectedSquare: null,
                 isPawnPromotion: false,
-                san: newSan
+                san: newMove.san
             };
 
         case GET_PIECE_AT_SQUARE:
@@ -50,27 +49,10 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
 
         case INIT_GAME:
-            game.load(action.payload.fen);
-
-            console.log("New state after INIT_GAME:", {
-                ...state,
-                fen: action.payload.fen,
-                moveHistories: action.payload.moveHistories,
-                currentFens: action.payload.currentFens,
-                initialMoves: action.payload.initialMoves,
-                nextMoves: action.payload.nextMoves,
-                // isComputerTurn: true
-            });
-
             return {
                 ...state,
-                fen: action.payload.fen,
-                moveHistories: action.payload.moveHistories,
-                currentFens: action.payload.currentFens,
-                initialMoves: action.payload.initialMoves,
-                nextMoves: action.payload.nextMoves,
-                isComputerTurn: true,
-                currentLineIndex: 0,
+                global: action.payload.global,
+                lines: action.payload.lines,
             };
 
         case MAKE_MOVE: {
@@ -78,85 +60,26 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const currentLineIndex = state.global.currentLineIndex;
             const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
             const updatedLines = [...state.lines];
+            const isComputerTurn = isComputersTurn(updatedLines[nextLineIndex].moveHistory, updatedLines[nextLineIndex].computerColor);
 
             updatedLines[currentLineIndex] = {
                 ...updatedLines[currentLineIndex],
-                fen,
+                fen: fen,
+                isPawnPromotion: isPromotion,
                 moveHistory: [...updatedLines[currentLineIndex].moveHistory, san],
-                isPawnPromotion: isPromotion
+                san: san,
+                isComputerTurn: isComputerTurn,
             }
-
-            try {
-                const moveResult = game.move({ from: source, to: destination });
-                const wasMoveValid = !!moveResult;
-
-                fens[currentLineIndex] = moveResult.after;
-                newMoveHistories[currentLineIndex].push(moveResult.san);
-
-                const isComputerTurn = isComputersTurn(newMoveHistories[nextLineIndex], state.computerColor);
-
-                return {
-                    ...state,
-                    currentFens: fens,
+            
+            return {
+                ...state,
+                lines: updatedLines,
+                global: {
+                    ...state.global,
                     currentLineIndex: nextLineIndex,
-                    fen: state.currentFens[nextLineIndex],
-                    isComputerTurn: isComputerTurn,
-                    lastMoveValid: wasMoveValid,
-                    moveHistories: newMoveHistories,
-                    san: moveResult.san,
                     selectedSquare: null,
-                };
-            } catch (error) {
-                // * Invalid move
-                console.error(error);
-
-                return {
-                    ...state,
-                    lastMoveValid: false,
-                    selectedSquare: null,
-                };
-            };
-        }
-
-        case MAKE_MOVE_ALT_FORMAT: {
-            console.log(state);
-
-            game.load(state.fen);
-            const newMoveHistories = state.moveHistories;
-            const fens = state.currentFens;
-            const nextMoves = state.nextMoves;
-            const currentLineIndex = state.currentLineIndex;
-            const move = action.payload.move !== "" ? action.payload.move : nextMoves[currentLineIndex];
-            const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
-
-            try {
-                const moveResult = game.move(move);
-                const wasMoveValid = !!moveResult;
-
-                fens[currentLineIndex] = moveResult.after;
-                newMoveHistories[currentLineIndex].push(moveResult.san);
-                nextMoves[currentLineIndex] = "";
-
-                const isComputerTurn = isComputersTurn(newMoveHistories[nextLineIndex], state.computerColor);
-                return {
-                    ...state,
-                    currentFens: fens,
-                    fen: fens[currentLineIndex],
-                    isComputerTurn: isComputerTurn,
-                    isComputerReadyToMove: false,
-                    lastMoveValid: wasMoveValid,
-                    moveHistories: newMoveHistories,
-                    nextMoves: nextMoves,
-                    san: "",
-                    selectedSquare: null,
-                };
-            } catch (error) {
-                console.error(error);
-                return {
-                    ...state,
-                    lastMoveValid: false,
                 }
-            }
+            };
         }
 
         case MAKE_MOVE_WITH_PROMOTION: {
@@ -180,7 +103,10 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case SELECT_SQUARE:
             return {
                 ...state,
-                selectedSquare: action.payload.square
+                global: {
+                    ...state.global,
+                    selectedSquare: action.payload.square
+                }
             };
 
         case SET_BOARD_FROM_HISTORY:
@@ -236,16 +162,25 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 variations: action.payload.variations
             }
 
-        case SWITCH_LINES:
+        case SWITCH_LINE:
             return {
                 ...state,
-                fen: action.payload.fen,
+                global: {
+                    ...state.global,
+                    currentLineIndex: action.payload.lineIndex
+                }
             }
 
-        case UPDATE_CURRENT_FENS:
+        case UPDATE_FEN_FOR_LINE:
+            const updatedLines = [...state.lines];
+            const lineIndex = action.payload.lineIndex;
+            updatedLines[lineIndex] = {
+                ...updatedLines[lineIndex],
+                fen: action.payload.fen
+            }
             return {
                 ...state,
-                currentFens: action.payload.currentFens
+                lines: updatedLines
             }
 
         case UPDATE_MOVE_HISTORIES:

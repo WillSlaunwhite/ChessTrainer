@@ -2,18 +2,18 @@ import { Card, List, ListItem } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { INIT_GAME } from "../../store/game/actions/gameActions";
-import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
+import { fetchOpening, processOpeningData } from "../../services/apiService";
+import { INIT_GAME } from "../../store/game/actions/actionTypes";
 
 const OpeningsMenu: React.FC = () => {
-	const [_gameState, dispatch] = useGameState();
+	const [gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 
 	const openGame = async (openingName: string) => {
 		try {
 			const opening: OpeningDTO = await fetchOpening(openingName);
-			const gameData = await processOpeningData(opening);
+			const gameData = await processOpeningData(opening, gameState.lines);
 			console.log("GAME DATA: ", gameData);
 			
 			dispatch({

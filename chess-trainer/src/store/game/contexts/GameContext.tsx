@@ -5,14 +5,14 @@ import { GameActionTypes } from "../actions/gameActions";
 
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-interface GlobalState {
+export interface GlobalState {
     currentLineIndex: number;
     initialMoves: string[];
     selectedSquare: string | null;
     variations: VariationDTO[];
 }
 
-interface LineState {
+export interface LineState {
     colorOfPiece: string;
     computerColor: 'white' | 'black';
     fen: string;

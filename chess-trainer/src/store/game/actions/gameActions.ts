@@ -1,4 +1,5 @@
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INIT_GAME, INCREMENT_LINE, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_TURN, SET_IS_COMPUTER_READY_TO_MOVE, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "./actionTypes";
+import { GlobalState, LineState } from "../contexts/GameContext";
+import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
 
 interface CheckMoveLegalityAction {
     type: typeof CHECK_MOVE_LEGALITY;
@@ -11,9 +12,10 @@ interface CheckMoveLegalityAction {
 interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
     payload: {
-        source: string;
         destination: string;
+        lineNumber: number;
         promotion: string;
+        source: string;
     };
 }
 
@@ -27,11 +29,8 @@ interface GetPieceAtSquareAction {
 interface InitGameAction {
     type: typeof INIT_GAME;
     payload: {
-        fen: string;
-        currentFens: string[];
-        moveHistories: string[][];
-        initialMoves: string[];
-        nextMoves: string[];
+        global: GlobalState,
+        lines: LineState[]
     };
 }
 
@@ -111,25 +110,19 @@ interface SetVariationsAction {
     };
 }
 
-interface SwitchLinesAction {
-    type: typeof SWITCH_LINES;
+interface SwitchLineAction {
+    type: typeof SWITCH_LINE;
     payload: {
+        lineIndex: number;
+    };
+}
+
+interface UpdateFenForLineAction {
+    type: typeof UPDATE_FEN_FOR_LINE;
+    payload: {
+        lineIndex: number,
         fen: string;
     };
 }
 
-interface UpdateCurrentFensAction {
-    type: typeof UPDATE_CURRENT_FENS;
-    payload: {
-        currentFens: string[];
-    };
-}
-
-interface UpdateMoveHistoriesAction {
-    type: typeof UPDATE_MOVE_HISTORIES;
-    payload: {
-        moveHistories: string[][];
-    };
-}
-
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLinesAction | UpdateCurrentFensAction | UpdateMoveHistoriesAction;
+export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction ;

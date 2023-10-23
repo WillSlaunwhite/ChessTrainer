@@ -1,5 +1,5 @@
 import React from "react";
-import MoveBlock from "../../components/MoveBlock";
+import MoveBlock from ".";
 
 
 interface MoveContainerProps {

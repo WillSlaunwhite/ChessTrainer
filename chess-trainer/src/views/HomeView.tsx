@@ -1,6 +1,6 @@
 import React from "react";
 import WelcomeMessageComponent from "../components/Common/text/welcome-message";
-import OpeningsMenu from "../components/MainMenu/openings-menu";
+import OpeningsMenu from "../components/MainMenu/OpeningsMenu";
 import SidebarComponent from "../components/Sidebar/sidebar";
 
 const HomeView: React.FC = () => {

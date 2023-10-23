@@ -4,7 +4,7 @@ import { SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../store/game/actions/ga
 import { isComputersTurn } from "../../utility/chessUtils";
 import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
 import { getBorderColor } from "../../utility/uiUtils";
-import MoveHistory from "./move-history";
+import MoveHistory from "./MoveHistory";
 
 interface MoveProps {
 	isCorrect: boolean | null;

@@ -1,9 +1,5 @@
-import { Chess } from "chess.js";
+import { Chess, Piece, Square } from "chess.js";
 
-// export function determineNextComputerMove(baseSequence: string[]): string {
-//     const nextMove = await fetchNextMoveForSequence(baseSequence);
-//     return nextMove;
-// }
 
 export function convertToFullMoves(history: string[]): string[] {
     const fullMoves = [];
@@ -14,14 +10,21 @@ export function convertToFullMoves(history: string[]): string[] {
             fullMoves.push(history[i]);
         }
     }
+    console.log("FULL MOVES HELPER: ", fullMoves);
+
     return fullMoves;
 };
 
-export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
-    const isWhite = computerColor === 'white' || computerColor === 'w';
-    return (isWhite && moveSequence.length % 2 === 1) || (!isWhite && moveSequence.length % 2 === 0);
+export function convertOpeningVariationsBaseSequenceToFullSequence(opening: OpeningDTO): string[][] {
+    const baseSequence = splitMoveString(opening.baseMovesSequence[0]);
+    return opening.variations.map((variation: VariationDTO) => {
+        if (variation.movesSequence[0]) {
+            return baseSequence.concat(variation.movesSequence);
+        } else {
+            return baseSequence;
+        }
+    });
 }
-
 
 export function getProbableMove(moveData: Record<string, number>): string {
     let mostProbableMove = '';
@@ -37,15 +40,9 @@ export function getProbableMove(moveData: Record<string, number>): string {
     return mostProbableMove;
 }
 
-export function convertOpeningVariationsBaseSequenceToFullSequence(opening: OpeningDTO): string[][] {
-    const baseSequence = opening.baseMovesSequence;
-    return opening.variations.map((variation: VariationDTO) => {
-        if (variation.movesSequence[0]) {
-            return baseSequence.concat(variation.movesSequence);
-        } else {
-            return baseSequence;
-        }
-    });
+export function getPieceAtSquare(fen: string, square: string): Piece {
+    const tempGame = new Chess(fen);
+    return tempGame.get(square as Square);
 }
 
 export function getFensFromMoveSequence(moveSequences: string[][]): string[] {
@@ -66,7 +63,27 @@ export function getFensFromMoveSequence(moveSequences: string[][]): string[] {
         if (!fens.includes(tempGame.fen())) {
             fens.push(tempGame.fen());
         }
+        tempGame.reset();
     });
 
     return fens;
+}
+
+export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
+    const isWhite = computerColor === 'white' || computerColor === 'w';
+    return (isWhite && moveSequence.length % 2 === 1) || (!isWhite && moveSequence.length % 2 === 0);
+}
+
+export const isValidMove = (fen: string, source: string, destination: string): boolean => {
+    const tempGame = new Chess(fen);
+    const validMoves = tempGame.moves({ square: source as Square, verbose: true });
+    return validMoves.some(move => move.to === destination);
+};
+
+export function splitMoveString(moves: string): string[] {
+    return moves
+        .split(/\d+\./) // split based on move numbers
+        .join(' ')
+        .split(/\s+/)
+        .filter(Boolean); // remove empty strings
 }

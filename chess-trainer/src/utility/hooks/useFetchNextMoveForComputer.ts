@@ -1,4 +1,5 @@
-import { convertToFullMoves, fetchNextMoveForSequence } from "../chessUtils";
+import { fetchNextMoveForSequence } from "../../services/apiService";
+import { convertToFullMoves } from "../chessUtils";
 
 export function useFetchNextMoveForComputer() {
 

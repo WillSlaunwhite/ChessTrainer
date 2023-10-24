@@ -1,43 +1,31 @@
-import { Chess, Square } from "chess.js";
-import { isComputersTurn } from "../../../utility/chessUtils";
-import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINE, SWITCH_LINES, UPDATE_CURRENT_FENS, UPDATE_MOVE_HISTORIES } from "../actions/actionTypes";
+import { getPieceAtSquare, isComputersTurn } from "../../../utility/chessUtils";
+import { GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../actions/actionTypes";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
 
-export const isValidMove = (game: Chess, source: string, destination: string): boolean => {
-    const validMoves = game.moves({ square: source as Square, verbose: true });
-    return validMoves.some(move => move.to === destination);
-};
-
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
     switch (action.type) {
-        case EXECUTE_PAWN_PROMOTION:
-            const { source, destination, promotion } = action.payload;
-            const updated
+        // case EXECUTE_PAWN_PROMOTION:
+        //     return {
+        //         ...state,
+        //     };
+
+        case GET_PIECE_AT_SQUARE: {
+            const lines = [...state.lines];
+            const currentLineIndex = action.payload.lineNumber;
+            const { type, color } = getPieceAtSquare(lines[currentLineIndex].fen, action.payload.square);
+
+            lines[currentLineIndex] = {
+                ...lines[currentLineIndex],
+                pieceAtSquare: type,
+                colorOfPiece: color
+            }
+
             return {
                 ...state,
-                lines: 
-                fen: game.fen(),
-                selectedSquare: null,
-                isPawnPromotion: false,
-                san: newMove.san
-            };
-
-        case GET_PIECE_AT_SQUARE:
-            const { square } = action.payload;
-            const squareInstance = game.get(square as Square);
-
-            if (squareInstance) {
-                return {
-                    ...state,
-                    pieceAtSquare: squareInstance.type,
-                    colorOfPiece: squareInstance.color
-                };
-            } else {
-                return {
-                    ...state
-                };
+                lines
             }
+        }
 
         case INCREMENT_LINE:
             return {
@@ -48,12 +36,14 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 }
             };
 
+
         case INIT_GAME:
             return {
                 ...state,
                 global: action.payload.global,
                 lines: action.payload.lines,
             };
+
 
         case MAKE_MOVE: {
             const { fen, san, isPromotion } = action.payload;
@@ -70,7 +60,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 san: san,
                 isComputerTurn: isComputerTurn,
             }
-            
+
             return {
                 ...state,
                 lines: updatedLines,
@@ -82,23 +72,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
         }
 
-        case MAKE_MOVE_WITH_PROMOTION: {
-            const { source, destination, promotionPiece } = action.payload;
 
-            if (!isValidMove(game, source, destination)) {
-                return {
-                    ...state,
-                    selectedSquare: null
-                }
-            }
+        // case MAKE_MOVE_WITH_PROMOTION: 
 
-            game.move({ from: source, to: destination, promotion: promotionPiece });
-            return {
-                ...state,
-                fen: game.fen(),
-                selectedSquare: null,
-            };
-        }
 
         case SELECT_SQUARE:
             return {
@@ -109,57 +85,72 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 }
             };
 
-        case SET_BOARD_FROM_HISTORY:
-            const lineIndex = state.currentLineIndex;
-            const moves = state.moveHistories[lineIndex].filter(move => move !== "");
-            const newFens = state.currentFens;
-            const newMoveHistories = state.moveHistories;
+        // case SET_BOARD_FROM_HISTORY:
+        //     const lineIndex = state.currentLineIndex;
+        //     const moves = state.moveHistories[lineIndex].filter(move => move !== "");
+        //     const newFens = state.currentFens;
+        //     const newMoveHistories = state.moveHistories;
 
-            game.reset();
-            moves.forEach(move => { game.move(move); });
-            newFens[lineIndex] = game.fen();
-            newMoveHistories[lineIndex] = moves;
-            console.log("NEW MOVE HISTORIES: ", newMoveHistories);
-            console.log("GAME HISTORY: ", game.history());
+        //     game.reset();
+        //     moves.forEach(move => { game.move(move); });
+        //     newFens[lineIndex] = game.fen();
+        //     newMoveHistories[lineIndex] = moves;
+        //     console.log("NEW MOVE HISTORIES: ", newMoveHistories);
+        //     console.log("GAME HISTORY: ", game.history());
+
+        //     return {
+        //         ...state,
+        //         currentFens: newFens,
+        //         moveHistories: newMoveHistories,
+        //         fen: game.fen(),
+        //     }
+
+
+        case SET_IS_COMPUTER_TURN: {
+            const updatedLines = state.lines;
+
+            updatedLines[action.payload.currentLineIndex] = {
+                ...updatedLines[action.payload.currentLineIndex],
+                isComputerReadyToMove: action.payload.isComputerTurn
+            }
+
+            return { ...state, lines: updatedLines }
+        }
+
+        case SET_IS_COMPUTER_READY_TO_MOVE: {
+            const updatedLines = state.lines;
+
+            updatedLines[action.payload.currentLineIndex] = {
+                ...updatedLines[action.payload.currentLineIndex],
+                isComputerReadyToMove: action.payload.isComputerReadyToMove
+            }
+
+            return { ...state, lines: updatedLines }
+
+        }
+
+        case SET_NEXT_MOVE: {
+
+            const updatedLines = state.lines;
+
+            updatedLines[action.payload.currentLineIndex] = {
+                ...updatedLines[action.payload.currentLineIndex],
+                nextMove: action.payload.nextMove
+            }
 
             return {
                 ...state,
-                currentFens: newFens,
-                moveHistories: newMoveHistories,
-                fen: game.fen(),
+                lines: updatedLines
             }
-
-        case SET_CURRENT_LINE_NUMBER:
-            return { ...state, currentLineIndex: action.payload.lineNumber }
-
-        case SET_IS_COMPUTER_TURN:
-            return { ...state, isComputerTurn: action.payload.isComputerTurn }
-
-        case SET_IS_COMPUTER_READY_TO_MOVE:
-            return { ...state, isComputerReadyToMove: action.payload.isComputerReadyToMove }
-
-        case SET_NEXT_MOVE:
-            const currentLineIndex = action.payload.currentLineIndex;
-            const nextMove = action.payload.nextMove;
-            const updatedNextMoves = [...state.nextMoves];
-
-            updatedNextMoves[currentLineIndex] = nextMove;
-
-            return {
-                ...state,
-                nextMoves: updatedNextMoves
-            }
-
-        case SET_NEXT_MOVES_ARRAY:
-            return {
-                ...state,
-                nextMoves: action.payload.nextMoves
-            }
+        }
 
         case SET_VARIATIONS:
             return {
                 ...state,
-                variations: action.payload.variations
+                global: {
+                    ...state.global,
+                    variations: action.payload.variations,
+                }
             }
 
         case SWITCH_LINE:
@@ -173,23 +164,13 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case UPDATE_FEN_FOR_LINE:
             const updatedLines = [...state.lines];
-            const lineIndex = action.payload.lineIndex;
-            updatedLines[lineIndex] = {
-                ...updatedLines[lineIndex],
+            updatedLines[action.payload.lineIndex] = {
+                ...updatedLines[action.payload.lineIndex],
                 fen: action.payload.fen
             }
             return {
                 ...state,
                 lines: updatedLines
-            }
-
-        case UPDATE_MOVE_HISTORIES:
-            const filteredMoveHistories = action.payload.moveHistories.map(subArray =>
-                subArray.filter(move => move !== "")
-            );
-            return {
-                ...state,
-                moveHistories: filteredMoveHistories
             }
 
         default:

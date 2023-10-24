@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
-import { MAKE_MOVE_ALT_FORMAT, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINE } from "../../store/game/actions/actionTypes";
+import { SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINE } from "../../store/game/actions/actionTypes";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { useQuiz } from "../../store/quiz/quiz-context";
 
@@ -16,16 +16,17 @@ const GameView: React.FC = () => {
 	const readyToMove = line.isComputerReadyToMove;
 	const nextMove = line.nextMove;
 	const isComputerTurn = line.isComputerTurn;
-	const moveHistories = gameState.lines.map(line => line.moveHistory);
+	const moveHistories: string[][] = [[], [], []];
+	gameState.lines.map((line, i) => moveHistories[i] = line.moveHistory);
+	console.log("MOVE HISTORIES: ", moveHistories);
+	
 
 	useEffect(() => {
-		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true } });
+		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true, currentLineIndex: currentLineIndex } });
 	}, [nextMove]);
 
 	const switchLine = useCallback((_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		gameDispatch({ type: SET_CURRENT_LINE_NUMBER, payload: { lineNumber: lineNumber } });
 		gameDispatch({ type: SWITCH_LINE, payload: { lineIndex: lineNumber } });
-		gameDispatch({ type: MAKE_MOVE_ALT_FORMAT, payload: { move: nextMove } })
 	}, [gameDispatch, gameState.lines])
 
 	return (

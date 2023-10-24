@@ -1,7 +1,7 @@
 import React from "react";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { SELECT_SQUARE } from "../../store/game/actions/gameActions";
 import SquarePresentation from "./square-presentation";
+import { SELECT_SQUARE } from "../../store/game/actions/actionTypes";
 
 interface SquareContainerProps {
 	square: string;
@@ -11,7 +11,7 @@ interface SquareContainerProps {
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
 	const [gameState, dispatch] = useGameState();
-	const selectedSquare = gameState.selectedSquare;
+	const selectedSquare = gameState.global.selectedSquare;
 	const isSelected = square === selectedSquare;
 
 	const handleClick = () => {

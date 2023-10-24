@@ -28,26 +28,31 @@ export async function fetchNextMoveForSequence(sequence: string[]): Promise<stri
 }
 
 export async function processOpeningData(opening: OpeningDTO, lines: LineState[]): Promise<{ global: GlobalState, lines: LineState[] }> {
-    const fullMoveSequences = convertOpeningVariationsBaseSequenceToFullSequence(opening);
+    const fullMoveSequences = convertOpeningVariationsBaseSequenceToFullSequence(opening).map(sequence => convertToFullMoves(sequence));
+    console.log("FULL MOVES SEQUENCES: ", fullMoveSequences);
 
     const firstMoves = await Promise.all(
         fullMoveSequences.map(async sequence => {
-            const moves = convertToFullMoves(sequence);
-            return await fetchNextMoveForSequence(moves);
+            console.log(sequence);
+            
+            return await fetchNextMoveForSequence(sequence);
         })
     );
+    console.log("hello");
 
-    const fens = getFensFromMoveSequence(fullMoveSequences.map(sequence => convertToFullMoves(sequence)));
+    const fens = getFensFromMoveSequence(fullMoveSequences);
 
     const newLines: LineState[] = [];
 
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < fullMoveSequences.length; i++) {
         const lineState: LineState = {
             ...lines[i],
             fen: fens[i],
             moveHistory: fullMoveSequences[i],
             nextMove: firstMoves[i]
         }
+        console.log("LINE STATE: ", lineState);
+        
 
         newLines.push(lineState);
     }

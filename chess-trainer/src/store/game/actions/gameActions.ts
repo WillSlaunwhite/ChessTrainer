@@ -1,13 +1,5 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { CHECK_MOVE_LEGALITY, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_CURRENT_LINE_NUMBER, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_NEXT_MOVES_ARRAY, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
-
-interface CheckMoveLegalityAction {
-    type: typeof CHECK_MOVE_LEGALITY;
-    payload: {
-        source: string;
-        destination: string;
-    };
-}
+import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
 
 interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
@@ -23,6 +15,7 @@ interface GetPieceAtSquareAction {
     type: typeof GET_PIECE_AT_SQUARE;
     payload: {
         square: string;
+        lineNumber: number;
     };
 }
 
@@ -73,19 +66,20 @@ interface SetBoardFromHistoryAction {
     type: typeof SET_BOARD_FROM_HISTORY;
 }
 
-interface SetCurrentLineNumberAction {
-    type: typeof SET_CURRENT_LINE_NUMBER;
-    payload: { lineNumber: number; };
-}
-
 interface SetIsComputerTurnAction {
     type: typeof SET_IS_COMPUTER_TURN;
-    payload: { isComputerTurn: boolean; };
+    payload: {
+        isComputerTurn: boolean;
+        currentLineIndex: number;
+    };
 }
 
 interface SetIsComputerReady {
     type: typeof SET_IS_COMPUTER_READY_TO_MOVE;
-    payload: { isComputerReadyToMove: boolean; };
+    payload: { 
+        isComputerReadyToMove: boolean;
+        currentLineIndex: number;
+    };
 }
 
 interface SetNextMoveAction {
@@ -93,13 +87,6 @@ interface SetNextMoveAction {
     payload: {
         nextMove: string;
         currentLineIndex: number;
-    };
-}
-
-interface SetNextMovesArrayAction {
-    type: typeof SET_NEXT_MOVES_ARRAY;
-    payload: {
-        nextMoves: string[];
     };
 }
 
@@ -125,4 +112,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = CheckMoveLegalityAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction |  MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetCurrentLineNumberAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetNextMovesArrayAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction ;
+export type GameActionTypes = ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;

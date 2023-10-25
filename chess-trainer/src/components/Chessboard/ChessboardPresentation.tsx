@@ -1,5 +1,5 @@
 import React from "react";
-import SquareContainer from "../Square/square-container";
+import SquareContainer from "../Square/SquareContainer";
 
 interface ChessboardPresentationProps {
 	fen: string;

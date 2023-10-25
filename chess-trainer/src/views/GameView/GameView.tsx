@@ -1,14 +1,19 @@
 import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
-import { SET_IS_COMPUTER_READY_TO_MOVE, SWITCH_LINE } from "../../store/game/actions/actionTypes";
+import { SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SWITCH_LINE } from "../../store/game/actions/actionTypes";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { useQuiz } from "../../store/quiz/quiz-context";
+import { isComputersTurn } from "../../utility/chessUtils";
+import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 
 const GameView: React.FC = () => {
 	// * state
 	const [quizState] = useQuiz();
 	const [gameState, gameDispatch] = useGameState();
+
+	// * hooks
+	const computerMoveLogic = useComputerMoveLogic();
 
 	// * variables
 	const currentLineIndex = gameState.global.currentLineIndex;
@@ -16,13 +21,24 @@ const GameView: React.FC = () => {
 	const readyToMove = line.isComputerReadyToMove;
 	const nextMove = line.nextMove;
 	const isComputerTurn = line.isComputerTurn;
-	const moveHistories: string[][] = [[], [], []];
-	gameState.lines.map((line, i) => moveHistories[i] = line.moveHistory);
-	console.log("MOVE HISTORIES: ", moveHistories);
-	
+	const moveHistories = gameState.lines.map((line) => line.moveHistory);
 
 	useEffect(() => {
+		console.log("HELLO: ", nextMove, readyToMove, isComputerTurn);
+		if (nextMove && readyToMove && isComputerTurn) {
+			console.log("HELLO 2");
+
+			// computerMoveLogic.makeComputerMove(nextMove)
+			// gameDispatch({ type: MAKE_MOVE, payload: {} })
+		}
+	}, []);
+
+	useEffect(() => {
+
+		console.log(nextMove);
+
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true, currentLineIndex: currentLineIndex } });
+		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 	}, [nextMove]);
 
 	const switchLine = useCallback((_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {

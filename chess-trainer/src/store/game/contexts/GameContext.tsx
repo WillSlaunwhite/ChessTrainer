@@ -14,7 +14,7 @@ export interface GlobalState {
 
 export interface LineState {
     colorOfPiece: string;
-    computerColor: 'white' | 'black';
+    computerColor: string;
     fen: string;
     isComputerTurn: boolean,
     isComputerReadyToMove: boolean,
@@ -47,32 +47,32 @@ export const useGameState = () => {
     return context;
 };
 
+const defaultLine = {
+    colorOfPiece: "",
+    computerColor: "black",
+    fen: startingFen,
+    isComputerTurn: false,
+    isComputerReadyToMove: false,
+    isPawnPromotion: false,
+    lastMoveValid: false,
+    moveHistory: [],
+    nextMove: "",
+    pieceAtSquare: "",
+    promotionDestination: "",
+    promotionSource: "",
+    san: "",
+};
+
 
 export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }) => {
-    const [gameState, dispatch] = useReducer(gameReducer, {
+    const [gameState, dispatch] = useReducer<React.Reducer<GameState, GameActionTypes>>(gameReducer, {
         global: {
             currentLineIndex: 0,
             initialMoves: [],
             selectedSquare: null,
             variations: []
         },
-        lines: [
-            {
-                colorOfPiece: "",
-                computerColor: "black",
-                fen: startingFen,
-                isComputerTurn: false,
-                isComputerReadyToMove: false,
-                isPawnPromotion: false,
-                lastMoveValid: false,
-                moveHistory: [],
-                nextMove: "",
-                pieceAtSquare: "",
-                promotionDestination: "",
-                promotionSource: "",
-                san: "",
-            }
-        ]
+        lines: [defaultLine, defaultLine, defaultLine]
     });
 
     return <GameContext.Provider value={[gameState, dispatch]}>{children}</GameContext.Provider>;

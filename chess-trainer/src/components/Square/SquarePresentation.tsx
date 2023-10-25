@@ -1,16 +1,16 @@
 import React from "react";
-import BlackBishop from "../Pieces/black/black-bishop";
-import BlackKing from "../Pieces/black/black-king";
-import BlackKnight from "../Pieces/black/black-knight";
-import BlackPawn from "../Pieces/black/black-pawn";
-import BlackQueen from "../Pieces/black/black-queen";
-import BlackRook from "../Pieces/black/black-rook";
-import WhiteBishop from "../Pieces/white/white-bishop";
-import WhiteKing from "../Pieces/white/white-king";
-import WhiteKnight from "../Pieces/white/white-knight";
-import WhitePawn from "../Pieces/white/white-pawn";
-import WhiteQueen from "../Pieces/white/white-queen";
-import WhiteRook from "../Pieces/white/white-rook";
+import BlackBishop from "../Pieces/black/BlackBishop";
+import BlackKing from "../Pieces/black/BlackKing";
+import BlackKnight from "../Pieces/black/BlackKnight";
+import BlackPawn from "../Pieces/black/BlackPawn";
+import BlackQueen from "../Pieces/black/BlackQueen";
+import BlackRook from "../Pieces/black/BlackRook";
+import WhiteBishop from "../Pieces/white/WhiteBishop";
+import WhiteKing from "../Pieces/white/WhiteKing";
+import WhiteKnight from "../Pieces/white/WhiteKnight";
+import WhitePawn from "../Pieces/white/WhitePawn";
+import WhiteQueen from "../Pieces/white/WhiteQueen";
+import WhiteRook from "../Pieces/white/WhiteRook";
 
 
 interface SquarePresentationProps {

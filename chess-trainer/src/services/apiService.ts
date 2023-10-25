@@ -1,5 +1,5 @@
 import { GlobalState, LineState } from "../store/game/contexts/GameContext";
-import { convertOpeningVariationsBaseSequenceToFullSequence, convertToFullMoves, getFensFromMoveSequence } from "../utility/chessUtils";
+import { convertOpeningVariationsBaseSequenceToFullSequence, convertToFullMoves, getFensFromMoveSequences } from "../utility/chessUtils";
 
 export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
     const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`);
@@ -33,15 +33,11 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
 
     const firstMoves = await Promise.all(
         fullMoveSequences.map(async sequence => {
-            console.log(sequence);
-            
             return await fetchNextMoveForSequence(sequence);
         })
     );
-    console.log("hello");
 
-    const fens = getFensFromMoveSequence(fullMoveSequences);
-
+    const fens = getFensFromMoveSequences(fullMoveSequences);
     const newLines: LineState[] = [];
 
     for (let i = 0; i < fullMoveSequences.length; i++) {
@@ -51,9 +47,6 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
             moveHistory: fullMoveSequences[i],
             nextMove: firstMoves[i]
         }
-        console.log("LINE STATE: ", lineState);
-        
-
         newLines.push(lineState);
     }
 

@@ -19,9 +19,10 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ fen, isComput
 
 	useEffect(() => {
 		if (readyToMove === true && nextMove !== "" && isComputerTurn === true) {
-			handleComputerMove.makeComputerMove(nextMove);
+			handleComputerMove.makeComputerMove(nextMove, fen);
 		}
 	}, [nextMove, readyToMove, isComputerTurn]);
+
 
 	// useEffect(() => {
 	// 	(async () => {

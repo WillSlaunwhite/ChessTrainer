@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { MAKE_MOVE } from "../../store/game/actions/actionTypes";
+import { MAKE_MOVE_COMPUTER } from "../../store/game/actions/actionTypes";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { isPromotion } from "../chessUtils";
 
@@ -12,10 +12,11 @@ export function useComputerMoveLogic() {
             const moveResult = game.move(nextMove);
             if (moveResult) {
                 dispatch({
-                    type: MAKE_MOVE, payload: {
+                    type: MAKE_MOVE_COMPUTER, payload: {
                         fen: moveResult.after,
                         isPromotion: isPromotion(moveResult),
-                        san: moveResult.san
+                        san: moveResult.san,
+                        nextMove: ""
                     }
                 });
 

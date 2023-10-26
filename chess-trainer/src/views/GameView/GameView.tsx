@@ -6,6 +6,7 @@ import { useGameState } from "../../store/game/contexts/GameContext";
 import { useQuiz } from "../../store/quiz/quiz-context";
 import { isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
+import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 
 const GameView: React.FC = () => {
 	// * state
@@ -14,6 +15,7 @@ const GameView: React.FC = () => {
 
 	// * hooks
 	const computerMoveLogic = useComputerMoveLogic();
+	const userMoveLogic = useUserMoveLogic();
 
 	// * variables
 	const currentLineIndex = gameState.global.currentLineIndex;
@@ -28,10 +30,9 @@ const GameView: React.FC = () => {
 		if (nextMove && readyToMove && isComputerTurn) {
 			console.log("HELLO 2");
 
-			// computerMoveLogic.makeComputerMove(nextMove)
-			// gameDispatch({ type: MAKE_MOVE, payload: {} })
+			computerMoveLogic.makeComputerMove(nextMove, line.fen)
 		}
-	}, []);
+	}, [nextMove, readyToMove, isComputerTurn]);
 
 	useEffect(() => {
 
@@ -48,7 +49,7 @@ const GameView: React.FC = () => {
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
-			<ChessboardContainer fen={line.fen} currentLineIndex={currentLineIndex} isComputerTurn={isComputerTurn} nextMove={nextMove} readyToMove={readyToMove} />
+			<ChessboardContainer fen={line.fen} handleMove={userMoveLogic.handleMove} />
 		</div>
 	);
 };

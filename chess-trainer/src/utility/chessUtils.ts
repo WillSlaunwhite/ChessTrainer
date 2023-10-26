@@ -1,16 +1,17 @@
 import { Chess, Move, Piece, Square } from "chess.js";
+import { LineState } from "../store/game/contexts/GameContext";
 
 
 export function appendToMoveHistory(history: string[], san: string): string[] {
     const halfMoves = convertToHalfMoves(history);
-    
+
     if (halfMoves.length % 2 === 0) {
-        const newHistory = [...history]; 
+        const newHistory = [...history];
         newHistory.push(san);
         return newHistory;
     } else {
         const lastMove = history[history.length - 1];
-        const newHistory =  history.slice(0, -1);       
+        const newHistory = history.slice(0, -1);
         newHistory.push(`${lastMove} ${san}`);
         return newHistory;
     }
@@ -29,7 +30,6 @@ export function convertToFullMoves(history: string[]): string[] {
             fullMoves.push(history[i]);
         }
     }
-    console.log("FULL MOVES HELPER: ", fullMoves);
 
     return fullMoves;
 };
@@ -89,8 +89,9 @@ export function getFensFromMoveSequences(moveSequences: string[][]): string[] {
 }
 
 export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
+    const splitMoveSequence = convertToHalfMoves(moveSequence);
     const isWhite = computerColor === 'white' || computerColor === 'w';
-    return (isWhite && moveSequence.length % 2 === 0) || (!isWhite && moveSequence.length % 2 === 1);
+    return (isWhite && splitMoveSequence.length % 2 === 0) || (!isWhite && splitMoveSequence.length % 2 === 1);
 }
 
 export function isPromotion(move: Move): boolean {
@@ -109,4 +110,65 @@ export function splitMoveString(moves: string): string[] {
         .join(' ')
         .split(/\s+/)
         .filter(Boolean); // remove empty strings
+}
+
+export function updateLineState(lines: LineState[], lineIndex: number, moveDetails: MoveDetails): LineState[] {
+    const updatedLines = [...lines];
+    const currentLine = updatedLines[lineIndex];
+
+    const { updatedMoveHistory, isComputerTurn } = updateMoveHistoryAndCheckComputerTurn(currentLine, moveDetails.san);
+
+    updatedLines[lineIndex] = {
+        ...currentLine,
+        fen: moveDetails.fen,
+        isPawnPromotion: moveDetails.isPromotion,
+        moveHistory: updatedMoveHistory,
+        san: moveDetails.san,
+        isComputerTurn,
+        isComputerReadyToMove: false
+    }
+
+    return updatedLines;
+}
+
+export function updateLineStateForComputer(lines: LineState[], lineIndex: number, moveDetails: MoveDetailsComputer): LineState[] {
+    const updatedLines = [...lines];
+    const currentLine = updatedLines[lineIndex];
+
+    const { updatedMoveHistory, isComputerTurn } = updateMoveHistoryAndCheckComputerTurn(currentLine, moveDetails.san);
+
+    updatedLines[lineIndex] = {
+        ...currentLine,
+        fen: moveDetails.fen,
+        isPawnPromotion: moveDetails.isPromotion,
+        moveHistory: updatedMoveHistory,
+        san: moveDetails.san,
+        isComputerTurn,
+        isComputerReadyToMove: false,
+        nextMove: moveDetails.nextMove,
+    }
+
+    return updatedLines;
+}
+
+export function updateMoveHistoryAndCheckComputerTurn(line: LineState, san: string): { updatedMoveHistory: string[], isComputerTurn: boolean } {
+    const updatedMoveHistory = appendToMoveHistory(line.moveHistory, san);
+    const isComputerTurn = isComputersTurn(updatedMoveHistory, line.computerColor);
+    return { updatedMoveHistory, isComputerTurn };
+}
+
+
+
+
+interface MoveDetailsComputer {
+    fen: string;
+    san: string;
+    isPromotion: boolean;
+    nextMove: string;
+}
+
+interface MoveDetails {
+    fen: string;
+    san: string;
+    isPromotion: boolean;
 }

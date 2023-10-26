@@ -6,10 +6,11 @@ import { SELECT_SQUARE } from "../../store/game/actions/actionTypes";
 interface SquareContainerProps {
 	square: string;
 	piece: string;
-	onMove: (source: string, destination: string) => void;
+	onMove: (source: string, destination: string, fen: string) => void;
+	fen: string;
 }
 
-const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove }) => {
+const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove, fen }) => {
 	const [gameState, dispatch] = useGameState();
 	const selectedSquare = gameState.global.selectedSquare;
 	const isSelected = square === selectedSquare;
@@ -19,7 +20,7 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove
 			dispatch({ type: SELECT_SQUARE, payload: { square: null } })
 		} else {
 			if (selectedSquare) {
-				onMove(selectedSquare, square);
+				onMove(selectedSquare, square, fen);
 				return;
 			}
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } })

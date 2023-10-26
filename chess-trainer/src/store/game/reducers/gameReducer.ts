@@ -1,5 +1,5 @@
-import { appendToMoveHistory, getPieceAtSquare, isComputersTurn } from "../../../utility/chessUtils";
-import { GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../actions/actionTypes";
+import { getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
+import { GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../actions/actionTypes";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
 
@@ -48,38 +48,37 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         case MAKE_MOVE: {
             const { fen, san, isPromotion } = action.payload;
             const currentLineIndex = state.global.currentLineIndex;
-            // const nextLineIndex = currentLineIndex === 2 ? 0 : currentLineIndex + 1;
-            const nextLineIndex = state.global.currentLineIndex;
-            const updatedLines = [...state.lines];
-            const updatedMoveHistory = [...state.lines[nextLineIndex].moveHistory];
-            const isComputerTurn = isComputersTurn(updatedLines[nextLineIndex].moveHistory, updatedLines[nextLineIndex].computerColor);
+            const nextLineIndex = (currentLineIndex + 1) % 3;
 
-            console.log(appendToMoveHistory(updatedMoveHistory,san));
-            
-
-            updatedLines[currentLineIndex] = {
-                ...updatedLines[currentLineIndex],
-                fen: fen,
-                isPawnPromotion: isPromotion,
-                moveHistory: appendToMoveHistory(updatedMoveHistory, san),
-                san: san,
-                isComputerTurn: isComputerTurn,
-                isComputerReadyToMove: false
-            }
-
-            console.log(updatedLines);
+            const updatedLines = updateLineState(state.lines, currentLineIndex, { fen, san, isPromotion });
 
             return {
                 ...state,
                 lines: updatedLines,
                 global: {
                     ...state.global,
-                    // currentLineIndex: nextLineIndex,
+                    currentLineIndex: nextLineIndex,
                     selectedSquare: null,
                 }
             };
         }
 
+
+        case MAKE_MOVE_COMPUTER: {
+            const { fen, san, isPromotion, nextMove } = action.payload;
+            const currentLineIndex = state.global.currentLineIndex;
+
+            const updatedLines = updateLineStateForComputer(state.lines, currentLineIndex, { fen, san, isPromotion, nextMove });
+
+            return {
+                ...state,
+                lines: updatedLines,
+                global: {
+                    ...state.global,
+                    selectedSquare: null,
+                }
+            };
+        }
 
         // case MAKE_MOVE_WITH_PROMOTION: 
 
@@ -122,9 +121,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 isComputerTurn: action.payload.isComputerTurn
             }
 
-            console.log(updatedLines);
-            console.log(action.payload.isComputerTurn);
-
             return { ...state, lines: updatedLines }
         }
 
@@ -135,9 +131,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 ...updatedLines[action.payload.currentLineIndex],
                 isComputerReadyToMove: action.payload.isComputerReadyToMove
             }
-
-            console.log(updatedLines);
-            console.log(action.payload.isComputerReadyToMove);
 
             return { ...state, lines: updatedLines }
 

@@ -1,5 +1,5 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_ALT_FORMAT, MAKE_MOVE_WITH_PROMOTION, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
+import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
 
 interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
@@ -40,21 +40,16 @@ interface MakeMoveAction {
     };
 }
 
-interface MakeMoveAltFormatAction {
-    type: typeof MAKE_MOVE_ALT_FORMAT;
+interface MakeMoveComputerAction {
+    type: typeof MAKE_MOVE_COMPUTER;
     payload: {
-        move: string;
+        fen: string,
+        san: string,
+        isPromotion: boolean,
+        nextMove: string
     }
 }
 
-interface MakeMoveWithPromotionAction {
-    type: typeof MAKE_MOVE_WITH_PROMOTION;
-    payload: {
-        source: string;
-        destination: string;
-        promotionPiece: string;
-    };
-}
 interface SelectSquareAction {
     type: typeof SELECT_SQUARE;
     payload: {
@@ -112,4 +107,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveAltFormatAction | MakeMoveWithPromotionAction | SelectSquareAction | SetBoardFromHistoryAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;
+export type GameActionTypes = ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;

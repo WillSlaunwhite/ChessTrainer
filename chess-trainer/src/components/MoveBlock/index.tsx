@@ -1,8 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useGameState } from "../../store/game/contexts/GameContext";
-import { SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../store/game/actions/gameActions";
-import { isComputersTurn } from "../../utility/chessUtils";
-import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
+import React from "react";
 import { getBorderColor } from "../../utility/uiUtils";
 import MoveHistory from "./MoveHistory";
 

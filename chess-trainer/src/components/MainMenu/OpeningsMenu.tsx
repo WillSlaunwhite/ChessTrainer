@@ -1,4 +1,4 @@
-import { Card, List, ListItem } from "@material-tailwind/react";
+import { Card, List, ListItem, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../store/game/contexts/GameContext";
@@ -14,7 +14,6 @@ const OpeningsMenu: React.FC = () => {
 		try {
 			const opening: OpeningDTO = await fetchOpening(openingName);
 			const gameData = await processOpeningData(opening, gameState.lines);
-			console.log("GAME DATA: ", gameData);
 			
 			dispatch({
 				type: INIT_GAME,
@@ -38,11 +37,12 @@ const OpeningsMenu: React.FC = () => {
 
 	return (
 		<div className="menu-container w-full flex items-center justify-center flex-col gap-1 mt-1">
-			<h2 className="menu-header">Select an Opening to Practice</h2>
-			<Card className="w-5/6">
-				<List className="mt-1">
+			
+			<Typography variant="h4">Select an Opening to Practice</Typography>
+			<Card className="w-5/6 opacity-80 mt-3">
+				<List className="w-full">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening.name)}>{opening.name}</ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-2" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
 					))}
 				</List>
 			</Card>

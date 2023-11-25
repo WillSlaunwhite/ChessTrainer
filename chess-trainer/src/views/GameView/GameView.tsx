@@ -26,18 +26,12 @@ const GameView: React.FC = () => {
 	const moveHistories = gameState.lines.map((line) => line.moveHistory);
 
 	useEffect(() => {
-		console.log("HELLO: ", nextMove, readyToMove, isComputerTurn);
 		if (nextMove && readyToMove && isComputerTurn) {
-			console.log("HELLO 2");
-
 			computerMoveLogic.makeComputerMove(nextMove, line.fen)
 		}
 	}, [nextMove, readyToMove, isComputerTurn]);
 
 	useEffect(() => {
-
-		console.log(nextMove);
-
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true, currentLineIndex: currentLineIndex } });
 		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 	}, [nextMove]);

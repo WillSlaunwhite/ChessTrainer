@@ -3,8 +3,8 @@ import React from "react";
 
 const Header: React.FC = () => {
 	return (
-      <Typography className="welcome-message-text text-center leading-none w-11/12 mx-auto pt-1" variant="h4" color="blue">
-        Welcome to the Beta version of <strong>Modern Learning System</strong>
+      <Typography className="text-center leading-none w-9/12 mx-auto py-3 scale-110" variant="h2" color="indigo">
+        Welcome to <strong>Chess Trainer</strong>
       </Typography>
 	);
 };

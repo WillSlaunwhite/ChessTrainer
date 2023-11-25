@@ -1,13 +1,11 @@
 import React from 'react';
-import Move from './move';
+import Move from './Move';
 
 interface MoveHistoryProps {
   moveHistory: string[];
 }
 
 const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
-  console.log(moveHistory);
-
   return (
     <div className='move-history tracking-wide text-center w-full'>
       {moveHistory.map((fullMove, index) => {

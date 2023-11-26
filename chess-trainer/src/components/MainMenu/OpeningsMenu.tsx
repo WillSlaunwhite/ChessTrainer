@@ -37,12 +37,11 @@ const OpeningsMenu: React.FC = () => {
 
 	return (
 		<div className="menu-container w-full flex items-center justify-center flex-col gap-1 mt-1">
-			
 			<Typography variant="h4">Select an Opening to Practice</Typography>
-			<Card className="w-5/6 opacity-80 mt-3">
-				<List className="w-full">
+			<Card className="w-5/6 opacity-80 mt-3 p-0">
+				<List className="w-full p-0">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-2" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-4" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
 					))}
 				</List>
 			</Card>

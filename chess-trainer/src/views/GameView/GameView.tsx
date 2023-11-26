@@ -27,7 +27,9 @@ const GameView: React.FC = () => {
 
 	useEffect(() => {
 		if (nextMove && readyToMove && isComputerTurn) {
-			computerMoveLogic.makeComputerMove(nextMove, line.fen)
+			setTimeout(() => {
+				computerMoveLogic.makeComputerMove(nextMove, line.fen)
+			}, 2000);
 		}
 	}, [nextMove, readyToMove, isComputerTurn]);
 

@@ -1,7 +1,6 @@
 import { Chess, Move, Piece, Square } from "chess.js";
 import { LineState } from "../store/game/contexts/GameContext";
 
-
 export function appendToMoveHistory(history: string[], san: string): string[] {
     const halfMoves = convertToHalfMoves(history);
 
@@ -156,7 +155,6 @@ export function updateMoveHistoryAndCheckComputerTurn(line: LineState, san: stri
     const isComputerTurn = isComputersTurn(updatedMoveHistory, line.computerColor);
     return { updatedMoveHistory, isComputerTurn };
 }
-
 
 
 

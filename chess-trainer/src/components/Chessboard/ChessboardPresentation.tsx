@@ -6,6 +6,7 @@ interface ChessboardPresentationProps {
 	onMove: (source: string, destination: string, fen: string) => void;
 }
 
+
 const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, onMove }) => {
 	const cols = "abcdefgh";
 	const board = fen.split(" ")[0];
@@ -30,14 +31,14 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 	const boardArray = fenToArray(board);
 
 	return (
-		<div className="chessboard grid w-344px h-344px">
-			{boardArray.map((row, rowIndex) => {
-				return row.map((piece, colIndex) => {
-					const square = `${cols[colIndex]}${8 - rowIndex}`;
-					return <SquareContainer key={square} square={square} piece={piece || ''} onMove={onMove} fen={fen} />;
-				});
-			})}
-		</div>
+			<div className="chessboard grid w-344px h-344px">
+				{boardArray.map((row, rowIndex) => {
+					return row.map((piece, colIndex) => {
+						const square = `${cols[colIndex]}${8 - rowIndex}`;
+						return <SquareContainer key={square} square={square} piece={piece || ''} onMove={onMove} fen={fen} />;
+					});
+				})}
+			</div>
 	);
 };
 

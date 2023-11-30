@@ -8,7 +8,7 @@ const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 export interface GlobalState {
     currentLineIndex: number;
     initialMoves: string[];
-    selectedSquare: string | null;
+    selectedSquares: string[];
     variations: VariationDTO[];
 }
 
@@ -69,7 +69,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
         global: {
             currentLineIndex: 0,
             initialMoves: [],
-            selectedSquare: null,
+            selectedSquares: [],
             variations: []
         },
         lines: [defaultLine, defaultLine, defaultLine]

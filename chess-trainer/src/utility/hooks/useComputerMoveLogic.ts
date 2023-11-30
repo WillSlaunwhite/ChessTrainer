@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { MAKE_MOVE_COMPUTER } from "../../store/game/actions/actionTypes";
+import { MAKE_MOVE_COMPUTER, SELECT_SQUARE } from "../../store/game/types/actionTypes";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { isPromotion } from "../chessUtils";
 

@@ -54,7 +54,7 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
         global: {
             currentLineIndex: 0,
             initialMoves: firstMoves,
-            selectedSquare: null,
+            selectedSquares: [],
             variations: opening.variations
         },
         lines: newLines

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { fetchOpening, processOpeningData } from "../../services/apiService";
-import { INIT_GAME } from "../../store/game/actions/actionTypes";
+import { INIT_GAME } from "../../store/game/types/actionTypes";
 
 const OpeningsMenu: React.FC = () => {
 	const [gameState, dispatch] = useGameState();
@@ -40,9 +40,9 @@ const OpeningsMenu: React.FC = () => {
 			
 			<Typography variant="h4">Select an Opening to Practice</Typography>
 			<Card className="w-5/6 opacity-80 mt-3">
-				<List className="w-full">
+				<List className="w-full p-0">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-2" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-4" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
 					))}
 				</List>
 			</Card>

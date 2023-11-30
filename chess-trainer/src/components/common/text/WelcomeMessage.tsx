@@ -1,5 +1,5 @@
-import Rules from "./Rules";
 import Header from "./Header";
+import Rules from "./Rules";
 
 const WelcomeMessageComponent: React.FC = () => {
   return (

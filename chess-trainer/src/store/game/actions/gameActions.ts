@@ -1,5 +1,5 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "./actionTypes";
+import { EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 interface ExecutePawnPromotionAction {
     type: typeof EXECUTE_PAWN_PROMOTION;
@@ -53,12 +53,20 @@ interface MakeMoveComputerAction {
 interface SelectSquareAction {
     type: typeof SELECT_SQUARE;
     payload: {
-        square: string | null;
+        square: string;
     };
 }
 
 interface SetBoardFromHistoryAction {
     type: typeof SET_BOARD_FROM_HISTORY;
+}
+
+interface SetHighlightSquaresAction {
+    type: typeof SET_HIGHLIGHT_SQUARES;
+    payload: {
+        from: string;
+        to: string;
+    }
 }
 
 interface SetIsComputerTurnAction {
@@ -107,4 +115,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;
+export type GameActionTypes = ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;

@@ -17,6 +17,10 @@ export function appendToMoveHistory(history: string[], san: string): string[] {
     }
 }
 
+// export function convertSanToFullMove(san: string): string[] {
+
+// }
+
 export function convertToHalfMoves(history: string[]): string[] {
     return history.flatMap(sequence => sequence.split(" "));
 }
@@ -45,25 +49,6 @@ export function convertOpeningVariationsBaseSequenceToFullSequence(opening: Open
     });
 }
 
-export function getProbableMove(moveData: Record<string, number>): string {
-    let mostProbableMove = '';
-    let highestOccurrence = 0;
-
-    for (const move in moveData) {
-        if (moveData[move] > highestOccurrence) {
-            highestOccurrence = moveData[move];
-            mostProbableMove = move;
-        }
-    }
-
-    return mostProbableMove;
-}
-
-export function getPieceAtSquare(fen: string, square: string): Piece {
-    const tempGame = new Chess(fen);
-    return tempGame.get(square as Square);
-}
-
 export function getFensFromMoveSequences(moveSequences: string[][]): string[] {
     const tempGame = new Chess();
     const fens: string[] = [];
@@ -86,6 +71,36 @@ export function getFensFromMoveSequences(moveSequences: string[][]): string[] {
     });
 
     return fens;
+}
+
+export function getLastMoveSquares(moveHistory: string[]): { from: string, to: string } {
+    const tempGame = new Chess();
+    const moves = convertToHalfMoves(moveHistory);
+    for (let i = 0; i < moves.length - 1; i++) {
+        tempGame.move(moves[i]);
+    }
+
+    const move = tempGame.move(moves[moves.length - 1]);
+    return { from: move.from, to: move.to };
+}
+
+export function getPieceAtSquare(fen: string, square: string): Piece {
+    const tempGame = new Chess(fen);
+    return tempGame.get(square as Square);
+}
+
+export function getProbableMove(moveData: Record<string, number>): string {
+    let mostProbableMove = '';
+    let highestOccurrence = 0;
+
+    for (const move in moveData) {
+        if (moveData[move] > highestOccurrence) {
+            highestOccurrence = moveData[move];
+            mostProbableMove = move;
+        }
+    }
+
+    return mostProbableMove;
 }
 
 export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {

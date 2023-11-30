@@ -1,5 +1,5 @@
-import { getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
-import { GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../actions/actionTypes";
+import { getLastMoveSquares, getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
+import { GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
 
@@ -51,6 +51,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const nextLineIndex = (currentLineIndex + 1) % 3;
 
             const updatedLines = updateLineState(state.lines, currentLineIndex, { fen, san, isPromotion });
+            const selectedSquares = getLastMoveSquares(updatedLines[currentLineIndex].moveHistory);
 
             return {
                 ...state,
@@ -58,7 +59,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 global: {
                     ...state.global,
                     currentLineIndex: nextLineIndex,
-                    selectedSquare: null,
+                    selectedSquares: [selectedSquares.from, selectedSquares.to]
                 }
             };
         }
@@ -69,13 +70,14 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const currentLineIndex = state.global.currentLineIndex;
 
             const updatedLines = updateLineStateForComputer(state.lines, currentLineIndex, { fen, san, isPromotion, nextMove });
+            const selectedSquares = getLastMoveSquares(updatedLines[currentLineIndex].moveHistory);
 
             return {
                 ...state,
                 lines: updatedLines,
                 global: {
                     ...state.global,
-                    selectedSquare: null,
+                    selectedSquares: [selectedSquares.from, selectedSquares.to]
                 }
             };
         }
@@ -84,11 +86,17 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
 
         case SELECT_SQUARE:
+            const updatedSquares = new Set(state.global.selectedSquares);
+            if (updatedSquares.has(action.payload.square)) {
+                updatedSquares.delete(action.payload.square);
+            } else {
+                updatedSquares.add(action.payload.square);
+            }
             return {
                 ...state,
                 global: {
                     ...state.global,
-                    selectedSquare: action.payload.square
+                    selectedSquares: Array.from(updatedSquares)
                 }
             };
 

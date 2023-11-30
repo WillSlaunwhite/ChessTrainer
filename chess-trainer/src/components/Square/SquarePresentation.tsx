@@ -18,7 +18,7 @@ interface SquarePresentationProps {
 	piece: string;
 	selected: boolean;
 	onClick: () => void;
-	selectedSquare: string | null;
+	// selectedSquare: string | null;
 }
 
 const pieceComponents: Record<string, React.FC> = {

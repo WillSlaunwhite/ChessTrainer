@@ -7,6 +7,8 @@ export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
 }
 
 export async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
+    console.log(sequence);
+    
     try {
         return fetch('http://localhost:8085/api/chess/next-moves', {
             method: "POST",
@@ -19,6 +21,8 @@ export async function fetchNextMoveForSequence(sequence: string[]): Promise<stri
             .then(data => {
                 const probableMoves = Object.entries(data[0]);
                 probableMoves.sort(((a: any, b: any) => b[1] - a[1]));
+                console.log(probableMoves);
+                
                 return probableMoves[0][0].split(' ')[1];
             });
     } catch (error) {

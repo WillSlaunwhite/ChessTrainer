@@ -59,10 +59,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             const { fen, san, isPromotion } = action.payload;
             const currentLineIndex = state.global.currentLineIndex;
             const nextLineIndex = (currentLineIndex + 1) % 3;
-
             const updatedLines = updateLineState(state.lines, currentLineIndex, { fen, san, isPromotion });
             const selectedSquares = getLastMoveSquares(updatedLines[nextLineIndex].moveHistory);
-            console.log(Array.from([selectedSquares.from, selectedSquares.to]));
 
             return {
                 ...state,

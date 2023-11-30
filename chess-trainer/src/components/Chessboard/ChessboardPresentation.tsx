@@ -3,10 +3,9 @@ import SquareContainer from "../Square/SquareContainer";
 
 interface ChessboardPresentationProps {
 	fen: string;
-	onMove: (source: string, destination: string, fen: string) => void;
 }
 
-const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, onMove }) => {
+const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen }) => {
 	const cols = "abcdefgh";
 	const board = fen.split(" ")[0];
 
@@ -34,7 +33,7 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen, on
 			{boardArray.map((row, rowIndex) => {
 				return row.map((piece, colIndex) => {
 					const square = `${cols[colIndex]}${8 - rowIndex}`;
-					return <SquareContainer key={square} square={square} piece={piece || ''} onMove={onMove} fen={fen} />;
+					return <SquareContainer key={square} square={square} piece={piece || ''} fen={fen} />;
 				});
 			})}
 		</div>

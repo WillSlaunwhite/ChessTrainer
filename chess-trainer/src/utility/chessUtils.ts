@@ -1,5 +1,6 @@
 import { Chess, Move, Piece, Square } from "chess.js";
 import { LineState } from "../store/game/contexts/GameContext";
+import { useFetchNextMoveForComputer } from "./hooks/useFetchNextMoveForComputer";
 
 
 export function appendToMoveHistory(history: string[], san: string): string[] {
@@ -130,7 +131,6 @@ export function splitMoveString(moves: string): string[] {
 export function updateLineState(lines: LineState[], lineIndex: number, moveDetails: MoveDetails): LineState[] {
     const updatedLines = [...lines];
     const currentLine = updatedLines[lineIndex];
-
     const { updatedMoveHistory, isComputerTurn } = updateMoveHistoryAndCheckComputerTurn(currentLine, moveDetails.san);
 
     updatedLines[lineIndex] = {
@@ -140,7 +140,7 @@ export function updateLineState(lines: LineState[], lineIndex: number, moveDetai
         moveHistory: updatedMoveHistory,
         san: moveDetails.san,
         isComputerTurn,
-        isComputerReadyToMove: false
+        isComputerReadyToMove: false,
     }
 
     return updatedLines;

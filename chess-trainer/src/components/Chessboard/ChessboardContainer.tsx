@@ -1,14 +1,11 @@
-import React, { useEffect } from "react";
-import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
-import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
+import React from "react";
 import ChessboardPresentation from "./ChessboardPresentation";
 
 interface ChessboardContainerProps {
 	fen: string;
-	handleMove: (source: string, destination: string, fen: string) => void;
 }
 
-const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ fen, handleMove }) => {
+const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ fen }) => {
 	// * hooks
 
 
@@ -33,7 +30,7 @@ const ChessboardContainer: React.FC<ChessboardContainerProps> = ({ fen, handleMo
 	// 		dispatch({ type: INCREMENT_LINE });
 	// 	})();
 	// }, [currentLineIndex, gameState.moveHistories[currentLineIndex]]);
-	return <ChessboardPresentation fen={fen} onMove={handleMove} />;
+	return <ChessboardPresentation fen={fen} />;
 };
 
 

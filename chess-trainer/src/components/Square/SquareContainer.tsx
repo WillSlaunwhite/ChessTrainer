@@ -1,20 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import SquarePresentation from "./SquarePresentation";
-import { SELECT_SQUARE } from "../../store/game/types/actionTypes";
-import { isValidMove } from "../../utility/chessUtils";
+import { CLEAR_SELECTED_SQUARES, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../store/game/types/actionTypes";
+import { getLastMoveSquares, isComputersTurn, isValidMove } from "../../utility/chessUtils";
+import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
+import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
+import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
 
 interface SquareContainerProps {
 	square: string;
 	piece: string;
-	onMove: (source: string, destination: string, fen: string) => void;
 	fen: string;
 }
 
-const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove, fen }) => {
+const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen }) => {
 	const [gameState, dispatch] = useGameState();
 	const selectedSquares = gameState.global.selectedSquares;
 	var isSelected = selectedSquares.includes(square);
+	const onMove = useUserMoveLogic();
 
 	const handleClick = () => {
 		// If a square is already selected and the current click is on a different square
@@ -22,8 +25,8 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, onMove
 			if (isValidMove(fen, selectedSquares[selectedSquares.length - 1], square)) {
 				// Make the move
 				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
-				onMove(selectedSquares[selectedSquares.length - 1], square, fen);
-			} else if (piece){
+				onMove.handleMove(selectedSquares[selectedSquares.length - 1], square, fen);
+			} else if (piece) {
 				// Optionally handle invalid move (show error, etc.)
 				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
 			}

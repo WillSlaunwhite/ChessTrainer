@@ -4,8 +4,8 @@ import { convertToFullMoves } from "../chessUtils";
 export function useFetchNextMoveForComputer() {
 
     const fetchNextMove = async (moveHistory: string[]) => {
-        const moves = convertToFullMoves(moveHistory);
-        const nextMove = await fetchNextMoveForSequence(moves);
+        console.log(moveHistory);
+        const nextMove = await fetchNextMoveForSequence(moveHistory);
         return nextMove;
     };
 

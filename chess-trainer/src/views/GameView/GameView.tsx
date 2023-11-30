@@ -1,14 +1,15 @@
+import { Spinner } from "@material-tailwind/react";
 import React, { useCallback, useEffect } from "react";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
+import Timer from "../../components/Common/misc/Timer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
-import { SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SWITCH_LINE } from "../../store/game/types/actionTypes";
 import { useGameState } from "../../store/game/contexts/GameContext";
+import { CLEAR_SELECTED_SQUARES, SELECT_SQUARE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SWITCH_LINE } from "../../store/game/types/actionTypes";
 import { useQuiz } from "../../store/quiz/quiz-context";
 import { getLastMoveSquares, isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
-import { Spinner } from "@material-tailwind/react";
-import Timer from "../../components/Common/misc/Timer";
+import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
 
 const GameView: React.FC = () => {
 	// * state
@@ -18,6 +19,7 @@ const GameView: React.FC = () => {
 	// * hooks
 	const computerMoveLogic = useComputerMoveLogic();
 	const userMoveLogic = useUserMoveLogic();
+	const switchLines = useHandleLineSwitch();
 
 	// * variables
 	const currentLineIndex = gameState.global.currentLineIndex;
@@ -49,7 +51,7 @@ const GameView: React.FC = () => {
 	}, [line.fen, line.moveHistory]);
 
 	const switchLine = useCallback((_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		gameDispatch({ type: SWITCH_LINE, payload: { lineIndex: lineNumber } });
+		switchLines.handleLineSwitch(lineNumber);
 	}, [gameDispatch, gameState.lines])
 
 	return (

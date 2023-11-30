@@ -1,29 +1,24 @@
-import { Card, List, ListItem } from "@material-tailwind/react";
+import { Card, List, ListItem, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { useGameState } from "../../contexts/game/game-context";
-import { INIT_GAME } from "../../contexts/game/gameActions";
-import { fetchOpening, processOpeningData } from "../../utility/chessUtils";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { fetchOpening, processOpeningData } from "../../services/apiService";
+import { INIT_GAME } from "../../store/game/types/actionTypes";
 
 const OpeningsMenu: React.FC = () => {
-	const [_gameState, dispatch] = useGameState();
+	const [gameState, dispatch] = useGameState();
 	const [openings, setOpenings] = useState<OpeningDTO[]>([]);
 	const navigate = useNavigate();
 
 	const openGame = async (openingName: string) => {
 		try {
 			const opening: OpeningDTO = await fetchOpening(openingName);
-			console.log("OPENING: ", opening);
-
-			const gameData = await processOpeningData(opening);
-			console.log("GAME DATA: ", gameData);
-
-
+			const gameData = await processOpeningData(opening, gameState.lines);
+			
 			dispatch({
 				type: INIT_GAME,
 				payload: gameData
 			});
-
 			navigate('/game');
 		}
 		catch (error) {
@@ -42,11 +37,12 @@ const OpeningsMenu: React.FC = () => {
 
 	return (
 		<div className="menu-container w-full flex items-center justify-center flex-col gap-1 mt-1">
-			<h2 className="menu-header">Select an Opening to Practice</h2>
-			<Card className="w-5/6">
-				<List className="mt-1">
+			
+			<Typography variant="h4">Select an Opening to Practice</Typography>
+			<Card className="w-5/6 opacity-80 mt-3">
+				<List className="w-full p-0">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple" onClick={() => openGame(opening.name)}>{opening.name}</ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-4" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
 					))}
 				</List>
 			</Card>

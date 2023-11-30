@@ -1,9 +1,9 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.scss";
-import { GameStateProvider } from "./contexts/game/game-context";
-import GameView from "./views/GameView/game-view";
-import HomeView from "./views/home-view";
-import { QuizInteractionProvider } from "./contexts/quiz/quiz-context";
+import { GameStateProvider } from "./store/game/contexts/GameContext";
+import GameView from "./views/GameView/GameView";
+import HomeView from "./views/HomeView";
+import { QuizInteractionProvider } from "./store/quiz/quiz-context";
 
 function App() {
 	return (

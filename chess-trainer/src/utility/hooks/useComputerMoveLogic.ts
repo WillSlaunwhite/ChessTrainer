@@ -1,16 +1,26 @@
-import { useGameState } from "../../contexts/game/game-context";
-import { MAKE_MOVE_ALT_FORMAT } from "../../contexts/game/gameActions";
+import { Chess } from "chess.js";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { MAKE_MOVE_COMPUTER } from "../../store/game/types/actionTypes";
+import { isPromotion } from "../chessUtils";
 
 export function useComputerMoveLogic() {
     const [_gameState, dispatch] = useGameState();
-
-    const makeComputerMove = (nextMove: string) => {
+    
+    const makeComputerMove = (nextMove: string, fen: string) => {
+        const game = new Chess(fen);
         if (nextMove) {
-            dispatch({
-                type: MAKE_MOVE_ALT_FORMAT, payload: {
-                    move: nextMove
-                }
-            });
+            const moveResult = game.move(nextMove);
+            if (moveResult) {
+                dispatch({
+                    type: MAKE_MOVE_COMPUTER, payload: {
+                        fen: moveResult.after,
+                        isPromotion: isPromotion(moveResult),
+                        san: moveResult.san,
+                        nextMove: ""
+                    }
+                });
+
+            }
         }
     };
     return {

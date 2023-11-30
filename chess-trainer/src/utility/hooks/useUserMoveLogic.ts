@@ -1,16 +1,23 @@
-import { useGameState } from "../../contexts/game/game-context";
-import { MAKE_MOVE } from "../../contexts/game/gameActions";
+import { Chess } from "chess.js";
+import { useGameState } from "../../store/game/contexts/GameContext";
+import { MAKE_MOVE } from "../../store/game/types/actionTypes";
+import { isPromotion } from "../chessUtils";
 
 export function useUserMoveLogic() {
     const [_gameState, dispatch] = useGameState();
 
-    const handleMove = (source: string, destination: string) => {
-        dispatch({
-            type: MAKE_MOVE, payload: {
-                source: source,
-                destination: destination
-            }
-        });
+    const handleMove = (source: string, destination: string, fen: string) => {
+        const game = new Chess(fen);
+        if (source && destination) {
+            const moveResult = game.move({ from: source, to: destination });
+            dispatch({
+                type: MAKE_MOVE, payload: {
+                    fen: moveResult.after,
+                    san: moveResult.san,
+                    isPromotion: isPromotion(moveResult)
+                }
+            });
+        }
     };
 
     return {

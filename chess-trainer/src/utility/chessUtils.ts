@@ -1,15 +1,31 @@
-import { Chess } from "chess.js";
+import { Chess, Move, Piece, Square } from "chess.js";
+import { LineState } from "../store/game/contexts/GameContext";
 
-function determineNextComputerMove(baseSequence: string[], index: number): Promise<string> {
-    const nextMove = baseSequence[baseSequence.length - 1];
-    console.log("NEXT MOVE: ", nextMove);
-    console.log("BASE SEQUENCE: ", baseSequence);
 
-    // TODO HARDCODED, NEED TO FIX!
-    return fetchNextMoveForSequence(baseSequence);
+export function appendToMoveHistory(history: string[], san: string): string[] {
+    const halfMoves = convertToHalfMoves(history);
+
+    if (halfMoves.length % 2 === 0) {
+        const newHistory = [...history];
+        newHistory.push(san);
+        return newHistory;
+    } else {
+        const lastMove = history[history.length - 1];
+        const newHistory = history.slice(0, -1);
+        newHistory.push(`${lastMove} ${san}`);
+        return newHistory;
+    }
 }
 
-function convertToFullMoves(history: string[]): string[] {
+// export function convertSanToFullMove(san: string): string[] {
+
+// }
+
+export function convertToHalfMoves(history: string[]): string[] {
+    return history.flatMap(sequence => sequence.split(" "));
+}
+
+export function convertToFullMoves(history: string[]): string[] {
     const fullMoves = [];
     for (let i = 0; i < history.length; i += 2) {
         if (history[i + 1]) {
@@ -18,17 +34,59 @@ function convertToFullMoves(history: string[]): string[] {
             fullMoves.push(history[i]);
         }
     }
+
     return fullMoves;
 };
 
-function isComputersTurn(computerColor: string, moveSequence: string[]): boolean {
-    if ((computerColor === "w" || computerColor === "white") && moveSequence.length % 2 === 1) {
-        return true;
-    } else if ((computerColor === "b" || computerColor === "black") && moveSequence.length % 2 === 0) {
-        return true;
-    } else {
-        return false;
+export function convertOpeningVariationsBaseSequenceToFullSequence(opening: OpeningDTO): string[][] {
+    const baseSequence = splitMoveString(opening.baseMovesSequence[0]);
+    return opening.variations.map((variation: VariationDTO) => {
+        if (variation.movesSequence[0]) {
+            return baseSequence.concat(variation.movesSequence);
+        } else {
+            return baseSequence;
+        }
+    });
+}
+
+export function getFensFromMoveSequences(moveSequences: string[][]): string[] {
+    const tempGame = new Chess();
+    const fens: string[] = [];
+    moveSequences.forEach(sequence => {
+        sequence.forEach(movePair => {
+            if (movePair !== "") {
+                const moves: string[] = movePair.split(" ");
+                moves.forEach(move => {
+                    if (move !== "") {
+                        tempGame.move(move);
+                    }
+                })
+            }
+        });
+
+        if (!fens.includes(tempGame.fen())) {
+            fens.push(tempGame.fen());
+        }
+        tempGame.reset();
+    });
+
+    return fens;
+}
+
+export function getLastMoveSquares(moveHistory: string[]): { from: string, to: string } {
+    const tempGame = new Chess();
+    const moves = convertToHalfMoves(moveHistory);
+    for (let i = 0; i < moves.length - 1; i++) {
+        tempGame.move(moves[i]);
     }
+
+    const move = tempGame.move(moves[moves.length - 1]);
+    return { from: move.from, to: move.to };
+}
+
+export function getPieceAtSquare(fen: string, square: string): Piece {
+    const tempGame = new Chess(fen);
+    return tempGame.get(square as Square);
 }
 
 export function getProbableMove(moveData: Record<string, number>): string {
@@ -45,87 +103,87 @@ export function getProbableMove(moveData: Record<string, number>): string {
     return mostProbableMove;
 }
 
-
-
-export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
-    const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`);
-    return response.json();
+export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
+    const splitMoveSequence = convertToHalfMoves(moveSequence);
+    const isWhite = computerColor === 'white' || computerColor === 'w';
+    return (isWhite && splitMoveSequence.length % 2 === 0) || (!isWhite && splitMoveSequence.length % 2 === 1);
 }
 
-export async function processOpeningData(opening: OpeningDTO): Promise<{ fen: string, moveHistories: string[][], currentFens: string[], initialMoves: string[], nextMoves: string[] }> {
-    const tempGame = new Chess();
-    const baseSequence = opening.baseMovesSequence[0].split(/\s+/).map(move => move.replace(/^\d+\./, ''));
-    const fens: string[] = [];
-    const firstMoves: string[] = [];
-    const fullMoveSequences = opening.variations.map(variation => {
-        if (variation.movesSequence[0]) {
-            return baseSequence.concat(variation.movesSequence);
-        } else {
-            return baseSequence;
-        }
-    });
-
-    console.log("FULL MOVE SEQUENCES: ", fullMoveSequences);
-
-    for (let i = 0; i < fullMoveSequences.length; i++) {
-        const sequence = convertToFullMoves(fullMoveSequences[i]);
-        const firstComputerMove = await determineNextComputerMove(sequence, i);
-
-        console.log("FIRST COMPUTER MOVE: ", firstComputerMove);
-
-        if (firstComputerMove) {
-            firstMoves[i] = firstComputerMove;
-        }
-
-        sequence.map(movePair => {
-            if (movePair !== "") {
-                const moves: string[] = movePair.split(" ");
-                moves.map(move => {
-                    if (move !== "") {
-                        tempGame.move(move);
-                    }
-                });
-            }
-        });
-
-        if (!fens.includes(tempGame.fen())) {
-            console.log("TEMP GAME FEN: ", tempGame.fen());
-            fens.push(tempGame.fen());
-        }
-        tempGame.reset();
-    }
-
-    return {
-        fen: fens[0],
-        moveHistories: fullMoveSequences,
-        currentFens: fens,
-        initialMoves: firstMoves,
-        nextMoves: firstMoves,
-    };
+export function isPromotion(move: Move): boolean {
+    return move.flags.includes('p');
 }
 
-async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
-    console.log("SEQUENCE: ", sequence);
-    try {
-        return fetch('http://localhost:8085/api/chess/next-moves', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify([sequence])
-        })
-            .then(res => res.json())
-            .then(data => {
-                const probableMoves = Object.entries(data[0]);
-                console.log("PROBABLE MOVES: ", probableMoves);
+export const isValidMove = (fen: string, source: string, destination: string): boolean => {
+    const tempGame = new Chess(fen);
+    const validMoves = tempGame.moves({ square: source as Square, verbose: true });
+    return validMoves.some(move => move.to === destination);
+};
 
-                probableMoves.sort(((a: any, b: any) => b[1] - a[1]));
-                console.log("PROBABLE MOVE SPLIT: ", probableMoves[0][0].split(' ')[1]);
+export function splitMoveString(moves: string): string[] {
+    return moves
+        .split(/\d+\./) // split based on move numbers
+        .join(' ')
+        .split(/\s+/)
+        .filter(Boolean); // remove empty strings
+}
 
-                return probableMoves[0][0].split(' ')[1];
-            });
-    } catch (error) {
-        console.warn('Failed to fetch the next move from the database. Using Stockfish to determine move...');
-        return "";
+export function updateLineState(lines: LineState[], lineIndex: number, moveDetails: MoveDetails): LineState[] {
+    const updatedLines = [...lines];
+    const currentLine = updatedLines[lineIndex];
+
+    const { updatedMoveHistory, isComputerTurn } = updateMoveHistoryAndCheckComputerTurn(currentLine, moveDetails.san);
+
+    updatedLines[lineIndex] = {
+        ...currentLine,
+        fen: moveDetails.fen,
+        isPawnPromotion: moveDetails.isPromotion,
+        moveHistory: updatedMoveHistory,
+        san: moveDetails.san,
+        isComputerTurn,
+        isComputerReadyToMove: false
     }
+
+    return updatedLines;
+}
+
+export function updateLineStateForComputer(lines: LineState[], lineIndex: number, moveDetails: MoveDetailsComputer): LineState[] {
+    const updatedLines = [...lines];
+    const currentLine = updatedLines[lineIndex];
+
+    const { updatedMoveHistory, isComputerTurn } = updateMoveHistoryAndCheckComputerTurn(currentLine, moveDetails.san);
+
+    updatedLines[lineIndex] = {
+        ...currentLine,
+        fen: moveDetails.fen,
+        isPawnPromotion: moveDetails.isPromotion,
+        moveHistory: updatedMoveHistory,
+        san: moveDetails.san,
+        isComputerTurn,
+        isComputerReadyToMove: false,
+        nextMove: moveDetails.nextMove,
+    }
+
+    return updatedLines;
+}
+
+export function updateMoveHistoryAndCheckComputerTurn(line: LineState, san: string): { updatedMoveHistory: string[], isComputerTurn: boolean } {
+    const updatedMoveHistory = appendToMoveHistory(line.moveHistory, san);
+    const isComputerTurn = isComputersTurn(updatedMoveHistory, line.computerColor);
+    return { updatedMoveHistory, isComputerTurn };
+}
+
+
+
+
+interface MoveDetailsComputer {
+    fen: string;
+    san: string;
+    isPromotion: boolean;
+    nextMove: string;
+}
+
+interface MoveDetails {
+    fen: string;
+    san: string;
+    isPromotion: boolean;
 }

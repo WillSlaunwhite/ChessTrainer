@@ -67,7 +67,7 @@ const GameView: React.FC = () => {
 
 		const previousLineNumber = lineNumber === 0 ? 2 : lineNumber - 1;
 		const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[previousLineNumber].moveHistory);
-		console.log(nextMove);
+
 		gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: previousLineNumber } });
 	}, [gameDispatch, gameState.lines])
 
@@ -76,7 +76,7 @@ const GameView: React.FC = () => {
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
 			{isComputerTurn && <Spinner className="h-16 w-16 text-gray-900/50" />}
 			<ChessboardContainer fen={line.fen} />
-			<Timer initialTime={5} />
+			<Timer key={currentLineIndex} initialTime={5} />
 		</div>
 	);
 };

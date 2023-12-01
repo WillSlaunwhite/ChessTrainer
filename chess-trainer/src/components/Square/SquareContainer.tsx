@@ -18,19 +18,25 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen })
 	const selectedSquares = gameState.global.selectedSquares;
 	var isSelected = selectedSquares.includes(square);
 	const onMove = useUserMoveLogic();
+	const isValid = isValidMove(fen, selectedSquares[selectedSquares.length - 1], square);
 
 	const handleClick = () => {
 		// If a square is already selected and the current click is on a different square
 		if (selectedSquares.length > 0 && selectedSquares[selectedSquares.length - 1] !== square) {
-			if (isValidMove(fen, selectedSquares[selectedSquares.length - 1], square)) {
+			if (isValid) {
 				// Make the move
 				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
 				onMove.handleMove(selectedSquares[selectedSquares.length - 1], square, fen);
-			} else if (piece) {
+			} else if (!isValid && selectedSquares.length > 2) {
 				// Optionally handle invalid move (show error, etc.)
-				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
+				dispatch({ type: SELECT_SQUARE, payload: { square: selectedSquares.slice(-1)[0] } });
 			}
 			// dispatch({ type: SELECT_SQUARE, payload: { square: null } }); // Clear selection
+			else if (piece) {
+				// Select the square or deselect if it's already selected
+				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
+			}
+
 		} else {
 			// Select the square or deselect if it's already selected
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } });

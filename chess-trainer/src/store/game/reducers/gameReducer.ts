@@ -96,7 +96,9 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case SELECT_SQUARE:
             const updatedSquares = new Set(state.global.selectedSquares);
+            
             if (updatedSquares.has(action.payload.square)) {
+                
                 updatedSquares.delete(action.payload.square);
             } else {
                 updatedSquares.add(action.payload.square);

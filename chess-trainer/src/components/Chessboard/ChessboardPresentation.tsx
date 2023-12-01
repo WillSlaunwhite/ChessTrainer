@@ -29,7 +29,7 @@ const ChessboardPresentation: React.FC<ChessboardPresentationProps> = ({ fen }) 
 	const boardArray = fenToArray(board);
 
 	return (
-		<div className="chessboard grid w-344px h-344px">
+		<div className="chessboard grid w-344px h-344px shadow hover:shadow-lg">
 			{boardArray.map((row, rowIndex) => {
 				return row.map((piece, colIndex) => {
 					const square = `${cols[colIndex]}${8 - rowIndex}`;

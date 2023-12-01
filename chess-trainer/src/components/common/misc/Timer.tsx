@@ -9,14 +9,12 @@ const Timer: React.FC<TimerProps> = ({ initialTime }) => {
     const [timeLeft, setTimeLeft] = useState(initialTime);
 
     useEffect(() => {
-        if (timeLeft === 0) return;
-
         const intervalId = setInterval(() => {
-            setTimeLeft(timeLeft - 1);
+            setTimeLeft((time) => time > 0 ? time - 1 : 0);
         }, 1000);
 
         return () => clearInterval(intervalId);
-    });
+    }), [initialTime];
 
     return (
         <div className="w-full">

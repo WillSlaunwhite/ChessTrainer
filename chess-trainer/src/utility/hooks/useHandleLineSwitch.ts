@@ -1,6 +1,6 @@
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_TURN, SWITCH_LINE } from "../../store/game/types/actionTypes";
-import { getLastMoveSquares, isComputersTurn } from "../chessUtils";
+import { CLEAR_SELECTED_SQUARES, SET_HIGHLIGHT_SQUARES, SWITCH_LINE } from "../../store/game/types/actionTypes";
+import { getLastMoveSquares } from "../chessUtils";
 
 export function useHandleLineSwitch() {
     const [gameState, dispatch] = useGameState();

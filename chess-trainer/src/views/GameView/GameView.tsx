@@ -63,24 +63,17 @@ const GameView: React.FC = () => {
 		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 	}, [nextMove]);
 
-	useEffect(() => {
-		const fetchNextMove = async () => {
-			const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[currentLineIndex].moveHistory, line.fen);
-			if (nextMove) {
-				gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
-				gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { currentLineIndex: currentLineIndex, isComputerReadyToMove: true } });
-				gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
-			}
-		};
-
-		fetchNextMove();
-	}, []);
-
 
 
 	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		console.log(gameState.lines[lineNumber]);
+		// const previousLineNumber = lineNumber === 0 ? 2 : lineNumber - 1;
+		const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[lineNumber].moveHistory, line.fen);
+		
+		gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: lineNumber } });
+		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { currentLineIndex: lineNumber, isComputerReadyToMove: true } });
+		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: lineNumber } })
 		switchLines.handleLineSwitch(lineNumber);
+		console.log(gameState.lines[lineNumber]);
 	}, [gameDispatch, gameState.lines])
 
 	return (

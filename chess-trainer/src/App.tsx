@@ -1,23 +1,24 @@
-import { useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.scss";
-import GameView from "./components/GameView/game-view";
-import { BoardProvider } from "./contexts/board-context";
-import HomeView from "./views/home-view";
+import { GameStateProvider } from "./store/game/contexts/GameContext";
+import GameView from "./views/GameView/GameView";
+import HomeView from "./views/HomeView";
+import { QuizInteractionProvider } from "./store/quiz/quiz-context";
 
 function App() {
-	const [isQuizActive, setIsQuizActive] = useState(false);
-	console.log("app");
-
 	return (
-		<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
-			<BoardProvider>
-				{!isQuizActive ? (
-					<HomeView setIsQuizActive={setIsQuizActive}></HomeView>
-				) : (
-					<GameView setIsQuizActive={setIsQuizActive}></GameView>
-				)}
-			</BoardProvider>
-		</div>
+		<Router>
+			<GameStateProvider>
+				<QuizInteractionProvider>
+					<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">
+						<Routes>
+							<Route path="/" element={<HomeView />} />
+							<Route path="/game" element={<GameView />} />
+						</Routes>
+					</div>
+				</QuizInteractionProvider>
+			</GameStateProvider>
+		</Router>
 	);
 }
 

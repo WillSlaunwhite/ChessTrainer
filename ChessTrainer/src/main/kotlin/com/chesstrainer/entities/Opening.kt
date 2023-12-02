@@ -1,6 +1,8 @@
 package com.chesstrainer.entities
 
 import com.chesstrainer.converters.StringListConverter
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import javax.persistence.*
 
 @Entity
@@ -11,9 +13,13 @@ data class Opening(
     val description: String? = null,
     @Convert(converter = StringListConverter::class)
     @Column(name = "moves_sequence")
-    val moveSequence: List<String>,
+    val baseMoveSequence: List<String> = listOf(),
     @OneToMany(mappedBy = "opening")
+    @JsonManagedReference
     val masterGames: List<MasterGame>,
+    @OneToMany(mappedBy = "opening")
+    @JsonManagedReference
+    val variations: List<Variation>,
     @Column(name = "difficulty_level")
     val difficulty: String? = null,
 )

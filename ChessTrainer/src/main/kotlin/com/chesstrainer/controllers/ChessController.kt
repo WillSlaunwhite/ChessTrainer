@@ -1,13 +1,14 @@
 package com.chesstrainer.controllers
 
 import com.chesstrainer.data.Move
+import com.chesstrainer.data.NextMoveRequest
 import com.chesstrainer.services.ChessTrieService
 import com.chesstrainer.wrappers.Evaluation
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@CrossOrigin("*", "http://localhost")
+@CrossOrigin("*")
 @RequestMapping("/api/chess")
 class ChessController(private val chessTrieService: ChessTrieService) {
 
@@ -23,7 +24,7 @@ class ChessController(private val chessTrieService: ChessTrieService) {
     }
 
     @PostMapping("/next-moves")
-    fun getNextMoves(@RequestBody currentMoves: List<List<String>>): ResponseEntity<List<Map<String, Int>>> {
-        return ResponseEntity.ok(chessTrieService.nextMovesForSequences(currentMoves))
+    fun getNextMoves(@RequestBody request: NextMoveRequest): ResponseEntity<List<Map<String, Int>>> {
+        return ResponseEntity.ok(chessTrieService.nextMovesForSequences(request.sequence, request.fen))
     }
 }

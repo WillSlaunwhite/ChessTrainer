@@ -5,6 +5,7 @@ import com.chesstrainer.converters.ResultConverter
 import com.chesstrainer.converters.RoundConverter
 import com.chesstrainer.converters.StringListConverter
 import com.chesstrainer.enums.Result
+import com.fasterxml.jackson.annotation.JsonBackReference
 import java.time.LocalDate
 import javax.persistence.*
 
@@ -29,8 +30,9 @@ data class MasterGame(
     val result: Result,
     val eco: String,
     @Convert(converter = StringListConverter::class)
-    val moves: List<String> = mutableListOf(),
+    val moves: List<String> = listOf(),
     @ManyToOne @JoinColumn(name = "opening_id")
+    @JsonBackReference
     val opening: Opening? = null,
 ) {
 

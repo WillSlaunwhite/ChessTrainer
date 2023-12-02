@@ -28,20 +28,25 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userService as UserDetailsService?).passwordEncoder(encoder)
+        auth.userDetailsService(userService).passwordEncoder(encoder)
     }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
         http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers(HttpMethod.GET, "/api/bids/*").permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/search/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll().antMatchers("/authenticate").permitAll()
-            .antMatchers(HttpMethod.POST, "/authenticate").permitAll().antMatchers("/authenticate").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/openings/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/openings/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/variations/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/chess/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/chess/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/validate-move").permitAll()
+            .antMatchers(HttpMethod.POST, "/authenticate").permitAll()
             .antMatchers("/api/**").authenticated().anyRequest().permitAll().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

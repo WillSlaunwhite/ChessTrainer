@@ -6,14 +6,9 @@ import com.chesstrainer.enums.MoveClassification
 import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.wrappers.Evaluation
 import com.chesstrainer.wrappers.StockfishWrapper
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import org.springframework.stereotype.Service
-import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
 
 @Service
 class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
@@ -30,12 +25,8 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     companion object {
 
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
-        const val BEST_MOVE_THRESHOLD = 0.5     // If a move is within this score of the best, it's considered best
-        const val GOOD_MOVE_THRESHOLD = 1.0     // Beyond this, a move is considered a blunder
-        const val INACCURACY_THRESHOLD = 2.0    // Beyond this, a move is considered an inaccuracy
-        const val BLUNDER_THRESHOLD = 4.0       // If a move is within this score of the best, it's considered good
+        const val PLAYABLE_MOVE_THRESHOLD = 1000  // If a move has been played more than this, it's playable
     }
-
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
@@ -56,10 +47,10 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
         if (cp != null) {
             return when {
-                cp <= BEST_MOVE_THRESHOLD -> MoveClassification.BEST_MOVE
-                cp <= GOOD_MOVE_THRESHOLD -> MoveClassification.VERY_GOOD_MOVE
-                cp <= INACCURACY_THRESHOLD -> MoveClassification.GOOD_MOVE
-                cp > BLUNDER_THRESHOLD -> MoveClassification.BLUNDER
+//                cp <= BEST_MOVE_THRESHOLD -> MoveClassification.BEST_MOVE
+//                cp <= GOOD_MOVE_THRESHOLD -> MoveClassification.VERY_GOOD_MOVE
+//                cp <= INACCURACY_THRESHOLD -> MoveClassification.GOOD_MOVE
+//                cp > BLUNDER_THRESHOLD -> MoveClassification.BLUNDER
                 else -> MoveClassification.INACCURACY
             }
         }
@@ -67,9 +58,20 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         return MoveClassification.ERROR
     }
 
-    fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
-        trie.printTrie(trie.root)
-        return moveSequences.map { trie.findNextMoves(it) }
+    fun nextMovesForSequences(sequence: List<String>, fen: String): List<Map<String, Int>> {
+        val nextMoves = trie.findNextMoves(sequence)
+        return if (nextMoves.isEmpty()) {
+            var stockfish = stockfishPool.take()
+            stockfish = StockfishWrapper()
+
+            val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
+
+            stockfish.close()
+            stockfishPool.offer(stockfish)
+            listOf(mapOf<String, Int>(nextMove to -1))
+        } else {
+            listOf(nextMoves)
+        }
     }
 
 //    private fun convertFenToMovesSequence(fen: String): List<String> {
@@ -78,11 +80,9 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
     @PostConstruct
     fun initialize() {
-        // CREATES TRIE
         val games: MutableList<MasterGame> = masterGameRepo.findAll()
         games.forEach { game ->
             trie.insert(game.moves.take(40))
         }
-        trie.printTrie(trie.root)
     }
 }

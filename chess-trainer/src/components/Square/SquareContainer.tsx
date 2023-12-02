@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import SquarePresentation from "./SquarePresentation";
-import { CLEAR_SELECTED_SQUARES, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../store/game/types/actionTypes";
-import { getLastMoveSquares, isComputersTurn, isValidMove } from "../../utility/chessUtils";
+import { SELECT_SQUARE } from "../../store/game/types/actionTypes";
+import { isValidMove } from "../../utility/chessUtils";
 import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
-import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
-import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
+import SquarePresentation from "./SquarePresentation";
 
 interface SquareContainerProps {
 	square: string;
@@ -31,7 +29,6 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen })
 				// Optionally handle invalid move (show error, etc.)
 				dispatch({ type: SELECT_SQUARE, payload: { square: selectedSquares.slice(-1)[0] } });
 			}
-			// dispatch({ type: SELECT_SQUARE, payload: { square: null } }); // Clear selection
 			else if (piece) {
 				// Select the square or deselect if it's already selected
 				dispatch({ type: SELECT_SQUARE, payload: { square: square } });

@@ -15,7 +15,6 @@ export function useHandleLineSwitch() {
                 dispatch({ type: SWITCH_LINE, payload: { lineIndex: lineIndex } });
                 dispatch({ type: CLEAR_SELECTED_SQUARES });
                 dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { from: lastMoves.from, to: lastMoves.to } })
-                dispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: lineIndex } })
             }
         }
     }

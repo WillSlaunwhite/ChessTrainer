@@ -27,20 +27,22 @@ class ChessTrie {
                 println("Move $move not found!")
                 return mapOf()
             }
-            current = current.children[move]!!
+            if (current.children[move] != null) {
+                current = current.children[move]!!
+            } else {
+                return mapOf();
+            }
         }
 
         if (isLastMoveHalf) {
             val lastMove = moves.last()
-            val nextMovesWithHalfMove = current.children
+
+            return current.children
                 .filterKeys { it.startsWith(lastMove) }
                 .mapValues { it.value.frequency }
-
-            if (nextMovesWithHalfMove.isNotEmpty()) {
-                return nextMovesWithHalfMove
-            }
         }
 
+        println("hello3")
         return current.children.mapValues { it.value.frequency }
     }
 

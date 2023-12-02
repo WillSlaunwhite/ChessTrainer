@@ -1,6 +1,5 @@
 import React from "react";
 import MoveBlock from ".";
-import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
 
 
 interface MoveContainerProps {

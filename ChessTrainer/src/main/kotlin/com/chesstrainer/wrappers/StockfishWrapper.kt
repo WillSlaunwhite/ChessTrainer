@@ -9,7 +9,6 @@ class StockfishWrapper : Closeable {
     private lateinit var reader: BufferedReader
     private lateinit var writer: BufferedWriter
 
-
     init {
         startEngine()
         clearInitialMessages()
@@ -18,12 +17,11 @@ class StockfishWrapper : Closeable {
     fun evaluate(fen: String, move: String): Pair<String, Evaluation> {
         println("MOVE MOVE MOVE MOVE MOVE MOVE MOVE MOVE  $move")
         sendCommand("position fen $fen moves $move")
-        sendCommand("go depth 15")
+        sendCommand("go depth 16")
         val output = getOutputUntilBestMove()
 
         val bestMove = extractBestMove(output)
         val evaluation = parseEvaluation(output)
-
 
         return Pair(bestMove, evaluation)
     }

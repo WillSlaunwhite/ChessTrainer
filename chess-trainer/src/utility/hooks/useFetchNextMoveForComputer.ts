@@ -1,11 +1,10 @@
 import { fetchNextMoveForSequence } from "../../services/apiService";
-import { convertToFullMoves } from "../chessUtils";
 
 export function useFetchNextMoveForComputer() {
-
-    const fetchNextMove = async (moveHistory: string[]) => {
+    const fetchNextMove = async (moveHistory: string[], fen: string) => {
         console.log(moveHistory);
-        const nextMove = await fetchNextMoveForSequence(moveHistory);
+        console.log(fen);
+        const nextMove = await fetchNextMoveForSequence(moveHistory, fen);
         return nextMove;
     };
 

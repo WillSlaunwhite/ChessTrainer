@@ -32,7 +32,8 @@ const GameView: React.FC = () => {
 	useEffect(() => {
 		const fetchComputerMove = async () => {
 			if (isComputerTurn && !nextMove) {
-				const nextComputerMove = await fetchNextMoveForComputer.fetchNextMove(moveHistories[currentLineIndex]);
+				const nextComputerMove = await fetchNextMoveForComputer.fetchNextMove(moveHistories[currentLineIndex], line.fen);
+				console.log(nextComputerMove)
 
 				if (nextComputerMove) {
 					gameDispatch({
@@ -62,19 +63,30 @@ const GameView: React.FC = () => {
 		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 	}, [nextMove]);
 
+	useEffect(() => {
+		const fetchNextMove = async () => {
+			const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[currentLineIndex].moveHistory, line.fen);
+			if (nextMove) {
+				gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
+				gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { currentLineIndex: currentLineIndex, isComputerReadyToMove: true } });
+				gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
+			}
+		};
+
+		fetchNextMove();
+	}, []);
+
+
+
 	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
+		console.log(gameState.lines[lineNumber]);
 		switchLines.handleLineSwitch(lineNumber);
-
-		const previousLineNumber = lineNumber === 0 ? 2 : lineNumber - 1;
-		const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[previousLineNumber].moveHistory);
-
-		gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: previousLineNumber } });
 	}, [gameDispatch, gameState.lines])
 
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
-			{isComputerTurn && <Spinner className="h-16 w-16 text-gray-900/50" />}
+			{isComputerTurn && <Spinner className="h-16 w-16 p-2 text-gray-900/50" />}
 			<ChessboardContainer fen={line.fen} />
 			<Timer key={currentLineIndex} initialTime={5} />
 		</div>

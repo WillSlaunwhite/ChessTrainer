@@ -6,24 +6,36 @@ export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
     return response.json();
 }
 
-export async function fetchNextMoveForSequence(sequence: string[]): Promise<string> {
+export async function fetchNextMoveForSequence(sequence: string[], fen: string): Promise<string> {
     console.log(sequence);
-    
+    console.log(fen);
+
     try {
         return fetch('http://localhost:8085/api/chess/next-moves', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify([sequence])
+            body: JSON.stringify({ sequence, fen })
+
         })
             .then(res => res.json())
             .then(data => {
                 const probableMoves = Object.entries(data[0]);
                 probableMoves.sort(((a: any, b: any) => b[1] - a[1]));
                 console.log(probableMoves);
-                
-                return probableMoves[0][0].split(' ')[1];
+
+                const move = probableMoves[0][0];
+                if (probableMoves[0][1] === -1) {
+                    const regex = /^[a-h][1-8][a-h][1-8]$/;
+                    if (regex.test(move)) { 
+                        return move.substring(0, 2) + ' ' + move.substring(2);
+                    }
+
+                    return move;
+                }
+
+                return move.split(' ')[1];
             });
     } catch (error) {
         console.warn('Failed to fetch the next move from the database. Using Stockfish to determine move...');
@@ -34,15 +46,15 @@ export async function fetchNextMoveForSequence(sequence: string[]): Promise<stri
 export async function processOpeningData(opening: OpeningDTO, lines: LineState[]): Promise<{ global: GlobalState, lines: LineState[] }> {
     const fullMoveSequences = convertOpeningVariationsBaseSequenceToFullSequence(opening).map(sequence => convertToFullMoves(sequence));
     console.log("FULL MOVES SEQUENCES: ", fullMoveSequences);
+    const fens = getFensFromMoveSequences(fullMoveSequences);
+    console.log("fens: ", fens);
+    const newLines: LineState[] = [];
 
     const firstMoves = await Promise.all(
-        fullMoveSequences.map(async sequence => {
-            return await fetchNextMoveForSequence(sequence);
+        fullMoveSequences.map(async (sequence, i) => {
+            return await fetchNextMoveForSequence(sequence, fens[i]);
         })
     );
-
-    const fens = getFensFromMoveSequences(fullMoveSequences);
-    const newLines: LineState[] = [];
 
     for (let i = 0; i < fullMoveSequences.length; i++) {
         const lineState: LineState = {

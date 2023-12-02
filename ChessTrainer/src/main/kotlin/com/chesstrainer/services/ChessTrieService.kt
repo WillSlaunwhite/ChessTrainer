@@ -58,9 +58,20 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         return MoveClassification.ERROR
     }
 
-    fun nextMovesForSequences(moveSequences: List<List<String>>): List<Map<String, Int>> {
-        println("MOVE SEQUENCES: $moveSequences")
-        return moveSequences.map { trie.findNextMoves(it) }
+    fun nextMovesForSequences(sequence: List<String>, fen: String): List<Map<String, Int>> {
+        val nextMoves = trie.findNextMoves(sequence)
+        return if (nextMoves.isEmpty()) {
+            var stockfish = stockfishPool.take()
+            stockfish = StockfishWrapper()
+
+            val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
+
+            stockfish.close()
+            stockfishPool.offer(stockfish)
+            listOf(mapOf<String, Int>(nextMove to -1))
+        } else {
+            listOf(nextMoves)
+        }
     }
 
 //    private fun convertFenToMovesSequence(fen: String): List<String> {

@@ -1,7 +1,7 @@
 import { getLastMoveSquares, getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
     switch (action.type) {
@@ -10,11 +10,11 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 ...state,
                 global: {
                     ...state.global,
-                    selectedSquares: []
+                    highlightedSquares: []
                 }
             }
         }
-        
+
         // case EXECUTE_PAWN_PROMOTION:
         //     return {
         //         ...state,
@@ -34,6 +34,17 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             return {
                 ...state,
                 lines
+            }
+        }
+
+        case HIGHLIGHT_LAST_MOVES: {
+            const lastMoves = state.global.highlightedSquares.length === 2 ? state.global.highlightedSquares : state.global.highlightedSquares.slice(0, 2);
+            return {
+                ...state,
+                global: {
+                    ...state.global,
+                    highlightedSquares: lastMoves,
+                }
             }
         }
 
@@ -68,7 +79,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 global: {
                     ...state.global,
                     currentLineIndex: nextLineIndex,
-                    selectedSquares: Array.from([selectedSquares.from, selectedSquares.to])
+                    highlightedSquares: [selectedSquares.from, selectedSquares.to]
                 }
             };
         }
@@ -86,7 +97,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 lines: updatedLines,
                 global: {
                     ...state.global,
-                    selectedSquares: [selectedSquares.from, selectedSquares.to]
+                    highlightedSquares: [selectedSquares.from, selectedSquares.to]
                 }
             };
         }
@@ -95,19 +106,13 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
 
         case SELECT_SQUARE:
-            const updatedSquares = new Set(state.global.selectedSquares);
-            
-            if (updatedSquares.has(action.payload.square)) {
-                
-                updatedSquares.delete(action.payload.square);
-            } else {
-                updatedSquares.add(action.payload.square);
-            }
+            const updatedSquare = state.global.selectedSquare !== action.payload.square ? action.payload.square : "";
+
             return {
                 ...state,
                 global: {
                     ...state.global,
-                    selectedSquares: Array.from(updatedSquares)
+                    selectedSquare: updatedSquare
                 }
             };
 
@@ -155,13 +160,20 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         }
 
         case SET_HIGHLIGHT_SQUARES: {
-            const squares = Array.from([action.payload.from, action.payload.to]);
-            
+            const updatedSquares = new Set(state.global.highlightedSquares);
+            action.payload.squares.map(square => {
+                if (updatedSquares.has(square)) {
+                    updatedSquares.delete(square);
+                } else {
+                    updatedSquares.add(square);
+                }
+            });
+
             return {
                 ...state,
                 global: {
                     ...state.global,
-                    selectedSquares: squares
+                    highlightedSquares: Array.from(updatedSquares)
                 }
             }
         }

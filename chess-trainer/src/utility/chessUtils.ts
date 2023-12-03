@@ -1,6 +1,5 @@
 import { Chess, Move, Piece, Square } from "chess.js";
 import { LineState } from "../store/game/contexts/GameContext";
-import { useFetchNextMoveForComputer } from "./hooks/useFetchNextMoveForComputer";
 
 
 export function appendToMoveHistory(history: string[], san: string): string[] {
@@ -85,9 +84,19 @@ export function getLastMoveSquares(moveHistory: string[]): { from: string, to: s
     return { from: move.from, to: move.to };
 }
 
+export function getMoveNumber(fen: string): number {
+    const tempGame = new Chess(fen);
+    return tempGame.moveNumber();
+}
+
 export function getPieceAtSquare(fen: string, square: string): Piece {
     const tempGame = new Chess(fen);
     return tempGame.get(square as Square);
+}
+
+export function getPossibleMovesForSquare(fen: string, square: string): string[] {
+    const tempGame = new Chess(fen);
+    return tempGame.moves({square: square as Square, verbose: true}).map(move => move.to);
 }
 
 export function getProbableMove(moveData: Record<string, number>): string {
@@ -102,6 +111,16 @@ export function getProbableMove(moveData: Record<string, number>): string {
     }
 
     return mostProbableMove;
+}
+
+export function isCheckmate(fen: string): boolean {
+    const tempGame = new Chess(fen);
+    return tempGame.isCheckmate();
+}
+
+export function isDraw(fen: string): boolean {
+    const tempGame = new Chess(fen);
+    return tempGame.isDraw();
 }
 
 export function isComputersTurn(moveSequence: string[], computerColor: string): boolean {
@@ -126,6 +145,11 @@ export function splitMoveString(moves: string): string[] {
         .join(' ')
         .split(/\s+/)
         .filter(Boolean); // remove empty strings
+}
+
+export function undoMove(fen: string): string {
+    const tempGame = new Chess(fen);
+    return tempGame.undo()!!.after
 }
 
 export function updateLineState(lines: LineState[], lineIndex: number, moveDetails: MoveDetails): LineState[] {

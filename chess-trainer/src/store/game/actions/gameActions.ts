@@ -1,5 +1,5 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 interface ClearSelectedSquaresAction {
     type: typeof CLEAR_SELECTED_SQUARES;
@@ -21,6 +21,10 @@ interface GetPieceAtSquareAction {
         square: string;
         lineNumber: number;
     };
+}
+
+interface HighlightLastMovesAction {
+    type: typeof HIGHLIGHT_LAST_MOVES;
 }
 
 interface InitGameAction {
@@ -68,8 +72,7 @@ interface SetBoardFromHistoryAction {
 interface SetHighlightSquaresAction {
     type: typeof SET_HIGHLIGHT_SQUARES;
     payload: {
-        from: string;
-        to: string;
+        squares: string[];
     }
 }
 
@@ -83,7 +86,7 @@ interface SetIsComputerTurnAction {
 
 interface SetIsComputerReady {
     type: typeof SET_IS_COMPUTER_READY_TO_MOVE;
-    payload: { 
+    payload: {
         isComputerReadyToMove: boolean;
         currentLineIndex: number;
     };
@@ -119,4 +122,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = ClearSelectedSquaresAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;
+export type GameActionTypes = ClearSelectedSquaresAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | HighlightLastMovesAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { SELECT_SQUARE } from "../../store/game/types/actionTypes";
-import { isValidMove } from "../../utility/chessUtils";
+import { SELECT_SQUARE, SET_HIGHLIGHT_SQUARES } from "../../store/game/types/actionTypes";
+import { getPossibleMovesForSquare, isValidMove } from "../../utility/chessUtils";
 import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 import SquarePresentation from "./SquarePresentation";
 
@@ -13,30 +13,25 @@ interface SquareContainerProps {
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen }) => {
 	const [gameState, dispatch] = useGameState();
-	const selectedSquares = gameState.global.selectedSquares;
-	var isSelected = selectedSquares.includes(square);
+	const selectedSquare = gameState.global.selectedSquare;
+	const highlightedSquares = gameState.global.highlightedSquares;
+	var isSelected = (square === selectedSquare || (highlightedSquares && highlightedSquares.includes(square)));
 	const onMove = useUserMoveLogic();
-	const isValid = isValidMove(fen, selectedSquares[selectedSquares.length - 1], square);
+	const isValid = isValidMove(fen, selectedSquare, square);
 
 	const handleClick = () => {
-		// If a square is already selected and the current click is on a different square
-		if (selectedSquares.length > 0 && selectedSquares[selectedSquares.length - 1] !== square) {
-			if (isValid) {
-				// Make the move
-				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
-				onMove.handleMove(selectedSquares[selectedSquares.length - 1], square, fen);
-			} else if (!isValid && selectedSquares.length > 2) {
-				// Optionally handle invalid move (show error, etc.)
-				dispatch({ type: SELECT_SQUARE, payload: { square: selectedSquares.slice(-1)[0] } });
-			}
-			else if (piece) {
-				// Select the square or deselect if it's already selected
-				dispatch({ type: SELECT_SQUARE, payload: { square: square } });
-			}
-
-		} else {
-			// Select the square or deselect if it's already selected
+		// there's another square selected and it isn't this one
+		if (piece && !selectedSquare) {
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } });
+			dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, square) } });
+		} else if (selectedSquare && isValid) {
+			onMove.handleMove(selectedSquare, square, fen);
+		} else if (selectedSquare === square && highlightedSquares.length > 2) {
+			dispatch({ type: SELECT_SQUARE, payload: { square: square } });
+			dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, square) } });
+		} else {
+			dispatch({ type: SELECT_SQUARE, payload: { square: "" } });
+			dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, selectedSquare) } });
 		}
 	};
 

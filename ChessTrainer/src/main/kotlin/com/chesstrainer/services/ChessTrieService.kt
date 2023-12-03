@@ -30,9 +30,11 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
-        val stockfish = stockfishPool.take()
+        var stockfish = stockfishPool.take()
+        stockfish = StockfishWrapper();
         val result = stockfish.evaluate(fen, move)
 //        println(classifyMove(result.second, ))
+        stockfish.close()
         stockfishPool.offer(stockfish)
         return result
     }
@@ -58,16 +60,21 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         return MoveClassification.ERROR
     }
 
-    fun nextMovesForSequences(sequence: List<String>, fen: String): List<Map<String, Int>> {
+    fun nextMovesForSequence(sequence: List<String>, fen: String): List<Map<String, Int>> {
         val nextMoves = trie.findNextMoves(sequence)
         return if (nextMoves.isEmpty()) {
+            println("nextMovesForSequence")
             var stockfish = stockfishPool.take()
+            println("nextMovesForSequence2")
             stockfish = StockfishWrapper()
+            println("nextMovesForSequence3")
 
             val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
+            println("nextMovesForSequence4")
 
             stockfish.close()
             stockfishPool.offer(stockfish)
+            println("nextMovesForSequence5")
             listOf(mapOf<String, Int>(nextMove to -1))
         } else {
             listOf(nextMoves)

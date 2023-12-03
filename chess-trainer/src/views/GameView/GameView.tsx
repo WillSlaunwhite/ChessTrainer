@@ -65,9 +65,11 @@ const GameView: React.FC = () => {
 
 	useEffect(() => {
 		const fetchNextMove = async () => {
-			const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[currentLineIndex].moveHistory, line.fen);
+			const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[currentLineIndex].moveHistory, gameState.lines[currentLineIndex].fen);
+			console.log(nextMove);
+			
+			gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
 			if (nextMove) {
-				gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
 				gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { currentLineIndex: currentLineIndex, isComputerReadyToMove: true } });
 				gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 			}

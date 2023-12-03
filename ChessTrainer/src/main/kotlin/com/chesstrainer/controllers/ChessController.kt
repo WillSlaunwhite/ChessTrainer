@@ -25,6 +25,6 @@ class ChessController(private val chessTrieService: ChessTrieService) {
 
     @PostMapping("/next-moves")
     fun getNextMoves(@RequestBody request: NextMoveRequest): ResponseEntity<List<Map<String, Int>>> {
-        return ResponseEntity.ok(chessTrieService.nextMovesForSequences(request.sequence, request.fen))
+        return ResponseEntity.ok(chessTrieService.nextMovesForSequence(request.sequence, request.fen))
     }
 }

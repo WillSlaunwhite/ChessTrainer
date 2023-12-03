@@ -37,13 +37,24 @@ class StockfishWrapper : Closeable {
         var lastEvaluation: Evaluation? = null
 
         for (line in stockfishOutput.split("\n")) {
-            if (line.contains("depth") && line.contains("score cp")) {
-                lastEvaluation = Evaluation(extractEvaluation(line), extractPrincipalVariation(line))
+            if (line.contains("depth")) {
+                if (line.contains("score cp")) {
+                    lastEvaluation = Evaluation(extractEvaluation(line), extractPrincipalVariation(line))
+                } else if (line.contains("score mate")) {
+                    val mateInMoves = extractMateInMoves(line)
+                    lastEvaluation = Evaluation(null, extractPrincipalVariation(line))
+                }
             }
         }
-        return lastEvaluation ?: throw Exception("Failed to parse Stockfish output.")
+//        return lastEvaluation ?: throw Exception("Failed to parse Stockfish output.")
+        return lastEvaluation ?: Evaluation(0.0, "MATE")
     }
 
+    private fun extractMateInMoves(line: String): Int? {
+        val pattern = "score mate (-?\\d+)".toRegex()
+        val match = pattern.find(line)
+        return match?.groups?.get(1)?.value?.toIntOrNull()
+    }
 
     private fun getOutputUntilBestMove(): String {
         val output = StringBuilder()

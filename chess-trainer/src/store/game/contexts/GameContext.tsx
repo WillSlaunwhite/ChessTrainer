@@ -16,6 +16,7 @@ export interface GlobalState {
 export interface LineState {
     colorOfPiece: string;
     computerColor: string;
+    evaluation: number;
     fen: string;
     isComputerTurn: boolean,
     isComputerReadyToMove: boolean,
@@ -51,6 +52,7 @@ export const useGameState = () => {
 const defaultLine = {
     colorOfPiece: "",
     computerColor: "black",
+    evaluation: 0,
     fen: startingFen,
     isComputerTurn: false,
     isComputerReadyToMove: false,

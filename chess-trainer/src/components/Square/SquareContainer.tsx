@@ -30,8 +30,10 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen })
 			dispatch({ type: SELECT_SQUARE, payload: { square: square } });
 			dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, square) } });
 		} else {
+			if (piece || selectedSquare) {
+				dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, selectedSquare) } });
+			}
 			dispatch({ type: SELECT_SQUARE, payload: { square: "" } });
-			dispatch({ type: SET_HIGHLIGHT_SQUARES, payload: { squares: getPossibleMovesForSquare(fen, selectedSquare) } });
 		}
 	};
 

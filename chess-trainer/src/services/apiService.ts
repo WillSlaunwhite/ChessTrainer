@@ -3,9 +3,13 @@ import { convertOpeningVariationsBaseSequenceToFullSequence, convertToFullMoves,
 
 // * EVALUATION
 
-export async function fetchEvaluation(fen: string, move: string): Promise<number> {
+interface EvaluationResponse { first: { bestMove: string }, second: { centipawns: number, principalVariation: string } }
+
+export async function fetchEvaluation(fen: string, move: string): Promise<{ bestMove: string, centipawns: number, principalVariation: string }> {
+    move = move.split(" ").length > 1 ? move.split(" ")[1] : move;
+    
     try {
-        return fetch('http://localhost:8085/api/chess/next-moves', {
+        return fetch('http://localhost:8085/api/chess/evaluate', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -13,15 +17,15 @@ export async function fetchEvaluation(fen: string, move: string): Promise<number
             body: JSON.stringify({ fen, move })
         })
             .then(res => res.json())
-            .then(data => {
+            .then((data: EvaluationResponse) => {
                 console.log(data);
-                
-                return data;
-            })
+
+                return { bestMove: data.first.bestMove, centipawns: data.second.centipawns, principalVariation: data.second.principalVariation };
+            });
     } catch (error) {
         console.warn('Failed to fetch evaluation using Stockfish');
         console.error(error);
-        return 0;
+        return { bestMove: "", centipawns: 0, principalVariation: "" };
     }
 }
 

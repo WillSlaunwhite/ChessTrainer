@@ -15,9 +15,8 @@ class StockfishWrapper : Closeable {
     }
 
     fun evaluate(fen: String, move: String): Pair<String, Evaluation> {
-        println("MOVE MOVE MOVE MOVE MOVE MOVE MOVE MOVE  $move")
         sendCommand("position fen $fen moves $move")
-        sendCommand("go depth 16")
+        sendCommand("go depth 14")
         val output = getOutputUntilBestMove()
 
         val bestMove = extractBestMove(output)
@@ -60,7 +59,6 @@ class StockfishWrapper : Closeable {
         val output = StringBuilder()
         while (true) {
             val line = reader.readLine() ?: break
-            println("LINE $line")
             output.append(line).append("\n")
             if (line.contains("bestmove")) break
         }
@@ -72,28 +70,24 @@ class StockfishWrapper : Closeable {
     private fun extractDepth(line: String): Int? {
         val pattern = "depth (\\d+)".toRegex()
         val match = pattern.find(line)
-        println("EXTRACT DEPTH ${match?.groups?.get(1)?.value?.toIntOrNull()}")
         return match?.groups?.get(1)?.value?.toIntOrNull()
     }
 
     private fun extractEvaluation(line: String): Double? {
         val pattern = "score cp (-?\\d+)".toRegex()
         val match = pattern.find(line)
-        println("EXTRACT EVALUATION ${match?.groups?.get(1)?.value?.toDoubleOrNull()}")
         return match?.groups?.get(1)?.value?.toDoubleOrNull()
     }
 
     private fun extractNodes(line: String): Int? {
         val pattern = "nodes (\\d+)".toRegex()
         val match = pattern.find(line)
-        println("EXTRACT NODES ${match?.groups?.get(1)?.value?.toIntOrNull()}")
         return match?.groups?.get(1)?.value?.toIntOrNull()
     }
 
     private fun extractTime(line: String): Int? {
         val pattern = "time (\\d+)".toRegex()
         val match = pattern.find(line)
-        println("EXTRACT TIME ${match?.groups?.get(1)?.value?.toIntOrNull()}")
         return match?.groups?.get(1)?.value?.toIntOrNull()
     }
 

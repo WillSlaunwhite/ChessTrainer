@@ -43,22 +43,8 @@ const GameView: React.FC = () => {
 	}, [nextMove, readyToMove, isComputerTurn, line.fen]);
 
 	useEffect(() => {
-		if (isComputerTurn && !nextMove) {
-			const fetchNextMove = async () => {
-				const nextMove = await fetchNextMoveForComputer.fetchNextMove(line.moveHistory, line.fen);
-
-				if (nextMove) {
-					gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
-				}
-			};
-
-			fetchNextMove();
-		}
-	}, [isComputerTurn, nextMove, line.moveHistory, line.fen]);
-
-	useEffect(() => {
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true, currentLineIndex: currentLineIndex } });
-		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } });
+		gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } })
 	}, [nextMove]);
 
 	useEffect(() => {

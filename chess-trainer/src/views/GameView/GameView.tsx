@@ -1,26 +1,29 @@
 import { Spinner } from "@material-tailwind/react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import BoardEvaluation from "../../components/BoardEvaluation/BoardEvaluation";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import Timer from "../../components/Common/misc/Timer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE } from "../../store/game/types/actionTypes";
+import { SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, UPDATE_EVALUATION } from "../../store/game/types/actionTypes";
 import { useQuiz } from "../../store/quiz/quiz-context";
 import { isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
+import { useFetchEvaluation } from "../../utility/hooks/useFetchEvaluation";
 import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
 import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
-import BoardEvaluation from "../../components/BoardEvaluation/BoardEvaluation";
 
 const GameView: React.FC = () => {
 	// * state
 	const [quizState, _quizDispatch] = useQuiz();
 	const [gameState, gameDispatch] = useGameState();
+	const [lastFetchedMove, setLastFetchedMove] = useState<string>("");
 
 	// * hooks
 	const computerMoveLogic = useComputerMoveLogic();
 	const switchLines = useHandleLineSwitch();
 	const fetchNextMoveForComputer = useFetchNextMoveForComputer();
+	const fetchEvaluation = useFetchEvaluation();
 
 	// * variables
 	const currentLineIndex = gameState.global.currentLineIndex;
@@ -31,32 +34,27 @@ const GameView: React.FC = () => {
 	const moveHistories = gameState.lines.map((line) => line.moveHistory);
 
 	useEffect(() => {
-		const fetchComputerMove = async () => {
-			if (isComputerTurn && !nextMove) {
-				const nextComputerMove = await fetchNextMoveForComputer.fetchNextMove(moveHistories[currentLineIndex], line.fen);
-
-				if (nextComputerMove) {
-					gameDispatch({
-						type: SET_NEXT_MOVE,
-						payload: {
-							currentLineIndex: currentLineIndex,
-							nextMove: nextComputerMove
-						}
-					});
-				}
-			}
-		};
-
-		fetchComputerMove();
-	}, [gameState, isComputerTurn, nextMove]);
-
-	useEffect(() => {
 		if (nextMove && readyToMove && isComputerTurn) {
 			setTimeout(() => {
 				computerMoveLogic.makeComputerMove(nextMove, line.fen);
+				gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: false, currentLineIndex: currentLineIndex } });
 			}, 1000);
 		}
-	}, [nextMove, readyToMove, isComputerTurn]);
+	}, [nextMove, readyToMove, isComputerTurn, line.fen]);
+
+	useEffect(() => {
+		if (isComputerTurn && !nextMove) {
+			const fetchNextMove = async () => {
+				const nextMove = await fetchNextMoveForComputer.fetchNextMove(line.moveHistory, line.fen);
+
+				if (nextMove) {
+					gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
+				}
+			};
+
+			fetchNextMove();
+		}
+	}, [isComputerTurn, nextMove, line.moveHistory, line.fen]);
 
 	useEffect(() => {
 		gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { isComputerReadyToMove: true, currentLineIndex: currentLineIndex } });
@@ -64,31 +62,32 @@ const GameView: React.FC = () => {
 	}, [nextMove]);
 
 	useEffect(() => {
-		const fetchNextMove = async () => {
-			const nextMove = await fetchNextMoveForComputer.fetchNextMove(gameState.lines[currentLineIndex].moveHistory, gameState.lines[currentLineIndex].fen);
-			console.log(nextMove);
-			
-			gameDispatch({ type: SET_NEXT_MOVE, payload: { nextMove: nextMove, currentLineIndex: currentLineIndex } });
-			if (nextMove) {
-				gameDispatch({ type: SET_IS_COMPUTER_READY_TO_MOVE, payload: { currentLineIndex: currentLineIndex, isComputerReadyToMove: true } });
-				gameDispatch({ type: SET_IS_COMPUTER_TURN, payload: { isComputerTurn: isComputersTurn(line.moveHistory, line.computerColor), currentLineIndex: currentLineIndex } });
-			}
-		};
+		const latestMove = line.moveHistory.slice(-1)[0];
 
-		fetchNextMove();
-	}, []);
+		if (line.fen && latestMove && latestMove !== lastFetchedMove) {
+			const fetchBoardEvaluation = async () => {
+				if (line.fen && line.moveHistory) {
+					const { bestMove, centipawns, principalVariation } = await fetchEvaluation.fetchPositionEvaluation(line.fen, latestMove);
+					const turn = line.fen.split(" ")[1];
+					const adjustedCentipawns = turn === 'b' ? -centipawns : centipawns;
+					gameDispatch({ type: UPDATE_EVALUATION, payload: { lineIndex: currentLineIndex, evaluation: adjustedCentipawns } });
+					setLastFetchedMove(latestMove);
+				}
+			};
 
+			fetchBoardEvaluation();
+		}
+	}, [line.fen, line.moveHistory, lastFetchedMove]);
 
 
 	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		console.log(gameState.lines[lineNumber]);
 		switchLines.handleLineSwitch(lineNumber);
 	}, [gameDispatch, gameState.lines]);
 
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
-			<BoardEvaluation fen={gameState.lines[currentLineIndex].fen} move={gameState.lines[currentLineIndex].moveHistory.slice(-1)[0]} />
+			<BoardEvaluation centipawns={line.evaluation} />
 			{isComputerTurn && <Spinner className="h-16 w-16 p-2 text-gray-900/50" />}
 			<ChessboardContainer fen={line.fen} />
 			<Timer key={currentLineIndex} initialTime={5} />

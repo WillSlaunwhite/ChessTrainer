@@ -1,5 +1,5 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_EVALUATION, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 interface ClearSelectedSquaresAction {
     type: typeof CLEAR_SELECTED_SQUARES;
@@ -114,6 +114,14 @@ interface SwitchLineAction {
     };
 }
 
+interface UpdateEvaluationAction {
+    type: typeof UPDATE_EVALUATION;
+    payload: {
+        lineIndex: number;
+        evaluation: number;
+    }
+}
+
 interface UpdateFenForLineAction {
     type: typeof UPDATE_FEN_FOR_LINE;
     payload: {
@@ -122,4 +130,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = ClearSelectedSquaresAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | HighlightLastMovesAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateFenForLineAction;
+export type GameActionTypes = ClearSelectedSquaresAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | HighlightLastMovesAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | SwitchLineAction | UpdateEvaluationAction | UpdateFenForLineAction;

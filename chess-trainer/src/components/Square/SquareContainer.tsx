@@ -1,7 +1,7 @@
 import React from "react";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { SELECT_SQUARE, SET_HIGHLIGHT_SQUARES } from "../../store/game/types/actionTypes";
-import { getPossibleMovesForSquare, isValidMove } from "../../utility/chessUtils";
+import { getLastMoveSquares, getPossibleMovesForSquare, isValidMove } from "../../utility/chessUtils";
 import { useUserMoveLogic } from "../../utility/hooks/useUserMoveLogic";
 import SquarePresentation from "./SquarePresentation";
 
@@ -13,11 +13,14 @@ interface SquareContainerProps {
 
 const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen }) => {
 	const [gameState, dispatch] = useGameState();
+	const line = gameState.lines[gameState.global.currentLineIndex];
 	const selectedSquare = gameState.global.selectedSquare;
 	const highlightedSquares = gameState.global.highlightedSquares;
-	var isSelected = (square === selectedSquare || (highlightedSquares && highlightedSquares.includes(square)));
+	const isSelected = (square === selectedSquare || (highlightedSquares && highlightedSquares.includes(square)));
+	const isFadedOut = isSelected && (square !== selectedSquare && getLastMoveSquares(line.moveHistory).to !== square);
 	const onMove = useUserMoveLogic();
 	const isValid = isValidMove(fen, selectedSquare, square);
+
 
 	const handleClick = () => {
 		// there's another square selected and it isn't this one
@@ -37,7 +40,7 @@ const SquareContainer: React.FC<SquareContainerProps> = ({ square, piece, fen })
 		}
 	};
 
-	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} />;
+	return <SquarePresentation square={square} piece={piece} selected={isSelected} onClick={handleClick} isFadedOut={isFadedOut} />;
 };
 
 export default React.memo(SquareContainer);

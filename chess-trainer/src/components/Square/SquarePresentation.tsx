@@ -18,7 +18,7 @@ interface SquarePresentationProps {
 	piece: string;
 	selected: boolean;
 	onClick: () => void;
-	// selectedSquare: string | null;
+	isFadedOut: boolean;
 }
 
 const pieceComponents: Record<string, React.FC> = {
@@ -36,7 +36,7 @@ const pieceComponents: Record<string, React.FC> = {
 	k: BlackKing,
 };
 
-const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, selected, onClick }) => {
+const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, selected, onClick, isFadedOut }) => {
 	const PieceComponent = pieceComponents[piece];
 
 	const fileToNum = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8 };
@@ -51,7 +51,7 @@ const SquarePresentation: React.FC<SquarePresentationProps> = ({ square, piece, 
 
 	return (
 		<div
-			className={`flex justify-center items-center w-full h-full ${backgroundColor} square ${selected ? "highlighted" : ""}`}
+			className={`flex justify-center items-center w-full h-full ${backgroundColor} square ${selected ? "highlighted" : ""} ${isFadedOut ? "highlighted-faded" : ""}`}
 			onClick={onClick}
 		>
 			{PieceComponent && <PieceComponent />}

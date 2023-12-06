@@ -1,7 +1,7 @@
 import { getLastMoveSquares, getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_EVALUATION, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
     switch (action.type) {
@@ -161,9 +161,15 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
         case SET_HIGHLIGHT_SQUARES: {
             const updatedSquares = new Set(state.global.highlightedSquares);
+            const lastMoveSquares = getLastMoveSquares(state.lines[state.global.currentLineIndex].moveHistory);
+
             action.payload.squares.map(square => {
                 if (updatedSquares.has(square)) {
-                    updatedSquares.delete(square);
+                    if(lastMoveSquares.from === square || lastMoveSquares.to === square) {
+                        return;
+                    } else {
+                        updatedSquares.delete(square);
+                    }
                 } else {
                     updatedSquares.add(square);
                 }
@@ -209,6 +215,13 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     currentLineIndex: action.payload.lineIndex
                 }
             }
+
+        case UPDATE_EVALUATION: {
+            const updatedLines = state.lines.map((line, index) =>
+                index === action.payload.lineIndex ? { ...line, evaluation: action.payload.evaluation } : line
+            );
+            return { ...state, lines: updatedLines };
+        }
 
         case UPDATE_FEN_FOR_LINE:
             const updatedLines = [...state.lines];

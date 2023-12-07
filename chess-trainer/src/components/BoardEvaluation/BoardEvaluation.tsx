@@ -10,4 +10,4 @@ const BoardEvaluation: React.FC<{ centipawns: number }> = ({ centipawns }) => {
     );
 }
 
-export default BoardEvaluation
+export default React.memo(BoardEvaluation);

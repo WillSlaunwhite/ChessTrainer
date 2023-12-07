@@ -1,5 +1,5 @@
 import { Progress, Typography } from '@material-tailwind/react';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 interface TimerProps {
     initialTime: number
@@ -31,4 +31,4 @@ const Timer: React.FC<TimerProps> = ({ initialTime }) => {
     )
 }
 
-export default Timer
+export default React.memo(Timer);

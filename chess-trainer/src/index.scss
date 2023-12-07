@@ -33,25 +33,41 @@ bg-img {
   opacity: .25;
   height: 40px;
   background: linear-gradient(to bottom, #7a7474, transparent);
-  pointer-events: none; /* so it doesn't interfere with scrolling */
+  pointer-events: none;
+  /* so it doesn't interfere with scrolling */
+}
+
+@keyframes fadeInHighlight {
+  from {
+    background-color: rgba(231, 231, 71, 0.35);
+  }
+
+  to {
+    background-color: rgba(255, 255, 0, 0.5) !important;
+  }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
-.fade-enter { animation: fadeIn .5s ease-in-out; }
+
+.fade-enter {
+  animation: fadeIn .5s ease-in-out;
+}
 
 @keyframes gradientBorder {
   0% {
-      background-position: 100% 0%;
+    background-position: 100% 0%;
   }
+
   100% {
-      background-position: 0% 100%;
+    background-position: 0% 100%;
   }
 }
 

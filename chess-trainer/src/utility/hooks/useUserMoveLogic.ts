@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { MAKE_MOVE, RESET_TIMER, STOP_TIMER } from "../../store/game/types/actionTypes";
+import { MAKE_MOVE, RESET_TIMER } from "../../store/game/types/actionTypes";
 import { isPromotion } from "../chessUtils";
 import { useHandleLineSwitch } from "./useHandleLineSwitch";
 

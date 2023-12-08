@@ -11,8 +11,6 @@ export function useComputerMoveLogic() {
 
         if (move) {
             var moveResult;
-            console.log("hello??????c");
-
 
             if (move.split(' ').length > 1) {
                 moveResult = game.move({ from: move.split(' ')[0], to: move.split(' ')[1] })

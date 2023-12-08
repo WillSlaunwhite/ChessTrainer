@@ -36,13 +36,6 @@ const GameView: React.FC = () => {
 	const timerStart = gameState.global.timerStart;
 	const timerReset = gameState.global.timerStart;
 
-	// useEffect(() => {
-	// 	console.log(isComputerTurn + " " + timerStart + " " + nextMove);
-	// 	if (!isComputerTurn && !timerStart && timerReset && !readyToMove) {
-	// 		gameDispatch({ type: START_TIMER });
-	// 	}
-	// }, [isComputerTurn, timerStart, nextMove]);
-
 	useEffect(() => {
 		if (nextMove && readyToMove && isComputerTurn) {
 			setTimeout(() => {

@@ -22,9 +22,7 @@ class ChessTrie {
         val processedMoves = if (isLastMoveHalf) moves.dropLast(1) else moves
 
         for (move in processedMoves) {
-            println("Current Move: $move")
             if (!current.children.containsKey(move)) {
-                println("Move $move not found!")
                 return mapOf()
             }
             if (current.children[move] != null) {
@@ -42,7 +40,6 @@ class ChessTrie {
                 .mapValues { it.value.frequency }
         }
 
-        println("hello3")
         return current.children.mapValues { it.value.frequency }
     }
 

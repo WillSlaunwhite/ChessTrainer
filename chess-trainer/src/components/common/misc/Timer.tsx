@@ -9,8 +9,6 @@ interface TimerProps {
 
 const Timer: React.FC<TimerProps> = ({ initialTime, start, reset }) => {
     const [timeLeft, setTimeLeft] = useState(initialTime);
-
-    console.log(start + " " + reset);
     
     useEffect(() => {
         let intervalId: number;

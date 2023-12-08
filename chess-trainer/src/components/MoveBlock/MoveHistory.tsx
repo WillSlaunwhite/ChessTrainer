@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Move from './move';
 
 interface MoveHistoryProps {
@@ -6,8 +6,23 @@ interface MoveHistoryProps {
 }
 
 const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      window.requestAnimationFrame(() => {
+        console.log(container);
+
+        container.scrollTo(0, container.scrollHeight);
+
+        console.log(container.scrollTop);
+      });
+    }
+  }, [moveHistory]);
+
   return (
-    <div className='move-history tracking-wide text-center w-full'>
+    <div ref={containerRef} className='move-history tracking-wide text-center w-full h-28 max-h-96 overflow-y-scroll'>
       {moveHistory.map((fullMove, index) => {
         const [whiteMove, blackMove] = fullMove.split(' ');
 
@@ -24,4 +39,4 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
   );
 };
 
-export default MoveHistory;
+export default React.memo(MoveHistory);

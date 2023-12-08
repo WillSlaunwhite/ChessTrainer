@@ -24,6 +24,18 @@ bg-img {
   background-color: rgba(231, 231, 71, 0.35) !important;
 }
 
+.move-history {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.move-history::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
 .move-history::before {
   content: '';
   position: absolute;

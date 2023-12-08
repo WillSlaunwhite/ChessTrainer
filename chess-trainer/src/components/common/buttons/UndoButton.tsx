@@ -1,6 +1,7 @@
-import { Button } from '@material-tailwind/react'
+import { Button, Typography } from '@material-tailwind/react'
 import React from 'react'
 import { useUndoMove } from '../../../utility/hooks/useUndoMove'
+import { ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
 
 interface UndoButtonProps {
     moveHistory: string[];
@@ -9,7 +10,14 @@ interface UndoButtonProps {
 const UndoButton: React.FC<UndoButtonProps> = ({ moveHistory }) => {
     const undoMove = useUndoMove();
     return (
-		<Button onClick={(_event) => undoMove.handleUndoMove(moveHistory)} variant="outlined" className="undo-button border-green-900 border-2 text-gray-600 focus:text-gray-400 focus:bg-blue-700 hover:text-gray-400 px-12 text-3xl font-sans font-normal tracking-wider py-7 rounded  hover:bg-blue-700 flex items-center">Undo Move</Button>
+        <div className='w-3/4 h-1/2 p-2'>
+            <Button onClick={() => undoMove.handleUndoMove(moveHistory)} variant="filled" className='min-w-full min-h-full p-0 flex items-center justify-around'>
+                <ArrowUturnLeftIcon className='h-12 w-8 text-blue-500 ml-3 py-1 mb-1'></ArrowUturnLeftIcon>
+                <Typography color="light-blue" variant="h3" className='mr-8'>
+                    Undo Move
+                </Typography>
+            </Button>
+        </div>
     )
 }
 

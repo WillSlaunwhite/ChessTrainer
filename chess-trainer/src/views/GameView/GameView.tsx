@@ -31,7 +31,7 @@ const GameView: React.FC = () => {
 	const nextMove = line.nextMove;
 	const isComputerTurn = line.isComputerTurn;
 	const moveHistories = gameState.lines.map((line) => line.moveHistory);
-	const toSquare = getLastMoveSquares(gameState.lines[gameState.global.currentLineIndex].moveHistory).to;
+	const toSquare =  line.moveHistory.length > 1 ? getLastMoveSquares(line.moveHistory).to : ""; 
 	const timerStart = gameState.global.timerStart;
 	const timerReset = gameState.global.timerStart;
 
@@ -71,8 +71,7 @@ const GameView: React.FC = () => {
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
 			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} />
-			<BoardEvaluation centipawns={line.evaluation} />
-			{isComputerTurn && <Spinner className="h-16 w-16 p-2 text-gray-900/50" />}
+			<BoardEvaluation centipawns={line.evaluation} isComputerTurn={isComputerTurn}/>
 			<ChessboardContainer fen={line.fen} highlightedSquares={gameState.global.highlightedSquares} selectedSquare={gameState.global.selectedSquare} toSquare={toSquare} />
 			<Timer key={currentLineIndex} initialTime={5} reset={timerReset} start={timerStart} />
 			<UndoButton moveHistory={line.moveHistory} />

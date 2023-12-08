@@ -30,7 +30,7 @@ const Timer: React.FC<TimerProps> = ({ initialTime, start, reset }) => {
     }, [reset, initialTime]);
 
     return (
-        <div className="w-full">
+        <div className="w-full h-1/2">
             <div className="mx-2 p-2 flex items-center justify-between">
                 <Typography color="blue-gray" variant="h6">
                     Time Left

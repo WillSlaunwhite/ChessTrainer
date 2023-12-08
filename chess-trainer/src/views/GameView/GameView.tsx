@@ -1,5 +1,5 @@
 import { Spinner } from "@material-tailwind/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BoardEvaluation from "../../components/BoardEvaluation/BoardEvaluation";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
@@ -11,7 +11,7 @@ import { getLastMoveSquares, isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import { useFetchEvaluation } from "../../utility/hooks/useFetchEvaluation";
 import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
-import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
+import UndoButton from "../../components/common/buttons/UndoButton";
 
 const GameView: React.FC = () => {
 	// * state
@@ -21,7 +21,6 @@ const GameView: React.FC = () => {
 
 	// * hooks
 	const computerMoveLogic = useComputerMoveLogic();
-	const switchLines = useHandleLineSwitch();
 	const fetchNextMoveForComputer = useFetchNextMoveForComputer(gameDispatch);
 	const fetchEvaluation = useFetchEvaluation();
 
@@ -69,17 +68,14 @@ const GameView: React.FC = () => {
 		}
 	}, [line.fen, line.moveHistory, lastFetchedMove]);
 
-	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		switchLines.handleLineSwitch(lineNumber);
-	}, [gameDispatch, gameState.lines]);
-
 	return (
 		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
-			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
+			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} />
 			<BoardEvaluation centipawns={line.evaluation} />
 			{isComputerTurn && <Spinner className="h-16 w-16 p-2 text-gray-900/50" />}
 			<ChessboardContainer fen={line.fen} highlightedSquares={gameState.global.highlightedSquares} selectedSquare={gameState.global.selectedSquare} toSquare={toSquare} />
 			<Timer key={currentLineIndex} initialTime={5} reset={timerReset} start={timerStart} />
+			<UndoButton moveHistory={line.moveHistory} />
 		</div>
 	);
 };

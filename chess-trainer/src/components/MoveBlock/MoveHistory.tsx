@@ -11,13 +11,7 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
-      window.requestAnimationFrame(() => {
-        console.log(container);
-
-        container.scrollTo(0, container.scrollHeight);
-
-        console.log(container.scrollTop);
-      });
+      container.scrollTop = container.scrollHeight;
     }
   }, [moveHistory]);
 

@@ -164,9 +164,18 @@ export function splitMoveString(moves: string): string[] {
         .filter(Boolean); // remove empty strings
 }
 
-export function undoMove(fen: string): string {
-    const tempGame = new Chess(fen);
-    return tempGame.undo()!!.after
+export function undoMove(moveHistory: string[]): string {
+    const tempGame = new Chess();
+    moveHistory.forEach((move) => tempGame.move(move));
+    const oldFen = tempGame.fen();
+    const undoResult = tempGame.undo();
+    
+    if (undoResult) {
+        return undoResult.after;
+    } else {
+        return oldFen;
+    }
+    
 }
 
 export function updateLineState(lines: LineState[], lineIndex: number, moveDetails: MoveDetails): LineState[] {

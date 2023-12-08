@@ -1,5 +1,5 @@
 import React from 'react';
-import Move from './Move';
+import Move from './move';
 
 interface MoveHistoryProps {
   moveHistory: string[];

@@ -11,6 +11,8 @@ export interface GlobalState {
     selectedSquare: string;
     highlightedSquares: string[];
     variations: VariationDTO[];
+    timerStart: boolean;
+    timerReset: boolean;
 }
 
 export interface LineState {
@@ -74,7 +76,9 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
             initialMoves: [],
             highlightedSquares: [],
             selectedSquare: "",
-            variations: []
+            variations: [],
+            timerStart: false,
+            timerReset: false,
         },
         lines: [defaultLine, defaultLine, defaultLine]
     });

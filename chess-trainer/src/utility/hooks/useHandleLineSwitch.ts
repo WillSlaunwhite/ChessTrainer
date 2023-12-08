@@ -1,5 +1,5 @@
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_TURN, SWITCH_LINE } from "../../store/game/types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_TURN, START_TIMER, SWITCH_LINE } from "../../store/game/types/actionTypes";
 import { getLastMoveSquares, isComputersTurn } from "../chessUtils";
 
 export function useHandleLineSwitch() {
@@ -7,10 +7,9 @@ export function useHandleLineSwitch() {
 
     const handleLineSwitch = (lineIndex: number) => {
         const line = gameState.lines[lineIndex];
-
         const lastMoves = getLastMoveSquares(line.moveHistory);
-        console.log(lastMoves);
-
+        if (!isComputersTurn(line.moveHistory, line.computerColor)) dispatch({ type: START_TIMER})
+        
         if (lastMoves) {
             dispatch({ type: SWITCH_LINE, payload: { lineIndex: lineIndex } });
             dispatch({ type: CLEAR_SELECTED_SQUARES })

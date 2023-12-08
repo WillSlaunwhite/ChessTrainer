@@ -1,7 +1,7 @@
 import { getLastMoveSquares, getPieceAtSquare, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, SWITCH_LINE, UPDATE_EVALUATION, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, RESET_TIMER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, START_TIMER, STOP_TIMER, SWITCH_LINE, UPDATE_EVALUATION } from "../types/actionTypes";
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
     switch (action.type) {
@@ -14,11 +14,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 }
             }
         }
-
-        // case EXECUTE_PAWN_PROMOTION:
-        //     return {
-        //         ...state,
-        //     };
 
         case GET_PIECE_AT_SQUARE: {
             const lines = [...state.lines];
@@ -49,11 +44,13 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
         }
 
         case INCREMENT_LINE:
+            const currentLineIndex = state.global.currentLineIndex;
+            const nextLineIndex = (currentLineIndex + 1) % 3;
             return {
                 ...state,
                 global: {
                     ...state.global,
-                    currentLineIndex: state.global.currentLineIndex + 1,
+                    currentLineIndex: nextLineIndex,
                 }
             };
 
@@ -102,8 +99,8 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             };
         }
 
-        // case MAKE_MOVE_WITH_PROMOTION: 
-
+        case RESET_TIMER:
+            return { ...state, global: { ...state.global, timerReset: true, timerStart: false } };
 
         case SELECT_SQUARE:
             const updatedSquare = state.global.selectedSquare !== action.payload.square ? action.payload.square : "";
@@ -115,27 +112,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     selectedSquare: updatedSquare
                 }
             };
-
-        // case SET_BOARD_FROM_HISTORY:
-        //     const lineIndex = state.currentLineIndex;
-        //     const moves = state.moveHistories[lineIndex].filter(move => move !== "");
-        //     const newFens = state.currentFens;
-        //     const newMoveHistories = state.moveHistories;
-
-        //     game.reset();
-        //     moves.forEach(move => { game.move(move); });
-        //     newFens[lineIndex] = game.fen();
-        //     newMoveHistories[lineIndex] = moves;
-        //     console.log("NEW MOVE HISTORIES: ", newMoveHistories);
-        //     console.log("GAME HISTORY: ", game.history());
-
-        //     return {
-        //         ...state,
-        //         currentFens: newFens,
-        //         moveHistories: newMoveHistories,
-        //         fen: game.fen(),
-        //     }
-
 
         case SET_IS_COMPUTER_TURN: {
             const updatedLines = state.lines;
@@ -165,7 +141,7 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
 
             action.payload.squares.map(square => {
                 if (updatedSquares.has(square)) {
-                    if(lastMoveSquares.from === square || lastMoveSquares.to === square) {
+                    if (lastMoveSquares.from === square || lastMoveSquares.to === square) {
                         return;
                     } else {
                         updatedSquares.delete(square);
@@ -207,6 +183,12 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                 }
             }
 
+        case START_TIMER:
+            return { ...state, global: { ...state.global, timerStart: true, timerReset: false } };
+
+        case STOP_TIMER:
+            return { ...state, global: { ...state.global, timerStart: false } };
+
         case SWITCH_LINE:
             return {
                 ...state,
@@ -222,17 +204,6 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
             );
             return { ...state, lines: updatedLines };
         }
-
-        case UPDATE_FEN_FOR_LINE:
-            const updatedLines = [...state.lines];
-            updatedLines[action.payload.lineIndex] = {
-                ...updatedLines[action.payload.lineIndex],
-                fen: action.payload.fen
-            }
-            return {
-                ...state,
-                lines: updatedLines
-            }
 
         default:
             return state;

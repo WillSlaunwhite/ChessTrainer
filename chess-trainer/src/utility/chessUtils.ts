@@ -49,6 +49,23 @@ export function convertOpeningVariationsBaseSequenceToFullSequence(opening: Open
     });
 }
 
+export const fenToArray = (fen: string): (string | null)[][] => {
+    const rows = fen.split("/");
+    return rows.map((row) => {
+        let squares: (string | null)[] = [];
+        for (const char of row) {
+            if (isNaN(parseInt(char))) {
+                // If it's a piece
+                squares.push(char);
+            } else {
+                // If it's a number, add that many null values
+                squares = squares.concat(Array(parseInt(char)).fill(null));
+            }
+        }
+        return squares;
+    });
+};
+
 export function getFensFromMoveSequences(moveSequences: string[][]): string[] {
     const tempGame = new Chess();
     const fens: string[] = [];
@@ -96,7 +113,7 @@ export function getPieceAtSquare(fen: string, square: string): Piece {
 
 export function getPossibleMovesForSquare(fen: string, square: string): string[] {
     const tempGame = new Chess(fen);
-    return tempGame.moves({square: square as Square, verbose: true}).map(move => move.to);
+    return tempGame.moves({ square: square as Square, verbose: true }).map(move => move.to);
 }
 
 export function getProbableMove(moveData: Record<string, number>): string {

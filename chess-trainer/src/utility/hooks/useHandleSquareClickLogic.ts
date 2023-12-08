@@ -1,13 +1,16 @@
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { SELECT_SQUARE, SET_HIGHLIGHT_SQUARES } from "../../store/game/types/actionTypes";
-import { getLastMoveSquares, getPossibleMovesForSquare, isValidMove } from "../chessUtils";
+import { RESET_TIMER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES } from "../../store/game/types/actionTypes";
+import { getPossibleMovesForSquare, isValidMove } from "../chessUtils";
 import { useUserMoveLogic } from "./useUserMoveLogic";
 
 export function useHandleSquareClickLogic() {
     const userMove = useUserMoveLogic();
-    const [_gameState, dispatch] = useGameState();
+    const [gameState, dispatch] = useGameState();
+    const fen = gameState.lines[gameState.global.currentLineIndex].fen;
+    const selectedSquare = gameState.global.selectedSquare;
+    const highlightedSquares = gameState.global.highlightedSquares;
 
-    const handleSquareClick = (fen: string, piece: string, square: string, selectedSquare: string, highlightedSquares: string[]) => {
+    const handleSquareClick = (piece: string, square: string) => {
         const possibleMoves = getPossibleMovesForSquare(fen, square);
         const isValid = isValidMove(fen, selectedSquare, square);
 

@@ -2,19 +2,34 @@ import { Progress, Typography } from '@material-tailwind/react';
 import React, { useEffect, useState } from 'react';
 
 interface TimerProps {
-    initialTime: number
+    initialTime: number;
+    start: boolean;
+    reset: boolean;
 }
 
-const Timer: React.FC<TimerProps> = ({ initialTime }) => {
+const Timer: React.FC<TimerProps> = ({ initialTime, start, reset }) => {
     const [timeLeft, setTimeLeft] = useState(initialTime);
 
+    console.log(start + " " + reset);
+    
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setTimeLeft((time) => time > 0 ? time - 1 : 0);
-        }, 1000);
+        let intervalId: number;
+        if (start) {
+            intervalId = setInterval(() => {
+                setTimeLeft((time) => {
+                    const newTime = time - .1;
+                    return newTime > 0 ? parseFloat(newTime.toFixed(2)) : 0;
+                });
+            }, 100);
+        }
+        return () => { if (intervalId) clearInterval(intervalId); }
+    }, [start]);
 
-        return () => clearInterval(intervalId);
-    }), [initialTime];
+    useEffect(() => {
+        if (reset) {
+            setTimeLeft(initialTime);
+        }
+    }, [reset, initialTime]);
 
     return (
         <div className="w-full">

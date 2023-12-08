@@ -93,7 +93,9 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
             initialMoves: firstMoves,
             highlightedSquares: [],
             selectedSquare: "",
-            variations: opening.variations
+            variations: opening.variations,
+            timerReset: false,
+            timerStart: false
         },
         lines: newLines
     }

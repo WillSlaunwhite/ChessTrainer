@@ -10,10 +10,10 @@ interface UndoButtonProps {
 const UndoButton: React.FC<UndoButtonProps> = ({ moveHistory }) => {
     const undoMove = useUndoMove();
     return (
-        <div className='w-3/4 h-1/2 p-2'>
-            <Button onClick={() => undoMove.handleUndoMove(moveHistory)} variant="filled" className='min-w-full min-h-full p-0 flex items-center justify-around'>
-                <ArrowUturnLeftIcon className='h-12 w-8 text-blue-500 ml-3 py-1 mb-1'></ArrowUturnLeftIcon>
-                <Typography color="light-blue" variant="h3" className='mr-8'>
+        <div className='w-3/4 h-1/2'>
+            <Button onClick={() => undoMove.handleUndoMove(moveHistory)} variant="filled" className='w-full h-4/5 p-2 py-4 flex items-center justify-around'>
+                <ArrowUturnLeftIcon className='h-8 w-8 text-white ml-3 py-1 mb-1'></ArrowUturnLeftIcon>
+                <Typography color="white" variant="h3" className='mr-7'>
                     Undo Move
                 </Typography>
             </Button>

@@ -7,11 +7,12 @@ interface MoveContainerProps {
 	isCorrect: boolean[];
 	currentBlockIndex: number;
 	moveHistories: string[][];
+	activeLines: boolean[];
 }
 
-const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories }) => {
+const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIndex, moveHistories, activeLines }) => {
 	const switchLines = useHandleLineSwitch();
-	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
+	const switchLine = useCallback(async (lineNumber: number) => {
 		switchLines.handleLineSwitch(lineNumber);
 	}, []);
 
@@ -24,8 +25,9 @@ const MoveContainer: React.FC<MoveContainerProps> = ({ isCorrect, currentBlockIn
 					isCurrent={index === currentBlockIndex}
 					isCorrect={isCorrect[index]}
 					currentIndex={index}
-					onClick={(event) => switchLine(event, index)}
+					onClick={() => switchLine(index)}
 					blockNumber={index}
+					isActive={activeLines[index]}
 				/>
 			))}
 		</div>

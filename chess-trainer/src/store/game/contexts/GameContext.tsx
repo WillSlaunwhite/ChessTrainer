@@ -20,6 +20,7 @@ export interface LineState {
     computerColor: string;
     evaluation: number;
     fen: string;
+    isActive: boolean,
     isComputerTurn: boolean,
     isComputerReadyToMove: boolean,
     isPawnPromotion: boolean;
@@ -56,6 +57,7 @@ const defaultLine = {
     computerColor: "black",
     evaluation: 0,
     fen: startingFen,
+    isActive: true,
     isComputerTurn: false,
     isComputerReadyToMove: false,
     isPawnPromotion: false,

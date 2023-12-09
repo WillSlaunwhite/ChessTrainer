@@ -1,18 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import Move from './move';
+import Move from './Move';
 
 interface MoveHistoryProps {
   moveHistory: string[];
+  isActive: boolean;
 }
 
-const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
+const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory, isActive }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+	const activeStyle = !isActive ? "text-gray-400 font-thin" : "";
 
   useEffect(() => {
     const container = containerRef.current;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
+    if (container) { container.scrollTop = container.scrollHeight; }
   }, [moveHistory]);
 
   return (
@@ -22,10 +22,10 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moveHistory }) => {
 
         return (
           <div className='w-full text-left flex align-middle fade-enter' key={index}>
-            <span className='pl-1'>{index + 1}. </span>
-            <Move move={whiteMove} isRecent={index === moveHistory.length - 1} />
-            {blackMove && <span className='mx-auto'> - </span>}
-            {blackMove && <Move move={blackMove} isRecent={index + 1 === moveHistory.length} />}
+            <span className={`${activeStyle} pl-1`}>{index + 1}. </span>
+            <Move move={whiteMove} isRecent={index === moveHistory.length - 1} isActive={isActive} />
+            {blackMove && <span className={`mx-auto ${activeStyle}`}> - </span>}
+            {blackMove && <Move move={blackMove} isRecent={index + 1 === moveHistory.length} isActive={isActive} />}
           </div>
         );
       })}

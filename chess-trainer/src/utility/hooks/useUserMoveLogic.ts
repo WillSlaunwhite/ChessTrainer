@@ -7,13 +7,22 @@ import { useHandleLineSwitch } from "./useHandleLineSwitch";
 export function useUserMoveLogic() {
     const [gameState, dispatch] = useGameState();
     const handleLineSwitch = useHandleLineSwitch();
-    const nextLineIndex = gameState.global.currentLineIndex === 2 ? 0 : gameState.global.currentLineIndex + 1;
+    const activeLines = gameState.lines
+        .map((line, index) => line.isActive ? index : -1)
+        .filter(index => index !== -1);
+
+    const nextLineIndex = () => {
+        const currentLineIndex = gameState.global.currentLineIndex;
+        const currentIndexInActiveLines = activeLines.indexOf(currentLineIndex);
+        const nextIndexInActiveLines = (currentIndexInActiveLines + 1) % activeLines.length;
+        return activeLines[nextIndexInActiveLines];
+    }
 
     const handleMove = (source: string, destination: string, fen: string) => {
         const game = new Chess(fen);
 
         if (source && destination) {
-            const moveResult = game.move({ from: source, to: destination });
+            const moveResult = game.move({ from: source, to: destination, promotion: "q" });
 
             dispatch({
                 type: MAKE_MOVE, payload: {
@@ -23,7 +32,7 @@ export function useUserMoveLogic() {
                 }
             });
             dispatch({ type: RESET_TIMER });
-            handleLineSwitch.handleLineSwitch(nextLineIndex);
+            handleLineSwitch.handleLineSwitch(nextLineIndex());
         }
     };
 

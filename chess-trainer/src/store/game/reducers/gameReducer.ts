@@ -1,7 +1,7 @@
 import { convertToFullMoves, getLastMoveSquares, getPieceAtSquare, undoMove, updateLineState, updateLineStateForComputer } from "../../../utility/chessUtils";
 import { GameActionTypes } from "../actions/gameActions";
 import { GameState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, RESET_TIMER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, START_TIMER, STOP_TIMER, SWITCH_LINE, UNDO_MOVE, UPDATE_EVALUATION } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, DEACTIVATE_LINE, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, RESET_TIMER, SELECT_SQUARE, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, START_TIMER, STOP_TIMER, SWITCH_LINE, UNDO_MOVE, UPDATE_EVALUATION } from "../types/actionTypes";
 
 export const gameReducer = (state: GameState, action: GameActionTypes): GameState => {
     switch (action.type) {
@@ -12,6 +12,14 @@ export const gameReducer = (state: GameState, action: GameActionTypes): GameStat
                     ...state.global,
                     highlightedSquares: []
                 }
+            }
+        }
+
+        case DEACTIVATE_LINE: {
+            const updatedLines = state.lines.map((line, index) => action.payload.lineNumber === index ? { ...line, isActive: false } : line);
+            return {
+                ...state,
+                lines: updatedLines
             }
         }
 

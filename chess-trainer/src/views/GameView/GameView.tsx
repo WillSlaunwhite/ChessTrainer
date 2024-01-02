@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import BoardEvaluation from "../../components/BoardEvaluation/BoardEvaluation";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
+import AbandonLineButton from "../../components/common/buttons/AbandonLineButton";
 import UndoButton from "../../components/common/buttons/UndoButton";
 import Timer from "../../components/common/misc/Timer";
 import { useGameState } from "../../store/game/contexts/GameContext";
-import { DEACTIVATE_LINE, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN } from "../../store/game/types/actionTypes";
+import { SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN } from "../../store/game/types/actionTypes";
 import { useQuiz } from "../../store/quiz/quiz-context";
 import { getLastMoveSquares, isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import { useFetchEvaluation } from "../../utility/hooks/useFetchEvaluation";
 import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
-import AbandonLineButton from "../../components/common/buttons/AbandonLineButton";
 
 const GameView: React.FC = () => {
 	// * state

@@ -1,11 +1,13 @@
 import { Button } from "@material-tailwind/react/components/Button";
 import { useState } from "react";
-import Rules from "../Common/text/Rules";
+import Rules from "../common/text/Rules";
+import IntroAssessment from "../IntroQuestions/IntroAssessment";
 
 const SidebarComponent: React.FC = () => {
 	const [showRules, setShowRules] = useState(false);
 	return (
 		<div className="sidebar flex flex-col justify-around items-center h-full w-full z-30 relative left-0">
+			<IntroAssessment />
 			<div className={`md:block ${showRules ? "block" : "hidden"}`}>
 				<Rules></Rules>
 			</div>

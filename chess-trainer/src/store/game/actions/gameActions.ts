@@ -1,8 +1,15 @@
 import { GlobalState, LineState } from "../contexts/GameContext";
-import { CLEAR_SELECTED_SQUARES, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, RESET_TIMER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, START_TIMER, STOP_TIMER, SWITCH_LINE, UPDATE_EVALUATION, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
+import { CLEAR_SELECTED_SQUARES, DEACTIVATE_LINE, EXECUTE_PAWN_PROMOTION, GET_PIECE_AT_SQUARE, HIGHLIGHT_LAST_MOVES, INCREMENT_LINE, INIT_GAME, MAKE_MOVE, MAKE_MOVE_COMPUTER, RESET_TIMER, SELECT_SQUARE, SET_BOARD_FROM_HISTORY, SET_HIGHLIGHT_SQUARES, SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN, SET_NEXT_MOVE, SET_VARIATIONS, START_TIMER, STOP_TIMER, SWITCH_LINE, UNDO_MOVE, UPDATE_EVALUATION, UPDATE_FEN_FOR_LINE } from "../types/actionTypes";
 
 interface ClearSelectedSquaresAction {
     type: typeof CLEAR_SELECTED_SQUARES;
+}
+
+interface DeactivateLineAction {
+    type: typeof DEACTIVATE_LINE;
+    payload: {
+        lineNumber: number;
+    }
 }
 
 interface ExecutePawnPromotionAction {
@@ -30,8 +37,8 @@ interface HighlightLastMovesAction {
 interface InitGameAction {
     type: typeof INIT_GAME;
     payload: {
-        global: GlobalState,
-        lines: LineState[]
+        global: GlobalState;
+        lines: LineState[];
     };
 }
 
@@ -126,6 +133,13 @@ interface SwitchLineAction {
     };
 }
 
+interface UndoMoveAction {
+    type: typeof UNDO_MOVE;
+    payload: {
+        moveHistory: string[];
+    }
+}
+
 interface UpdateEvaluationAction {
     type: typeof UPDATE_EVALUATION;
     payload: {
@@ -142,4 +156,4 @@ interface UpdateFenForLineAction {
     };
 }
 
-export type GameActionTypes = ClearSelectedSquaresAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | HighlightLastMovesAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | ResetTimerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | StartTimerAction | StopTimerAction | SwitchLineAction | UpdateEvaluationAction | UpdateFenForLineAction;
+export type GameActionTypes = ClearSelectedSquaresAction | DeactivateLineAction | ExecutePawnPromotionAction | GetPieceAtSquareAction | HighlightLastMovesAction | IncrementLineAction | InitGameAction | MakeMoveAction | MakeMoveComputerAction | ResetTimerAction | SelectSquareAction | SetBoardFromHistoryAction | SetHighlightSquaresAction | SetIsComputerReady | SetIsComputerTurnAction | SetNextMoveAction | SetVariationsAction | StartTimerAction | StopTimerAction | SwitchLineAction | UndoMoveAction | UpdateEvaluationAction | UpdateFenForLineAction;

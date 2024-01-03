@@ -9,8 +9,6 @@ interface TimerProps {
 
 const Timer: React.FC<TimerProps> = ({ initialTime, start, reset }) => {
     const [timeLeft, setTimeLeft] = useState(initialTime);
-
-    console.log(start + " " + reset);
     
     useEffect(() => {
         let intervalId: number;
@@ -32,8 +30,8 @@ const Timer: React.FC<TimerProps> = ({ initialTime, start, reset }) => {
     }, [reset, initialTime]);
 
     return (
-        <div className="w-full">
-            <div className="mb-2 p-2 flex items-center justify-between gap-4">
+        <div className="w-full h-1/2">
+            <div className="mx-2 p-2 flex items-center justify-between">
                 <Typography color="blue-gray" variant="h6">
                     Time Left
                 </Typography>

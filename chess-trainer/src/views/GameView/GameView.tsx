@@ -1,8 +1,9 @@
-import { Spinner } from "@material-tailwind/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BoardEvaluation from "../../components/BoardEvaluation/BoardEvaluation";
 import ChessboardContainer from "../../components/Chessboard/ChessboardContainer";
 import MoveContainer from "../../components/MoveBlock/MoveContainer";
+import AbandonLineButton from "../../components/common/buttons/AbandonLineButton";
+import UndoButton from "../../components/common/buttons/UndoButton";
 import Timer from "../../components/common/misc/Timer";
 import { useGameState } from "../../store/game/contexts/GameContext";
 import { SET_IS_COMPUTER_READY_TO_MOVE, SET_IS_COMPUTER_TURN } from "../../store/game/types/actionTypes";
@@ -11,7 +12,6 @@ import { getLastMoveSquares, isComputersTurn } from "../../utility/chessUtils";
 import { useComputerMoveLogic } from "../../utility/hooks/useComputerMoveLogic";
 import { useFetchEvaluation } from "../../utility/hooks/useFetchEvaluation";
 import { useFetchNextMoveForComputer } from "../../utility/hooks/useFetchNextMoveForComputer";
-import { useHandleLineSwitch } from "../../utility/hooks/useHandleLineSwitch";
 
 const GameView: React.FC = () => {
 	// * state
@@ -21,7 +21,6 @@ const GameView: React.FC = () => {
 
 	// * hooks
 	const computerMoveLogic = useComputerMoveLogic();
-	const switchLines = useHandleLineSwitch();
 	const fetchNextMoveForComputer = useFetchNextMoveForComputer(gameDispatch);
 	const fetchEvaluation = useFetchEvaluation();
 
@@ -32,9 +31,10 @@ const GameView: React.FC = () => {
 	const nextMove = line.nextMove;
 	const isComputerTurn = line.isComputerTurn;
 	const moveHistories = gameState.lines.map((line) => line.moveHistory);
-	const toSquare = getLastMoveSquares(gameState.lines[gameState.global.currentLineIndex].moveHistory).to;
+	const toSquare = line.moveHistory.length > 1 ? getLastMoveSquares(line.moveHistory).to : "";
 	const timerStart = gameState.global.timerStart;
 	const timerReset = gameState.global.timerStart;
+	const activeLines = gameState.lines.flatMap((line) => line.isActive);
 
 	useEffect(() => {
 		if (nextMove && readyToMove && isComputerTurn) {
@@ -69,17 +69,16 @@ const GameView: React.FC = () => {
 		}
 	}, [line.fen, line.moveHistory, lastFetchedMove]);
 
-	const switchLine = useCallback(async (_event: React.MouseEvent<HTMLDivElement>, lineNumber: number) => {
-		switchLines.handleLineSwitch(lineNumber);
-	}, [gameDispatch, gameState.lines]);
-
 	return (
-		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-5/6 w-full overflow-hidden absolute top-0">
-			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} switchLines={switchLine} />
-			<BoardEvaluation centipawns={line.evaluation} />
-			{isComputerTurn && <Spinner className="h-16 w-16 p-2 text-gray-900/50" />}
+		<div className=" bg-blue-gray-50 flex flex-col justify-center items-center h-full w-full overflow-hidden absolute top-0">
+			<MoveContainer moveHistories={moveHistories} isCorrect={quizState.isCorrect} currentBlockIndex={currentLineIndex} activeLines={activeLines} />
+			<BoardEvaluation centipawns={line.evaluation} isComputerTurn={isComputerTurn} />
 			<ChessboardContainer fen={line.fen} highlightedSquares={gameState.global.highlightedSquares} selectedSquare={gameState.global.selectedSquare} toSquare={toSquare} />
 			<Timer key={currentLineIndex} initialTime={5} reset={timerReset} start={timerStart} />
+			<div className="flex items-center justify-center flex-col w-full h-full">
+				<UndoButton moveHistory={line.moveHistory} />
+				<AbandonLineButton lineNumber={currentLineIndex} />
+			</div>
 		</div>
 	);
 };

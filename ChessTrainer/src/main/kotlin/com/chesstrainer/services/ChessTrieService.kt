@@ -1,5 +1,6 @@
 package com.chesstrainer.services
 
+import com.chesstrainer.data.ScoreMoveResponse
 import com.chesstrainer.datastructures.ChessTrie
 import com.chesstrainer.entities.MasterGame
 import com.chesstrainer.enums.MoveClassification
@@ -21,11 +22,17 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
         }
     }
 
-
     companion object {
-
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
         const val PLAYABLE_MOVE_THRESHOLD = 1000  // If a move has been played more than this, it's playable
+    }
+
+    fun scoreMove(move: String, previousMoves: List<String>, fen: String): ScoreMoveResponse {
+        val movesFromTrie = trie.findNextMoves(previousMoves)
+        var stockfish = stockfishPool.take()
+        stockfish = StockfishWrapper();
+        val evaluation = stockfish.evaluate(fen, move)
+        return ScoreMoveResponse(classifyMove(evaluation.second, -1), "")
     }
 
 
@@ -74,10 +81,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
             listOf(nextMoves)
         }
     }
-
-//    private fun convertFenToMovesSequence(fen: String): List<String> {
-//
-//    }
 
     @PostConstruct
     fun initialize() {

@@ -24,17 +24,28 @@ bg-img {
   background-color: rgba(231, 231, 71, 0.35) !important;
 }
 
+.move-history {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.move-history::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
 .move-history::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  opacity: .25;
+  opacity: .20;
   height: 40px;
   background: linear-gradient(to bottom, #7a7474, transparent);
   pointer-events: none;
-  /* so it doesn't interfere with scrolling */
 }
 
 @keyframes fadeInHighlight {

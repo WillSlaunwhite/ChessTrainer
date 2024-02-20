@@ -4,14 +4,26 @@ import java.io.*
 
 
 class StockfishWrapper : Closeable {
-    private val processBuilder = ProcessBuilder("stockfish")
+    private val possiblePaths = listOf("/usr/games/stockfish", "/usr/local/bin/stockfish", "stockfish") // Add more paths as needed
+    private val processBuilder: ProcessBuilder
     private lateinit var process: Process
     private lateinit var reader: BufferedReader
     private lateinit var writer: BufferedWriter
 
     init {
+        processBuilder = possiblePaths.map { ProcessBuilder(it) }
+            .find { tryStartProcess(it) != null }
+            ?: throw IllegalStateException("Could not find Stockfish executable in any known location.")
         startEngine()
         clearInitialMessages()
+    }
+
+    private fun tryStartProcess(processBuilder: ProcessBuilder): Process? {
+        return try {
+            processBuilder.start()
+        } catch (e: IOException) {
+            null // Failed to start, try the next one
+        }
     }
 
     fun evaluate(fen: String, move: String): Pair<String, Evaluation> {

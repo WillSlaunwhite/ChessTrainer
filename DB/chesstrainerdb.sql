@@ -15,7 +15,7 @@ USE `chesstrainerdb`;
 SET SQL_MODE = ''; 
 DROP USER IF EXISTS chesstrainer@localhost; 
 SET SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'; 
-CREATE USER 'chesstrainer'@'localhost' IDENTIFIED BY '!5simetrA'; 
+CREATE USER 'chesstrainer'@'localhost' IDENTIFIED BY 'Artemis5!'; 
 
 GRANT SELECT, INSERT, TRIGGER, UPDATE, DELETE ON chesstrainerdb.* TO 'chesstrainer'@'localhost';
 -- -----------------------------------------------------

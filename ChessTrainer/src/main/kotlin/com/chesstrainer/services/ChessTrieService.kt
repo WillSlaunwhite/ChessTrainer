@@ -29,20 +29,20 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
     fun scoreMove(move: String, previousMoves: List<String>, fen: String): ScoreMoveResponse {
         val movesFromTrie = trie.findNextMoves(previousMoves)
-        var stockfish = stockfishPool.take()
-        stockfish = StockfishWrapper();
+        val stockfish = stockfishPool.take()
         val evaluation = stockfish.evaluate(fen, move)
         return ScoreMoveResponse(classifyMove(evaluation.second, -1), "")
     }
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
-        var stockfish = stockfishPool.take()
-        stockfish = StockfishWrapper();
-        val result = stockfish.evaluate(fen, move)
-        stockfish.close()
-        stockfishPool.offer(stockfish)
-        return result
+        val stockfish = stockfishPool.take()
+        try {
+            return stockfish.evaluate(fen,move)
+        } finally {
+            stockfishPool.offer(stockfish)
+            stockfish.close()
+        }
     }
 
     fun classifyMove(evaluation: Evaluation, moveFrequency: Int): MoveClassification {
@@ -69,13 +69,11 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     fun nextMovesForSequence(sequence: List<String>, fen: String): List<Map<String, Int>> {
         val nextMoves = trie.findNextMoves(sequence)
         return if (nextMoves.isEmpty()) {
-            var stockfish = stockfishPool.take()
-            stockfish = StockfishWrapper()
-
+            val stockfish = stockfishPool.take()
             val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
 
-            stockfish.close()
             stockfishPool.offer(stockfish)
+            stockfish.close()
             listOf(mapOf<String, Int>(nextMove to -1))
         } else {
             listOf(nextMoves)

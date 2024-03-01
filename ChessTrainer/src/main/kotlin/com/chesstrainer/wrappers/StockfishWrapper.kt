@@ -4,25 +4,49 @@ import java.io.*
 
 
 class StockfishWrapper : Closeable {
-    private val processBuilder = ProcessBuilder("stockfish")
+    private val possiblePaths = listOf("/usr/games/stockfish", "/usr/local/bin/stockfish", "stockfish")
+    private lateinit var processBuilder: ProcessBuilder
     private lateinit var process: Process
     private lateinit var reader: BufferedReader
     private lateinit var writer: BufferedWriter
 
     init {
-        startEngine()
-        clearInitialMessages()
+        var foundExecutable = false
+        for (path in possiblePaths) {
+            try {
+                // Attempt to start a process with the given path to truly test if it's executable
+                val testProcess = ProcessBuilder(path).start()
+                testProcess.destroy() // Immediately destroy the test process if successful
+                processBuilder = ProcessBuilder(path) // Initialize the actual process builder with the valid path
+                foundExecutable = true
+                break // Exit the loop since we've found a valid executable
+            } catch (e: IOException) {
+                // This path didn't work, try the next one
+            }
+        }
+
+        if (!foundExecutable) {
+            throw IllegalStateException("Could not find Stockfish executable in any known location.")
+        }
+
+//        this.startEngine() // Start the engine with the found executable
     }
 
     fun evaluate(fen: String, move: String): Pair<String, Evaluation> {
-        sendCommand("position fen $fen moves $move")
-        sendCommand("go depth 14")
-        val output = getOutputUntilBestMove()
+//        this.startEngine()
 
-        val bestMove = extractBestMove(output)
-        val evaluation = parseEvaluation(output)
+        try {
+            sendCommand("position fen $fen moves $move")
+            sendCommand("go depth 14")
+            val output = getOutputUntilBestMove()
 
-        return Pair(bestMove, evaluation)
+            val bestMove = extractBestMove(output)
+            val evaluation = parseEvaluation(output)
+
+            return Pair(bestMove, evaluation)
+        } finally {
+//            this.stopEngine()
+        }
     }
 
     private fun extractBestMove(output: String): String {
@@ -103,9 +127,10 @@ class StockfishWrapper : Closeable {
     }
 
     private fun startEngine() {
-        process = processBuilder.start()
+        process = processBuilder.start() // Start the process here
         reader = BufferedReader(InputStreamReader(process.inputStream))
         writer = BufferedWriter(OutputStreamWriter(process.outputStream))
+        clearInitialMessages()
     }
 
     private fun clearInitialMessages() {
@@ -125,7 +150,7 @@ class StockfishWrapper : Closeable {
     }
 
     override fun close() {
-        stopEngine()
+//        stopEngine()
     }
 }
 

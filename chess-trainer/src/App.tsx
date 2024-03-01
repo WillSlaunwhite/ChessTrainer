@@ -6,8 +6,12 @@ import HomeView from "./views/HomeView";
 import { QuizInteractionProvider } from "./store/quiz/quiz-context";
 
 function App() {
+    console.log("App component is being rendered.");
+
+	const basename = process.env.NODE_ENV === 'production' ? '/ChessTrainer' : '';
+
 	return (
-		<Router>
+		<Router basename={basename}>
 			<GameStateProvider>
 				<QuizInteractionProvider>
 					<div className="app-container h-screen w-screen bg-blue-gray-50 flex flex-column justify-center items-center overflow-hidden">

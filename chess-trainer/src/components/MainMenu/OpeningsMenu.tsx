@@ -12,6 +12,7 @@ const OpeningsMenu: React.FC = () => {
 
 	const openGame = async (openingName: string) => {
 		try {
+			console.log("In openGame");
 			const opening: OpeningDTO = await fetchOpening(openingName);
 			const gameData = await processOpeningData(opening, gameState.lines);
 			
@@ -19,6 +20,7 @@ const OpeningsMenu: React.FC = () => {
 				type: INIT_GAME,
 				payload: gameData
 			});
+			console.log("Navigating to /game");
 			navigate('/game');
 		}
 		catch (error) {
@@ -42,7 +44,7 @@ const OpeningsMenu: React.FC = () => {
 			<Card className="w-5/6 opacity-80 mt-3">
 				<List className="w-full p-0">
 					{openings.map((opening) => (
-						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-4" onClick={() => openGame(opening.name)}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
+						<ListItem key={opening.name} className="ripple-bg-blue-700 ripple text-center p-4" onClick={() => { openGame(opening.name); }}><Typography variant="h4" className="w-full">{opening.name}</Typography></ListItem>
 					))}
 				</List>
 			</Card>

@@ -4,8 +4,12 @@ import "../node_modules/tailwindcss/tailwind.css";
 import App from "./App.tsx";
 import "./index.scss";
 
+console.log("Initializing React application...");
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
-	<ThemeProvider>
-		<App />
-	</ThemeProvider>,
+    <ThemeProvider>
+        <App />
+    </ThemeProvider>,
 );
+
+console.log("React application rendered.");

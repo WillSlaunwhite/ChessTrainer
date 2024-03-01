@@ -9,7 +9,7 @@ const AbandonLineButton: React.FC<{lineNumber: number}> = ({lineNumber}) => {
         <div className='w-3/4 h-2/3 p-2'>
             <Button onClick={() => abandonLine.abandonLine(lineNumber)} variant="filled" className='w-full h-4/5 p-2 py-4 flex items-center justify-around'>
                 <XMarkIcon className='h-12 w-8 text-white ml-3 py-1'/>
-                <Typography color="white" variant="h4" className='mr-8 h-full'>
+                <Typography color="white" variant="h3" className='mr-2 mb-2 h-full w-full'>
                     Abandon Line
                 </Typography>
             </Button>

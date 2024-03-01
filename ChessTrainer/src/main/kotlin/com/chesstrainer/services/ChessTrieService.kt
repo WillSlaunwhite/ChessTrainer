@@ -14,13 +14,14 @@ import javax.annotation.PostConstruct
 @Service
 class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     private val trie: ChessTrie = ChessTrie()
-    private val stockfishPool = LinkedBlockingQueue<StockfishWrapper>()
+//    private val stockfishPool = LinkedBlockingQueue<StockfishWrapper>()
+    private val stockfish = StockfishWrapper()
 
-    init {
-        for (i in 1..3) {
-            stockfishPool.offer(StockfishWrapper())
-        }
-    }
+//    init {
+//        for (i in 1..3) {
+//            stockfishPool.offer(StockfishWrapper())
+//        }
+//    }
 
     companion object {
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
@@ -29,18 +30,18 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 
     fun scoreMove(move: String, previousMoves: List<String>, fen: String): ScoreMoveResponse {
         val movesFromTrie = trie.findNextMoves(previousMoves)
-        val stockfish = stockfishPool.take()
+//        val stockfish = stockfishPool.take()
         val evaluation = stockfish.evaluate(fen, move)
         return ScoreMoveResponse(classifyMove(evaluation.second, -1), "")
     }
 
 
     fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
-        val stockfish = stockfishPool.take()
+//        val stockfish = stockfishPool.take()
         try {
-            return stockfish.evaluate(fen,move)
+            return stockfish.evaluate(fen, move)
         } finally {
-            stockfishPool.offer(stockfish)
+//            stockfishPool.offer(stockfish)
             stockfish.close()
         }
     }
@@ -69,10 +70,9 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     fun nextMovesForSequence(sequence: List<String>, fen: String): List<Map<String, Int>> {
         val nextMoves = trie.findNextMoves(sequence)
         return if (nextMoves.isEmpty()) {
-            val stockfish = stockfishPool.take()
+//            val stockfish = stockfishPool.take()
             val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
 
-            stockfishPool.offer(stockfish)
             stockfish.close()
             listOf(mapOf<String, Int>(nextMove to -1))
         } else {

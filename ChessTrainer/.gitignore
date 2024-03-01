@@ -6,6 +6,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 ChessTrainer/gradle/wrapper/gradle-wrapper.jar
+static/**
+/src/main/resources
+chesstrainer.log.**
 
 ### STS ###
 .apt_generated

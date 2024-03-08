@@ -3,7 +3,7 @@ import { convertOpeningVariationsBaseSequenceToFullSequence, convertToFullMoves,
 
 
 // * EVALUATION
-interface EvaluationResponse { first: { bestMove: string }, second: { centipawns: number, principalVariation: string } }
+interface EvaluationResponse { evaluation: number, principalVariation: string }
 
 export async function fetchEvaluation(fen: string, move: string): Promise<{ bestMove: string, centipawns: number, principalVariation: string }> {
     move = move.split(" ").length > 1 ? move.split(" ")[1] : move;
@@ -19,8 +19,8 @@ export async function fetchEvaluation(fen: string, move: string): Promise<{ best
             .then(res => res.json())
             .then((data: EvaluationResponse) => {
                 console.log(data);
-
-                return { bestMove: data.first.bestMove, centipawns: data.second.centipawns, principalVariation: data.second.principalVariation };
+                const bestMove = data.principalVariation.substring(0, 4);
+                return { bestMove: bestMove, centipawns: data.evaluation, principalVariation: data.principalVariation };
             });
     } catch (error) {
         console.warn('Failed to fetch evaluation using Stockfish');

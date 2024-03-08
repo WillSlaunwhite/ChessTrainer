@@ -1,9 +1,6 @@
 package com.chesstrainer.controllers
 
-import com.chesstrainer.data.Move
-import com.chesstrainer.data.NextMoveRequest
-import com.chesstrainer.data.ScoreMoveRequest
-import com.chesstrainer.data.ScoreMoveResponse
+import com.chesstrainer.data.*
 import com.chesstrainer.services.ChessTrieService
 import com.chesstrainer.wrappers.Evaluation
 import org.springframework.http.ResponseEntity
@@ -20,8 +17,8 @@ class ChessController(private val chessTrieService: ChessTrieService) {
     }
 
     @PostMapping("/evaluate")
-    fun validateMove(@RequestBody move: Move): ResponseEntity<Pair<String, Evaluation>> {
-        val evaluation = chessTrieService.evaluatePosition(move.fen, move.move)
+    fun validateMove(@RequestBody move: Move): ResponseEntity<EvaluationResponse> {
+        val evaluation = chessTrieService.evaluatePositionWithCache(move.fen, move.move)
         return ResponseEntity.ok(evaluation)
     }
 

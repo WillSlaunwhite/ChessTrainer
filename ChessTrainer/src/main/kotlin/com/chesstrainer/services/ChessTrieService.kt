@@ -1,5 +1,6 @@
 package com.chesstrainer.services
 
+import com.chesstrainer.data.EvaluationResponse
 import com.chesstrainer.data.ScoreMoveResponse
 import com.chesstrainer.datastructures.ChessTrie
 import com.chesstrainer.entities.MasterGame
@@ -8,19 +9,24 @@ import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.wrappers.Evaluation
 import com.chesstrainer.wrappers.StockfishWrapper
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.annotation.PostConstruct
+import kotlin.collections.LinkedHashMap
 
 @Service
 class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     private val trie: ChessTrie = ChessTrie()
-//    private val stockfishPool = LinkedBlockingQueue<StockfishWrapper>()
     private val stockfish = StockfishWrapper()
+    private val cacheSizeLimit: Int = 250
 
-//    init {
-//        for (i in 1..3) {
-//            stockfishPool.offer(StockfishWrapper())
-//        }
-//    }
+
+    private val evaluationsCache: MutableMap<String, EvaluationResponse> = Collections.synchronizedMap(
+        object : LinkedHashMap<String, EvaluationResponse>(16, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, EvaluationResponse>): Boolean {
+                return size > cacheSizeLimit
+            }
+        }
+    )
 
     companion object {
         const val COMMON_MOVE_THRESHOLD = 5000  // If a move has been played more than this, it's common
@@ -35,13 +41,30 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
     }
 
 
-    fun evaluatePosition(fen: String, move: String): Pair<String, Evaluation> {
+    private fun evaluatePosition(fen: String, move: String): EvaluationResponse {
 //        val stockfish = stockfishPool.take()
         try {
-            return stockfish.evaluate(fen, move)
+            val evaluation = stockfish.evaluate(fen, move)
+            return EvaluationResponse(evaluation.second.centipawns, evaluation.second.principalVariation)
         } finally {
 //            stockfishPool.offer(stockfish)
         }
+    }
+
+    fun evaluatePositionWithCache(fen: String, move: String): EvaluationResponse {
+        val cacheKey = "$fen:$move"
+
+        // check if it's in cache
+        evaluationsCache[cacheKey]?.let { return it }
+
+        // if it's not in cache, evaluate position
+        val evaluation = evaluatePosition(fen, move)
+
+        // store new evaluation in cache
+        evaluationsCache[cacheKey] = evaluation
+        print("CACHE: $evaluationsCache")
+
+        return evaluation
     }
 
     fun classifyMove(evaluation: Evaluation, moveFrequency: Int): MoveClassification {

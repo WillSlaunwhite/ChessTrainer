@@ -11,9 +11,9 @@ class UserDetailsServiceImpl(
     private val userRepository: UserRepository
 ) : UserDetailsService {
 
-    override fun loadUserByUsername(username: String?): UserDetails {
+    override fun loadUserByUsername(username: String): UserDetails? {
        val user = userRepository.findByUsername(username)
 
-        return UserDetailsImpl.build(user)
+        return if (user != null) UserDetailsImpl.build(user) else null
     }
 }

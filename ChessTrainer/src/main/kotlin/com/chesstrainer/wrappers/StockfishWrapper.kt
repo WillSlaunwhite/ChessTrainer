@@ -1,14 +1,20 @@
 package com.chesstrainer.wrappers
 
+import org.springframework.scheduling.annotation.Scheduled
 import java.io.*
+import java.time.Duration
+import java.time.Instant
+import javax.annotation.PreDestroy
 
 
-class StockfishWrapper : Closeable {
+class StockfishWrapper {
     private val possiblePaths = listOf("/usr/games/stockfish", "/usr/local/bin/stockfish", "stockfish")
     private lateinit var processBuilder: ProcessBuilder
     private lateinit var process: Process
     private lateinit var reader: BufferedReader
     private lateinit var writer: BufferedWriter
+    private var isEngineRunning: Boolean = false
+    private var lastUsed: Instant = Instant.now()
 
     init {
         var foundExecutable = false
@@ -29,13 +35,16 @@ class StockfishWrapper : Closeable {
             throw IllegalStateException("Could not find Stockfish executable in any known location.")
         }
 
-//        this.startEngine() // Start the engine with the found executable
+        this.startEngineIfNeeded()
     }
 
     fun evaluate(fen: String, move: String): Pair<String, Evaluation> {
-//        this.startEngine()
+        if (!this.isEngineRunning) {
+            this.startEngineIfNeeded()
+        }
 
         try {
+            lastUsed = Instant.now()
             sendCommand("position fen $fen moves $move")
             sendCommand("go depth 14")
             val output = getOutputUntilBestMove()
@@ -126,32 +135,60 @@ class StockfishWrapper : Closeable {
         writer.flush()
     }
 
-    private fun startEngine() {
-        process = processBuilder.start() // Start the process here
-        reader = BufferedReader(InputStreamReader(process.inputStream))
-        writer = BufferedWriter(OutputStreamWriter(process.outputStream))
-        clearInitialMessages()
-    }
-
     private fun clearInitialMessages() {
         while (reader.ready()) {
             reader.readLine()
         }
     }
 
-    private fun stopEngine() {
-        try {
-            sendCommand("quit")
-        } finally {
-            reader.close()
-            writer.close()
-            process.destroy()
+
+//  STARTUP FUNCTIONS
+
+    private fun startEngineIfNeeded() {
+        if (!this.isEngineRunning) {
+            this.startEngine()
+            this.isEngineRunning = true
         }
     }
 
-    override fun close() {
-//        stopEngine()
+    private fun startEngine() {
+        process = processBuilder.start() // Start the process here
+        reader = BufferedReader(InputStreamReader(process.inputStream))
+        writer = BufferedWriter(OutputStreamWriter(process.outputStream))
+        this.isEngineRunning = true
+        clearInitialMessages()
+        print("STOCKFISH STARTED")
+    }
+
+//   CLEANUP FUNCTIONS
+
+    @PreDestroy
+    fun cleanUp() {
+        stopEngine()
+    }
+
+    private fun stopEngine() {
+        try {
+            sendCommand("quit")
+            reader.close()
+            writer.close()
+        } catch (e: Exception) {
+            // need to handle exception here
+            e.printStackTrace()
+        } finally {
+            process.destroy()
+            this.isEngineRunning = false
+            print("STOCKFISH STOPPED")
+        }
+    }
+
+    @Scheduled(fixedRate = 60000)
+    fun checkAndStopEngine() {
+        if (Duration.between(lastUsed, Instant.now()).toMinutes() >= 5 && isEngineRunning) {
+            stopEngine()
+        }
     }
 }
 
 data class Evaluation(val centipawns: Double?, val principalVariation: String?)
+

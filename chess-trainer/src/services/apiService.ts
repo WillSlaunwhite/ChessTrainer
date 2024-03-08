@@ -1,8 +1,8 @@
 import { GlobalState, LineState } from "../store/game/contexts/GameContext";
 import { convertOpeningVariationsBaseSequenceToFullSequence, convertToFullMoves, getFensFromMoveSequences } from "../utility/chessUtils";
 
-// * EVALUATION
 
+// * EVALUATION
 interface EvaluationResponse { first: { bestMove: string }, second: { centipawns: number, principalVariation: string } }
 
 export async function fetchEvaluation(fen: string, move: string): Promise<{ bestMove: string, centipawns: number, principalVariation: string }> {
@@ -29,10 +29,9 @@ export async function fetchEvaluation(fen: string, move: string): Promise<{ best
     }
 }
 
-// * NEXT MOVES
 
+// * NEXT MOVES
 export async function fetchNextMoveForSequence(sequence: string[], fen: string): Promise<string> {
-    console.log("In fetchNextMove 1");
     try {
         const response = await fetch('http://localhost:8085/api/chess/next-moves', {
             method: "POST",
@@ -41,7 +40,6 @@ export async function fetchNextMoveForSequence(sequence: string[], fen: string):
             },
             body: JSON.stringify({ sequence, fen })
         });
-        console.log("In fetchNextMove 2");
 
         if (!response.ok) {
             throw new Error(`Server responded with status ${response.status}`);
@@ -49,7 +47,6 @@ export async function fetchNextMoveForSequence(sequence: string[], fen: string):
 
         const data = await response.json();
 
-        console.log("In fetchNextMove 3");
         const probableMoves = Object.entries(data[0]);
         probableMoves.sort(((a: any, b: any) => b[1] - a[1]));
 
@@ -63,7 +60,6 @@ export async function fetchNextMoveForSequence(sequence: string[], fen: string):
             return move;
         }
 
-        console.log("In fetchNextMove 4");
         return move.split(' ')[1];
     } catch (error) {
         console.error('Error in fetchNextMoveForSequence:', error);
@@ -71,14 +67,11 @@ export async function fetchNextMoveForSequence(sequence: string[], fen: string):
     }
 }
 
-// * OPENINGS
 
+// * OPENINGS
 export async function processOpeningData(opening: OpeningDTO, lines: LineState[]): Promise<{ global: GlobalState, lines: LineState[] }> {
-    console.log("In processOpeningData");
     const fullMoveSequences = convertOpeningVariationsBaseSequenceToFullSequence(opening).map(sequence => convertToFullMoves(sequence));
-    console.log("In processOpeningData 2");
     const fens = getFensFromMoveSequences(fullMoveSequences);
-    console.log("In processOpeningData 3");
     const newLines: LineState[] = [];
     let firstMoves: string[] = [];
 
@@ -86,8 +79,6 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
         const results = await Promise.allSettled(
             fullMoveSequences.map(async (sequence, i) => fetchNextMoveForSequence(sequence, fens[i]))
         );
-
-        console.log("In processOpeningData 4");
 
         firstMoves = results.map(result => result.status === "fulfilled" ? result.value : "defaultMove");
 
@@ -101,7 +92,6 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
             newLines.push(lineState);
         }
 
-        console.log("In processOpeningData 5");
     } catch (error) {
         console.error("Error processing moves:", error);
         // Handle the error appropriately
@@ -121,8 +111,6 @@ export async function processOpeningData(opening: OpeningDTO, lines: LineState[]
 }
 
 export async function fetchOpening(openingName: string): Promise<OpeningDTO> {
-    console.log("In fetchOpening");
     const response = await fetch(`http://localhost:8085/api/openings/${openingName}/start`);
-    console.log("In fetchOpening 2");
     return response.json();
 }

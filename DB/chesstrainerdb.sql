@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `opening` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
-  `base_moves_sequence` VARCHAR(1000) NOT NULL,
+  `moves_sequence` VARCHAR(1000) NOT NULL,
   `difficulty_level` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC)

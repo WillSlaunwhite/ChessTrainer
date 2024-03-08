@@ -12,7 +12,6 @@ const OpeningsMenu: React.FC = () => {
 
 	const openGame = async (openingName: string) => {
 		try {
-			console.log("In openGame");
 			const opening: OpeningDTO = await fetchOpening(openingName);
 			const gameData = await processOpeningData(opening, gameState.lines);
 			
@@ -20,7 +19,7 @@ const OpeningsMenu: React.FC = () => {
 				type: INIT_GAME,
 				payload: gameData
 			});
-			console.log("Navigating to /game");
+
 			navigate('/game');
 		}
 		catch (error) {

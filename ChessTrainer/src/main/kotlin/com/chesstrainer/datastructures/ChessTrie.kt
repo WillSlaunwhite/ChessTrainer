@@ -54,5 +54,4 @@ class ChessTrie {
             printTrie(child, prefix + move + " -> ")
         }
     }
-
 }

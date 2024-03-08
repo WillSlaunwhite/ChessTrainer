@@ -16,7 +16,7 @@ data class Opening(
     val baseMoveSequence: List<String> = listOf(),
     @OneToMany(mappedBy = "opening")
     @JsonManagedReference
-    val masterGames: List<MasterGame>,
+    val masterGames: MutableList<MasterGame>,
     @OneToMany(mappedBy = "opening")
     @JsonManagedReference
     val variations: List<Variation>,

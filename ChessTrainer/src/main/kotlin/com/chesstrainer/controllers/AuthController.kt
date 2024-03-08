@@ -4,6 +4,7 @@ import com.chesstrainer.data.AuthenticationRequest
 import com.chesstrainer.data.AuthenticationResponse
 import com.chesstrainer.security.JwtUtil
 import com.chesstrainer.services.UserDetailsServiceImpl
+import com.skilldistillery.marketplace.exceptions.UserNotFoundException
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -31,9 +32,12 @@ class AuthController(
         }
 
         val userDetails = userService.loadUserByUsername(authenticationRequest.username)
-
-        val jwt = jwtUtil.generateToken(userDetails)
-        println("jwt: $jwt")
-        return ResponseEntity.ok(AuthenticationResponse(jwt))
+        if (userDetails != null) {
+            val jwt = jwtUtil.generateToken(userDetails)
+            println("jwt: $jwt")
+            return ResponseEntity.ok(AuthenticationResponse(jwt))
+        } else {
+            throw UserNotFoundException("Unable to authenticate user with username ${authenticationRequest.username}")
+        }
     }
 }

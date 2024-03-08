@@ -8,7 +8,6 @@ import com.chesstrainer.repositories.MasterGameRepository
 import com.chesstrainer.wrappers.Evaluation
 import com.chesstrainer.wrappers.StockfishWrapper
 import org.springframework.stereotype.Service
-import java.util.concurrent.LinkedBlockingQueue
 import javax.annotation.PostConstruct
 
 @Service
@@ -42,7 +41,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
             return stockfish.evaluate(fen, move)
         } finally {
 //            stockfishPool.offer(stockfish)
-            stockfish.close()
         }
     }
 
@@ -73,7 +71,6 @@ class ChessTrieService(private val masterGameRepo: MasterGameRepository) {
 //            val stockfish = stockfishPool.take()
             val (nextMove, eval) = stockfish.evaluate(fen, sequence.last())
 
-            stockfish.close()
             listOf(mapOf<String, Int>(nextMove to -1))
         } else {
             listOf(nextMoves)
